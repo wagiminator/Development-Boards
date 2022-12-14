@@ -1,10 +1,10 @@
 # CH55xG Development Board
 Development board for the CH551G, CH552G and CH554G microcontrollers with USB 2.0 and Arduino IDE support.
 
-![CH55xG_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic1.jpg)
+![CH55xG_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic1.jpg)
 
 # Pinout
-![CH55xG_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pinout.png)
+![CH55xG_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pinout.png)
 
 # Features of the CH55xG
 The CH55x is an enhanced E8051 core MCU compatible with the MCS51 instruction set. 79% of its instructions are single-byte single-cycle instructions, and the average instruction speed is 8 - 15 times faster than that of the standard MCS51. The special xRAM supports direct memory access (DMA), data fast copy command, and double DPTR pointers. The CH55x has a built-in USB controller and USB transceiver, it supports USB-Host mode (CH554 only) and USB-Device mode (all), USB Type-C master-slave detection, USB 2.0 full-speed (12Mbps) and low-speed (1.5Mbps) traffic, data packets of up to 64 bytes, and DMA. It has a factory built-in bootloader so firmware can be uploaded directly via USB without the need for an additional programming device.
@@ -67,8 +67,8 @@ sudo pip install pyusb
 - [CH551/552 Datasheet](http://www.wch-ic.com/downloads/CH552DS1_PDF.html)
 - [CH554 Datasheet](http://www.wch-ic.com/downloads/CH554DS1_PDF.html)
 
-![CH55xG_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic3.jpg)
-![CH55xG_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic2.jpg)
+![CH55xG_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic3.jpg)
+![CH55xG_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic2.jpg)
 
 # License
 
