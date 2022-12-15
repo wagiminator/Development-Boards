@@ -16,7 +16,7 @@ Bootloader | 2 KB | 2 KB | 2 KB
 Data Flash | 128 bytes | 128 bytes | 128 bytes
 iRAM | 256 bytes | 256 bytes | 256 bytes 
 xRAM | 512 bytes | 1024 bytes | 1024 bytes
-GPIO Pins | 10 usable | 10 usable | 10 usable
+GPIO Pins | 12 (10 usable) | 12 (10 usable) | 12 (10 usable)
 ADC Channels | 0 | 4x 8-bit | 4x 8-bit
 PWM Channels | 2x 8-bit | 2x 8-bit | 2x 8-bit
 Timer/Counter | 3 | 3 | 3
