@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ===================================================================================
 # Project:   chprog - Programming Tool for CH55x Microcontrollers
-# Version:   v1.0
+# Version:   v1.1
 # Year:      2022
 # Author:    Stefan Wagner
 # Github:    https://github.com/wagiminator
@@ -59,15 +59,16 @@ def _main():
         print('Connecting to device ...')
         isp = Programmer()
         isp.detect()
-        print('SUCCESS: Found', isp.chipname, 'with bootloader v' + isp.bootloader + '.')
+        print('FOUND:', isp.chipname, 'with bootloader v' + isp.bootloader + '.')
         print('Erasing chip ...')
         isp.erase()
         print('Flashing', sys.argv[1], 'to', isp.chipname, '...')
-        length = isp.write(sys.argv[1])
-        print('SUCCESS:', length, 'bytes written.')
+        with open(sys.argv[1], 'rb') as f: data = f.read()
+        isp.flash_data(data)
+        print('SUCCESS:', len(data), 'bytes written.')
         print('Verifying ...')
-        length = isp.verify(sys.argv[1])
-        print('SUCCESS:', length, 'bytes verified.')
+        isp.verify_data(data)
+        print('SUCCESS:', len(data), 'bytes verified.')
         isp.exit()
     except Exception as ex:
         if str(ex) != '':
@@ -144,18 +145,31 @@ class Programmer:
             self.__erasev2()
 
 
-    def write(self, fileName):
-        if self.chipversion == 1:
-            return self.__writev1(fileName, MODE_WRITE_V1)
-        else:
-            return self.__writev2(fileName, MODE_WRITE_V2)
+    def flash_bin(self, filename):
+        with open(filename, 'rb') as f: data = f.read()
+        self.flash_data(data)
+        return len(data)
 
+    def verify_bin(self, filename):
+        with open(filename, 'rb') as f: data = f.read()
+        self.verify_data(data)
+        return len(data)
 
-    def verify(self, fileName):
+    def flash_data(self, data):
+        if len(data) > self.code_flash_size:
+            raise Exception('Not enough memory')
         if self.chipversion == 1:
-            return self.__writev1(fileName, MODE_VERIFY_V1)
+            self.__writev1(data, MODE_WRITE_V1)
         else:
-            return self.__writev2(fileName, MODE_VERIFY_V2)
+            self.__writev2(data, MODE_WRITE_V2)
+
+    def verify_data(self, data):
+        if len(data) > self.code_flash_size:
+            raise Exception('Not enough memory')
+        if self.chipversion == 1:
+            self.__writev1(data, MODE_VERIFY_V1)
+        else:
+            self.__writev2(data, MODE_VERIFY_V2)
 
 
     def exit(self):
@@ -231,14 +245,7 @@ class Programmer:
         self.epout.write((0xa2, 0x01, 0x00, 0x01))
 
 
-    def __writev1(self, fileName, mode):
-        try:
-            data = open(fileName, 'rb').read()
-        except:
-            raise Exception('Failed to open BIN file')
-        if len(data) > self.code_flash_size:
-            raise Exception('BIN file is too big')
-
+    def __writev1(self, data, mode):
         rest = len(data)
         curr_addr = 0
         pkt_length = 0
@@ -265,23 +272,15 @@ class Programmer:
                         raise Exception('Verify failed')
         return len(data)
 
-    def __writev2(self, fileName, mode):
-        try:
-            data = open(fileName, 'rb').read()
-        except:
-            raise Exception('Failed to open BIN file')
-        if len(data) > self.code_flash_size:
-            raise Exception('BIN file is too big')
-
+    def __writev2(self, data, mode):
+        rest = len(data)
+        curr_addr = 0
+        pkt_length = 0
         outbuffer = bytearray(64)
         outbuffer[0] = mode
         outbuffer[2] = 0x00
         outbuffer[5] = 0x00
         outbuffer[6] = 0x00
-
-        rest = len(data)
-        curr_addr = 0
-        pkt_length = 0
         while curr_addr < len(data):
             if rest >= 0x38:
                 pkt_length = 0x38
@@ -305,7 +304,6 @@ class Programmer:
                         raise Exception('Write failed')
                     elif mode == MODE_VERIFY_V2:
                         raise Exception('Verify failed')
-        return len(data)
 
 
 # ===================================================================================
