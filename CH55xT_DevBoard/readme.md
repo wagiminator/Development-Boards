@@ -1,10 +1,10 @@
 # CH55xT Development Board
 Development board for the CH552T, CH554T and CH559T microcontrollers with native USB 2.0 and Arduino IDE support.
 
-![CH55xT_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic1.jpg)
+![CH55xT_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic1.jpg)
 
 # Pinout
-![CH55xT_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pinout.png)
+![CH55xT_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pinout.png)
 
 Note: The CH559T partially has a different pinout. Refer to the [datasheet](http://www.wch-ic.com/downloads/CH559DS1_PDF.html) for more information.
 
@@ -70,8 +70,8 @@ sudo pip install pyusb
 - [CH554 Datasheet](http://www.wch-ic.com/downloads/CH554DS1_PDF.html)
 - [CH559 Datasheet](http://www.wch-ic.com/downloads/CH559DS1_PDF.html)
 
-![CH55xT_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic2.jpg)
-![CH55xT_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic3.jpg)
+![CH55xT_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic2.jpg)
+![CH55xT_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic3.jpg)
 
 # License
 
