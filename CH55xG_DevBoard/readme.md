@@ -1,5 +1,5 @@
 # CH55xG Development Board
-Development board for the CH551G, CH552G and CH554G microcontrollers with USB 2.0 and Arduino IDE support.
+Development board for the CH551G, CH552G and CH554G microcontrollers with native USB 2.0 and Arduino IDE support.
 
 ![CH55xG_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic1.jpg)
 
@@ -7,7 +7,7 @@ Development board for the CH551G, CH552G and CH554G microcontrollers with USB 2.
 ![CH55xG_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pinout.png)
 
 # Features of the CH55xG
-The CH55x is an enhanced E8051 core MCU compatible with the MCS51 instruction set. 79% of its instructions are single-byte single-cycle instructions, and the average instruction speed is 8 - 15 times faster than that of the standard MCS51. The special xRAM supports direct memory access (DMA), data fast copy command, and double DPTR pointers. The CH55x has a built-in USB controller and USB transceiver, it supports USB-Host mode (CH554 only) and USB-Device mode (all), USB Type-C master-slave detection, USB 2.0 full-speed (12Mbps) and low-speed (1.5Mbps) traffic, data packets of up to 64 bytes, and DMA. It has a factory built-in bootloader so firmware can be uploaded directly via USB without the need for an additional programming device.
+The CH55x is an 8-bit enhanced E8051 core MCU compatible with the MCS51 instruction set. 79% of its instructions are single-byte single-cycle instructions, and the average instruction speed is 8 - 15 times faster than that of the standard MCS51. The special xRAM supports direct memory access (DMA), data fast copy command, and double DPTR pointers. The CH55x has a built-in USB controller and USB transceiver, it supports USB-Host mode (CH554 only) and USB-Device mode (all), USB Type-C master-slave detection, USB 2.0 full-speed (12Mbps) and low-speed (1.5Mbps) traffic, data packets of up to 64 bytes, and DMA. It has a factory built-in bootloader so firmware can be uploaded directly via USB without the need for an additional programming device.
 
  Specifications |  CH551G |  CH552G |  CH554G 
 :-------------- | :------ | :------ | :------ 
@@ -21,10 +21,10 @@ ADC Channels | 0 | 4x 8-bit | 4x 8-bit
 PWM Channels | 2x 8-bit | 2x 8-bit | 2x 8-bit
 Timer/Counter | 3 | 3 | 3
 Touch Key Channels | 4 | 5 | 5
-USB modes | Device | Device | Host/Device
+USB Modes | Device | Device | Host/Device
 USB Type-C | no | yes | yes
 Interfaces | 1x UART, SPI | 2x UART, SPI | 2x UART, SPI
-Intern. Clock | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz 
+Internal Clock | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz 
 
 # Built-in USB Bootloader
 ## Installing Drivers for the Bootloader
