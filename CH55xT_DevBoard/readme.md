@@ -64,6 +64,7 @@ sudo pip install pyusb
 - Now you can upload your sketch.
 
 # References, Links and Notes
+- [EasyEDA Design Files](https://oshwlab.com/wagiminator/ch55xt-development-board)
 - [CH55x SDK for SDCC](https://github.com/Blinkinlabs/ch554_sdcc)
 - [ch55xduino](https://github.com/DeqingSun/ch55xduino)
 - [CH552 Datasheet](http://www.wch-ic.com/downloads/CH552DS1_PDF.html)
