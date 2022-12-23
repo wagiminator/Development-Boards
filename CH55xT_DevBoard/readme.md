@@ -30,15 +30,13 @@ Internal Clock | max 24 MHz | max 24 MHz | max 56 MHz
 
 # Built-in USB Bootloader
 ## Installing Drivers for the Bootloader
-### Linux
-You do not need to install a driver. However, by default Linux will not expose enough permission to upload your code with the USB bootloader. In order to fix this, open a terminal and run the following commands:
+On Linux you do not need to install a driver. However, by default Linux will not expose enough permission to upload your code with the USB bootloader. In order to fix this, open a terminal and run the following commands:
 
 ```
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="4348", ATTR{idProduct}=="55e0", MODE="666"' | sudo tee /etc/udev/rules.d/99-ch55x.rules
 sudo service udev restart
 ```
 
-### Windows
 On Windows you will need the Zadig tool (https://zadig.akeo.ie/) to install the correct driver. Click "Options" and "List All Devices" to select the USB module, then install the libusb-win32 driver.
 
 ## Entering Bootloader Mode
@@ -47,10 +45,10 @@ A brand new chip starts automatically in bootloader mode as soon as it is connec
 # Installing Toolchain for CH55x
 If you do not want to use the Arduino IDE, you can install the [CH55x Software Development Kit for the SDCC compiler](https://github.com/Blinkinlabs/ch554_sdcc). Follow the instructions on the website. This SDK does not support the CH559 at the moment!
 
-In order for some programming tools to work, Python3 must be installed on your system. Most Linux distributions already include this. Windows users can follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition pyusb must be installed. On Linux this can be done by running the following commands:
+In order for some programming tools to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [pyusb](https://github.com/pyusb/pyusb) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
-sudo apt install python3-pip
+sudo apt install sdcc python3 python3-pip
 sudo pip install pyusb
 ```
 
