@@ -7,17 +7,25 @@
 #include "usb_descr.h"
 #include "delay.h"
 
-#define LINE_CODING_SIZE 7
-
 extern __xdata uint8_t Ep0Buffer[];
 extern __xdata uint8_t Ep2Buffer[];
 
-// Initialize for baudrate 57600, 1 stopbit, No parity, eight data bits
-__xdata uint8_t LineCoding[LINE_CODING_SIZE]={0x00,0xe1,0x00,0x00,0x00,0x00,0x08};
+// Initialize line coding
+__xdata struct CDC_LINE_CODING_TYPE {
+  uint32_t baudrate;        // baud rate
+  uint8_t  stopbits;        // number of stopbits (0:1bit,1:1.5bits,2:2bits)
+  uint8_t  parity;          // parity (0:none,1:odd,2:even,3:mark,4:space)
+  uint8_t  databits;        // number of data bits (5,6,7,8 or 16)
+} CDC_LineCoding = {
+  .baudrate = 57600,        // baudrate 57600
+  .stopbits = 0,            // 1 stopbit
+  .parity   = 0,            // no parity
+  .databits = 8             // 8 databits
+};
 
 volatile __xdata uint8_t USBByteCountEP2 = 0;   // bytes of received data on USB endpoint
 volatile __xdata uint8_t USBBufOutPointEP2 = 0; // data pointer for fetching
-volatile __xdata uint8_t controlLineState = 0;
+volatile __xdata uint8_t controlLineState = 0;  // control line state
 volatile __bit UpPoint2BusyFlag  = 0;           // flag of whether upload pointer is busy
 __xdata uint8_t usbWritePointer = 0;
 
@@ -31,16 +39,35 @@ void CDC_flush(void) {
   }
 }
 
+// Write a single character via CDC
+void CDC_write(char c) {
+  uint16_t waitWriteCount;
+  if(controlLineState > 0) {
+    while(1) {
+      waitWriteCount = 50000;
+      while(UpPoint2BusyFlag) {                 // wait for 250ms or give up
+        _delay_us(5);
+        if(!--waitWriteCount) return;
+      }
+      if(usbWritePointer < EP2_SIZE) {
+        Ep2Buffer[EP2_SIZE + usbWritePointer++] = c;
+        return;
+      }
+      else CDC_flush();                         // go back to first while
+    }
+  }
+}
+
 // Send a string via CDC
 void CDC_print(char* str) {
   uint16_t waitWriteCount;
   if(controlLineState > 0) {
     while(*str) {
-      waitWriteCount = 0;
+      waitWriteCount = 50000;
       while(UpPoint2BusyFlag) {
         waitWriteCount++;
         _delay_us(5);   
-        if(waitWriteCount >= 50000) return;
+        if(!--waitWriteCount) return;
       }
       while(*str) {
         if(usbWritePointer < EP2_SIZE)
@@ -77,31 +104,41 @@ char CDC_read(void) {
   return data;
 }
 
+// Get DTR flag
+uint8_t CDC_getDTR(void) {
+  return(controlLineState & 1);
+}
+
+// Get RTS flag
+uint8_t CDC_getRTS(void) {
+  return(controlLineState & 2);
+}
+
 // Reset CDC parameters
-void resetCDCParameters(void) {
+void CDC_reset(void) {
   USBByteCountEP2 = 0;                          // bytes of received data on USB endpoint
   UpPoint2BusyFlag = 0;
 }
 
 // Set line coding handler
-void setLineCodingHandler(void) {
+void CDC_setLineCoding(void) {
   uint8_t i;
-  for(i=0; i<((LINE_CODING_SIZE<=USB_RX_LEN)?LINE_CODING_SIZE:USB_RX_LEN); i++) {
-    LineCoding[i] = Ep0Buffer[i];
+  for(i=0; i<((sizeof(CDC_LineCoding)<=USB_RX_LEN)?sizeof(CDC_LineCoding):USB_RX_LEN); i++) {
+    ((uint8_t*)&CDC_LineCoding)[i] = Ep0Buffer[i];
   }
 }
 
 // Get line coding handler
-uint16_t getLineCodingHandler(void) {
+uint16_t CDC_getLineCoding(void) {
   uint8_t i;
-  for(i=0; i<LINE_CODING_SIZE; i++) {
-    Ep0Buffer[i] = LineCoding[i];
+  for(i=0; i<sizeof(CDC_LineCoding); i++) {
+    Ep0Buffer[i] = ((uint8_t*)&CDC_LineCoding)[i];
   }
-  return LINE_CODING_SIZE;
+  return sizeof(CDC_LineCoding);
 }
 
 // Set control line state handler
-void setControlLineStateHandler(void) {
+void CDC_setControlLineState(void) {
   controlLineState = Ep0Buffer[2];
 }
 

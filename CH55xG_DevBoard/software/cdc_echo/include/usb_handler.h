@@ -5,8 +5,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "ch554.h"
-#include "usb.h"
 #include "usb_descr.h"
 
 extern __xdata __at (EP0_ADDR) uint8_t Ep0Buffer[];

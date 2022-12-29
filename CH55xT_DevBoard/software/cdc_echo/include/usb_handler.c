@@ -6,10 +6,10 @@
 #include "usb_handler.h"
 
 //CDC functions:
-void resetCDCParameters(void);
-void setLineCodingHandler(void);
-uint16_t getLineCodingHandler(void);
-void setControlLineStateHandler(void);
+void CDC_reset(void);
+void CDC_setLineCoding(void);
+uint16_t CDC_getLineCoding(void);
+void CDC_setControlLineState(void);
 void USB_EP2_IN(void);
 void USB_EP2_OUT(void);
 
@@ -78,10 +78,10 @@ void USB_EP0_SETUP(void) {
         case USB_REQ_TYP_CLASS:
           switch(SetupReq) {
             case GET_LINE_CODING:           // 0x21  currently configured
-              len = getLineCodingHandler();
+              len = CDC_getLineCoding();
               break;
             case SET_CONTROL_LINE_STATE:    // 0x22  generates RS-232/V.24 style control signals
-              setControlLineStateHandler();
+              CDC_setControlLineState();
               break;
             case SET_LINE_CODING:           // 0x20  Configure
               break;            
@@ -282,7 +282,7 @@ void USB_EP0_IN(void) {
 void USB_EP0_OUT(void) {
   if(SetupReq == SET_LINE_CODING) {         // set line coding
     if( U_TOG_OK ) {
-      setLineCodingHandler();
+      CDC_setLineCoding();
       UEP0_T_LEN = 0;
       UEP0_CTRL |= UEP_R_RES_ACK | UEP_T_RES_ACK;  // send 0-length packet
     }
@@ -365,7 +365,7 @@ void USB_interrupt(void) {   // inline not really working in multiple files in S
     UIF_TRANSFER = 0;
     UIF_BUS_RST = 0;                        // clear interrupt flag
 
-    resetCDCParameters();
+    CDC_reset();
   }
     
   // USB bus suspend / wake up
