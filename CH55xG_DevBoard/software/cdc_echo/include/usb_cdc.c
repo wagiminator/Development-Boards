@@ -1,123 +1,102 @@
 // ===================================================================================
-// USB CDC Functions for CH55x
+// USB CDC Functions for CH551, CH552 and CH554
 // ===================================================================================
 
 #include "ch554.h"
 #include "usb.h"
+#include "usb_cdc.h"
 #include "usb_descr.h"
+#include "usb_handler.h"
 #include "delay.h"
 
-extern __xdata uint8_t Ep0Buffer[];
-extern __xdata uint8_t Ep2Buffer[];
-
 // Initialize line coding
-__xdata struct CDC_LINE_CODING_TYPE {
-  uint32_t baudrate;        // baud rate
-  uint8_t  stopbits;        // number of stopbits (0:1bit,1:1.5bits,2:2bits)
-  uint8_t  parity;          // parity (0:none,1:odd,2:even,3:mark,4:space)
-  uint8_t  databits;        // number of data bits (5,6,7,8 or 16)
-} CDC_LineCoding = {
+__xdata CDC_LINE_CODING_TYPE CDC_LineCoding = {
   .baudrate = 57600,        // baudrate 57600
   .stopbits = 0,            // 1 stopbit
   .parity   = 0,            // no parity
   .databits = 8             // 8 databits
 };
 
-volatile __xdata uint8_t USBByteCountEP2 = 0;   // bytes of received data on USB endpoint
-volatile __xdata uint8_t USBBufOutPointEP2 = 0; // data pointer for fetching
-volatile __xdata uint8_t controlLineState = 0;  // control line state
-volatile __bit UpPoint2BusyFlag  = 0;           // flag of whether upload pointer is busy
-__xdata uint8_t usbWritePointer = 0;
+volatile __xdata uint8_t CDC_controlLineState  = 0; // control line state
+volatile __xdata uint8_t USB_EP2_readByteCount = 0; // bytes of received data on USB endpoint
+volatile __xdata uint8_t USB_EP2_readPointer   = 0; // data pointer for fetching
+volatile __bit USB_EP2_writeBusyFlag = 0;           // flag of whether upload pointer is busy
+__xdata uint8_t USB_EP2_writePointer = 0;           // data pointer for writing
 
-// Flush the OUT-buffer
+#define CDC_DTR_flag  (CDC_controlLineState & 1)
+#define CDC_RTS_flag  ((CDC_controlLineState >> 1) & 1)
+
+// Setup USB-CDC
+void CDC_init(void) {
+  USB_init();
+  UEP0_T_LEN = 0;
+  UEP1_T_LEN = 0;
+  UEP2_T_LEN = 0;
+}
+
+// Check number of bytes in the IN buffer
+uint8_t CDC_available(void) {
+  return USB_EP2_readByteCount;
+}
+
+// Check if OUT buffer is ready to be written
+__bit CDC_ready(void) {
+  return(CDC_DTR_flag && !USB_EP2_writeBusyFlag);
+}
+
+// Flush the OUT buffer
 void CDC_flush(void) {
-  if(!UpPoint2BusyFlag && usbWritePointer > 0) {
-    UEP2_T_LEN = usbWritePointer;                                                   
-    UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_ACK; // respond ACK
-    UpPoint2BusyFlag = 1;
-    usbWritePointer = 0;
+  if(!USB_EP2_writeBusyFlag && USB_EP2_writePointer > 0) {
+    UEP2_T_LEN = USB_EP2_writePointer;                                                   
+    UEP2_CTRL  = UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // respond ACK
+    USB_EP2_writeBusyFlag = 1;
+    USB_EP2_writePointer  = 0;
   }
 }
 
-// Write a single character via CDC
+// Write single character to OUT buffer
 void CDC_write(char c) {
-  uint16_t waitWriteCount;
-  if(controlLineState > 0) {
-    while(1) {
-      waitWriteCount = 50000;
-      while(UpPoint2BusyFlag) {                 // wait for 250ms or give up
-        _delay_us(5);
-        if(!--waitWriteCount) return;
-      }
-      if(usbWritePointer < EP2_SIZE) {
-        Ep2Buffer[EP2_SIZE + usbWritePointer++] = c;
-        return;
-      }
-      else CDC_flush();                         // go back to first while
-    }
-  }
+  while(!CDC_ready());
+  Ep2Buffer[EP2_SIZE + USB_EP2_writePointer++] = c;
+  if(USB_EP2_writePointer == EP2_SIZE) CDC_flush();
 }
 
-// Send a string via CDC
+// Write string to OUT buffer
 void CDC_print(char* str) {
-  uint16_t waitWriteCount;
-  if(controlLineState > 0) {
-    while(*str) {
-      waitWriteCount = 50000;
-      while(UpPoint2BusyFlag) {
-        waitWriteCount++;
-        _delay_us(5);   
-        if(!--waitWriteCount) return;
-      }
-      while(*str) {
-        if(usbWritePointer < EP2_SIZE)
-          Ep2Buffer[EP2_SIZE + usbWritePointer++] = *str++;
-        else {
-          CDC_flush();
-          break;
-        }
-      }
-    }
-  }
+  while(*str) CDC_write(*str++);
 }
 
-// Send a string with newline via CDC
+// Write string with newline to OUT buffer and flush
 void CDC_println(char* str) {
   CDC_print(str);
-  CDC_print("\n");
+  CDC_write('\n');
+  CDC_flush();
 }
 
-// Check for incoming data
-uint8_t CDC_available(void) {
-  return USBByteCountEP2;
-}
-
-// Read a character from the IN-buffer
+// Read single character from IN buffer
 char CDC_read(void) {
   char data;
-  if(USBByteCountEP2 == 0) return 0;
-  data = Ep2Buffer[USBBufOutPointEP2];
-  USBBufOutPointEP2++;
-  USBByteCountEP2--;
-  if(USBByteCountEP2 == 0)
-    UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_R_RES | UEP_R_RES_ACK;
+  while(!CDC_available());
+  data = Ep2Buffer[USB_EP2_readPointer++];
+  if(--USB_EP2_readByteCount == 0)
+    UEP2_CTRL = UEP2_CTRL & ~MASK_UEP_R_RES | UEP_R_RES_ACK;
   return data;
 }
 
 // Get DTR flag
-uint8_t CDC_getDTR(void) {
-  return(controlLineState & 1);
+__bit CDC_getDTR(void) {
+  return CDC_DTR_flag;
 }
 
 // Get RTS flag
-uint8_t CDC_getRTS(void) {
-  return(controlLineState & 2);
+__bit CDC_getRTS(void) {
+  return CDC_RTS_flag;
 }
 
 // Reset CDC parameters
 void CDC_reset(void) {
-  USBByteCountEP2 = 0;                          // bytes of received data on USB endpoint
-  UpPoint2BusyFlag = 0;
+  USB_EP2_readByteCount = 0;                          // bytes of received data on USB endpoint
+  USB_EP2_writeBusyFlag = 0;
 }
 
 // Set line coding handler
@@ -129,7 +108,7 @@ void CDC_setLineCoding(void) {
 }
 
 // Get line coding handler
-uint16_t CDC_getLineCoding(void) {
+uint8_t CDC_getLineCoding(void) {
   uint8_t i;
   for(i=0; i<sizeof(CDC_LineCoding); i++) {
     Ep0Buffer[i] = ((uint8_t*)&CDC_LineCoding)[i];
@@ -139,20 +118,20 @@ uint16_t CDC_getLineCoding(void) {
 
 // Set control line state handler
 void CDC_setControlLineState(void) {
-  controlLineState = Ep0Buffer[2];
+  CDC_controlLineState = Ep0Buffer[2];
 }
 
 void USB_EP2_IN(void) {
   UEP2_T_LEN = 0;                                           // no data to send anymore
-  UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK; // respond NAK by default
-  UpPoint2BusyFlag = 0;                                     // clear busy flag
+  UEP2_CTRL = UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_NAK;  // respond NAK by default
+  USB_EP2_writeBusyFlag = 0;                                // clear busy flag
 }
 
 void USB_EP2_OUT(void) {
   if(U_TOG_OK) {                                            // discard unsynchronized packets
-    USBByteCountEP2 = USB_RX_LEN;
-    USBBufOutPointEP2 = 0;                                  // reset Data pointer for fetching
-    if(USBByteCountEP2) 
-      UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_R_RES | UEP_R_RES_NAK; // respond NAK after a packet. Let main code change response after handling.
+    USB_EP2_readByteCount = USB_RX_LEN;
+    USB_EP2_readPointer = 0;                                // reset Data pointer for fetching
+    if(USB_EP2_readByteCount) 
+      UEP2_CTRL = UEP2_CTRL & ~MASK_UEP_R_RES | UEP_R_RES_NAK; // respond NAK after a packet. Let main code change response after handling.
   }
 }

@@ -2,6 +2,7 @@
 // USB Descriptors
 // ===================================================================================
 
+#include "config.h"
 #include "usb_descr.h"
 
 // ===================================================================================
@@ -15,9 +16,9 @@ __code USB_DEV_DESCR DevDescr = {
   .bDeviceSubClass    = 0,                      // unused
   .bDeviceProtocol    = 0,                      // unused
   .bMaxPacketSize0    = EP0_SIZE,               // maximum packet size for Endpoint 0
-  .idVendor           = VENDOR_ID,              // VID
-  .idProduct          = PRODUCT_ID,             // PID
-  .bcdDevice          = DEVICE_VERSION,         // device version
+  .idVendor           = USB_VENDOR_ID,          // VID
+  .idProduct          = USB_PRODUCT_ID,         // PID
+  .bcdDevice          = USB_DEVICE_VERSION,     // device version
   .iManufacturer      = 1,                      // index of Manufacturer String Descr
   .iProduct           = 2,                      // index of Product String Descriptor
   .iSerialNumber      = 3,                      // index of Serial Number String Descr
@@ -38,7 +39,7 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
     .bConfigurationValue= 1,                      // value to select this configuration
     .iConfiguration     = 4,                      // index of String Descr for this config
     .bmAttributes       = 0x80,                   // attributes = bus powered, no wakeup
-    .MaxPower           = 100                     // in 2mA units = 200mA
+    .MaxPower           = USB_MAX_POWER_mA / 2    // in 2mA units
   },
 
   // Interface Descriptor: Interface 0 (CDC)

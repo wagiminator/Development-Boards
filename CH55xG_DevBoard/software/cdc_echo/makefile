@@ -25,7 +25,7 @@ PACK_HEX   = packihx
 WCHISP    ?= python3 tools/chprog.py
 
 # Compiler Flags
-CFLAGS  = -mmcs51 --model-small  --no-xinit-opt
+CFLAGS  = -mmcs51 --model-small --no-xinit-opt
 CFLAGS += --xram-size $(XRAM_SIZE) --xram-loc $(XRAM_LOC) --code-size $(CODE_SIZE)
 CFLAGS += -I$(INCLUDE) -DFREQ_SYS=$(FREQ_SYS)
 CFILES  = $(SKETCH) $(wildcard $(INCLUDE)/*.c)

@@ -25,7 +25,7 @@ PACK_HEX   = packihx
 WCHISP    ?= python3 tools/chprog.py
 
 # Compiler Flags
-CFLAGS  = -mmcs51 --model-small
+CFLAGS  = -mmcs51 --model-small --no-xinit-opt
 CFLAGS += --xram-size $(XRAM_SIZE) --xram-loc $(XRAM_LOC) --code-size $(CODE_SIZE)
 CFLAGS += -I$(INCLUDE) -DFREQ_SYS=$(FREQ_SYS)
 CFILES  = $(SKETCH) $(wildcard $(INCLUDE)/*.c)
@@ -73,9 +73,9 @@ install: flash
 
 size:
 	@echo "------------------"
-	@echo "FLASH: $(shell awk '$$1 == "ROM/EPROM/FLASH" {print $$4}' $(TARGET).mem) bytes"
-	@echo "IRAM:  $(shell awk '$$1 == "Stack"      {print 248-$$10}' $(TARGET).mem) bytes"
-	@echo "XRAM:  $(shell awk '$$1 == "EXTERNAL"      {print 0+$$5}' $(TARGET).mem) bytes"
+	@echo "FLASH: $(shell awk '$$1 == "ROM/EPROM/FLASH"      {print $$4}' $(TARGET).mem) bytes"
+	@echo "IRAM:  $(shell awk '$$1 == "Stack"           {print 248-$$10}' $(TARGET).mem) bytes"
+	@echo "XRAM:  $(shell awk '$$1 == "EXTERNAL" {print $(XRAM_LOC)+$$5}' $(TARGET).mem) bytes"
 	@echo "------------------"
 
 removetemp:

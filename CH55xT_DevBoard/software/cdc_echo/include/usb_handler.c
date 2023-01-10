@@ -1,14 +1,14 @@
 // ===================================================================================
-// USB Handler
+// USB Handler for CH551, CH552 and CH554
 // ===================================================================================
 
-#include "usb_descr.h"
+#include "ch554.h"
 #include "usb_handler.h"
 
 //CDC functions:
 void CDC_reset(void);
 void CDC_setLineCoding(void);
-uint16_t CDC_getLineCoding(void);
+uint8_t CDC_getLineCoding(void);
 void CDC_setControlLineState(void);
 void USB_EP2_IN(void);
 void USB_EP2_OUT(void);
@@ -24,39 +24,26 @@ uint8_t  SetupReq, UsbConfig;
 
 inline void NOP_Process(void) {}
 
-// copy descriptor *pDescr to Ep0
+// Copy descriptor *pDescr to Ep0
 // (Thanks to Ralph Doncaster)
-#pragma callee_saves cpy_desc_Ep0
-void cpy_desc_Ep0(uint8_t len) __naked {
-  len;                                      // stop unused arg warning
+#pragma callee_saves USB_EP0_copyDescr
+void USB_EP0_copyDescr(uint8_t len) {
+  len;                          // stop unreferenced argument warning
   __asm
-    xch A, _DPL     ; ACC = len
-    inc _XBUS_AUX
-    mov DPL, #_Ep0Buffer
-    mov DPH, #(_Ep0Buffer >> 8)
-    dec _XBUS_AUX
-    mov DPL, _pDescr
-    mov DPH, (_pDescr + 1)
-    sjmp _ccpyx
-  __endasm;
-}
-
-// copy code to xram 
-// *dest in DPTR1, len in A
-// (Thanks to Ralph Doncaster)
-#pragma callee_saves ccpyx
-void ccpyx(__code char* src) {
-  src;                                      // stop unused arg warning
-  __asm
-    push ar7
-    xch A, R7
+    push ar7                    ; r7 -> stack
+    mov  r7, dpl                ; r7 <- len
+    inc  _XBUS_AUX              ; select dptr1
+    mov  dptr, #_Ep0Buffer      ; dptr1 <- Ep0Buffer
+    dec  _XBUS_AUX              ; select dptr0
+    mov  dpl, _pDescr           ; dptr0 <- *pDescr
+    mov  dph, (_pDescr + 1)
     01$:
-    clr A
-    movc A, @A+DPTR
-    inc DPTR
-    .DB  0xA5       ;MOVX @DPTR1,A & INC DPTR1
-    djnz R7, 01$
-    pop ar7
+    clr  a                      ; acc <- #0
+    movc a, @a+dptr             ; acc <- *pDescr[dptr0]
+    inc  dptr                   ; inc dptr0
+    .DB  0xA5                   ; acc -> Ep0Buffer[dptr1] & inc dptr1
+    djnz r7, 01$                ; dec r7 & if r7 not zero jump to 01$
+    pop  ar7                    ; r7 <- stack
   __endasm;
 }
 
@@ -109,12 +96,12 @@ void USB_EP0_SETUP(void) {
               break;
             case USB_DESCR_TYP_STRING:
               switch(UsbSetupBuf->wValueL) {  // String Descriptor Index
-                case 0:   pDescr = (uint8_t*)LangDescr;   break;
-                case 1:   pDescr = (uint8_t*)ManufDescr;  break;
-                case 2:   pDescr = (uint8_t*)ProdDescr;   break;
-                case 3:   pDescr = (uint8_t*)SerDescr;    break;
-                case 4:   pDescr = (uint8_t*)CDC_Descr;   break;
-                default:  pDescr = (uint8_t*)SerDescr;    break;
+                case 0:   pDescr = USB_STR_DESCR_i0; break;
+                case 1:   pDescr = USB_STR_DESCR_i1; break;
+                case 2:   pDescr = USB_STR_DESCR_i2; break;
+                case 3:   pDescr = USB_STR_DESCR_i3; break;
+                case 4:   pDescr = USB_STR_DESCR_i4; break;
+                default:  pDescr = USB_STR_DESCR_ix; break;
               }
               len = pDescr[0];              // descriptor length
               break;
@@ -125,7 +112,7 @@ void USB_EP0_SETUP(void) {
           if(len != 0xff) {
             if(SetupLen > len) SetupLen = len;  // limit length
             len = SetupLen >= EP0_SIZE ? EP0_SIZE : SetupLen;
-            cpy_desc_Ep0(len);              // copy descriptor to Ep0
+            USB_EP0_copyDescr(len);              // copy descriptor to Ep0
             SetupLen -= len;
             pDescr += len;
           }
@@ -262,7 +249,7 @@ void USB_EP0_IN(void) {
   switch(SetupReq) {
     case USB_GET_DESCRIPTOR:
       len = SetupLen >= EP0_SIZE ? EP0_SIZE : SetupLen;
-      cpy_desc_Ep0(len);                    // copy descriptor to Ep0                                
+      USB_EP0_copyDescr(len);                    // copy descriptor to Ep0                                
       SetupLen -= len;
       pDescr += len;
       UEP0_T_LEN = len;
@@ -377,31 +364,31 @@ void USB_interrupt(void) {   // inline not really working in multiple files in S
 #pragma restore
 
 void USB_init(void) {
-  // USB internal pull-up enable, return NAK if USB INT flag not clear 
-  USB_CTRL = bUC_DEV_PU_EN | bUC_INT_BUSY | bUC_DMA_EN;
+  USB_CTRL    = bUC_DEV_PU_EN               // USB internal pull-up enable
+              | bUC_INT_BUSY                // Return NAK if USB INT flag not clear
+              | bUC_DMA_EN;                 // DMA enable
+  UDEV_CTRL   = bUD_PD_DIS                  // Disable UDP/UDM pulldown resistor
+              | bUD_PORT_EN;                // Enable port, full-speed
+  USB_INT_EN |= bUIE_SUSPEND                // Enable device hang interrupt
+              | bUIE_TRANSFER               // Enable USB transfer completion interrupt
+              | bUIE_BUS_RST;               // Enable device mode USB bus reset interrupt
 
-  // enable port, full-speed, disable UDP/UDM pulldown resistor
-  UDEV_CTRL = bUD_PD_DIS | bUD_PORT_EN;
-
-  USB_INT_EN |= bUIE_SUSPEND;               // Enable device hang interrupt
-  USB_INT_EN |= bUIE_TRANSFER;              // Enable USB transfer completion interrupt
-  USB_INT_EN |= bUIE_BUS_RST;               // Enable device mode USB bus reset interrupt
   USB_INT_FG |= 0x1F;                       // Clear interrupt flag
-  IE_USB = 1;                               // Enable USB interrupt
-  EA = 1;                                   // Enable global interrupts
+  IE_USB      = 1;                          // Enable USB interrupt
+  EA          = 1;                          // Enable global interrupts
 
-  UEP0_DMA = (uint16_t) Ep0Buffer;          // Endpoint 0 data transfer address
-  UEP1_DMA = (uint16_t) Ep1Buffer;          // Endpoint 1 data transfer address
-  UEP2_DMA = (uint16_t) Ep2Buffer;          // Endpoint 2 data transfer address
+  UEP0_DMA    = (uint16_t)Ep0Buffer;        // EP0 data transfer address
+  UEP1_DMA    = (uint16_t)Ep1Buffer;        // EP1 data transfer address
+  UEP2_DMA    = (uint16_t)Ep2Buffer;        // EP2 data transfer address
 
-  UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;// manual flip, OUT transaction returns ACK, IN transaction returns NAK
-  UEP1_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;// Endpoint 1 automatically flips the sync flag, and IN transaction returns NAK
-  UEP2_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK | UEP_R_RES_ACK;// Endpoint 2 automatically flips the sync flag, IN transaction returns NAK, OUT returns ACK
+  UEP0_CTRL   = UEP_R_RES_ACK               // EP0 Manual flip, OUT transaction returns ACK
+              | UEP_T_RES_NAK;              // EP0 IN transaction returns NAK
+  UEP1_CTRL   = bUEP_AUTO_TOG               // EP1 Auto flip sync flag
+              | UEP_T_RES_NAK;              // EP1 IN transaction returns NAK
+  UEP2_CTRL   = bUEP_AUTO_TOG               // EP2 Auto flip sync flag
+              | UEP_T_RES_NAK               // EP2 IN transaction returns NAK
+              | UEP_R_RES_ACK;              // EP2 OUT transaction returns ACK
 
-  UEP2_3_MOD = bUEP2_RX_EN | bUEP2_TX_EN;   // Endpoint 2 double buffer (0x0C)
-  UEP4_1_MOD = bUEP1_TX_EN;                 // Endpoint 1 TX enable (0x40)
-
-  UEP0_T_LEN = 0;
-  UEP1_T_LEN = 0;
-  UEP2_T_LEN = 0;
+  UEP2_3_MOD = bUEP2_RX_EN | bUEP2_TX_EN;   // EP2 double buffer (0x0C)
+  UEP4_1_MOD = bUEP1_TX_EN;                 // EP1 TX enable (0x40)
 }

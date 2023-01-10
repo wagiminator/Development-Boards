@@ -3,12 +3,11 @@
 // ===================================================================================
 
 #pragma once
-
 #include <stdint.h>
 
 // USB PID
 #ifndef USB_PID_SETUP
-#define USB_PID_NULL            0x00        // reserved PID
+#define USB_PID_NULL            0x00  // reserved PID
 #define USB_PID_SOF             0x05
 #define USB_PID_SETUP           0x0D
 #define USB_PID_IN              0x09
@@ -58,16 +57,16 @@
 
 // Bit define for USB request type
 #ifndef USB_REQ_TYP_MASK
-#define USB_REQ_TYP_IN          0x80        // control IN, device to host
-#define USB_REQ_TYP_OUT         0x00        // control OUT, host to device
-#define USB_REQ_TYP_READ        0x80        // control read, device to host
-#define USB_REQ_TYP_WRITE       0x00        // control write, host to device
-#define USB_REQ_TYP_MASK        0x60        // bit mask of request type
+#define USB_REQ_TYP_IN          0x80  // control IN, device to host
+#define USB_REQ_TYP_OUT         0x00  // control OUT, host to device
+#define USB_REQ_TYP_READ        0x80  // control read, device to host
+#define USB_REQ_TYP_WRITE       0x00  // control write, host to device
+#define USB_REQ_TYP_MASK        0x60  // bit mask of request type
 #define USB_REQ_TYP_STANDARD    0x00
 #define USB_REQ_TYP_CLASS       0x20
 #define USB_REQ_TYP_VENDOR      0x40
 #define USB_REQ_TYP_RESERVED    0x60
-#define USB_REQ_RECIP_MASK      0x1F        // bit mask of request recipient
+#define USB_REQ_RECIP_MASK      0x1F  // bit mask of request recipient
 #define USB_REQ_RECIP_DEVICE    0x00
 #define USB_REQ_RECIP_INTERF    0x01
 #define USB_REQ_RECIP_ENDP      0x02
@@ -152,32 +151,46 @@
 #endif
 
 #ifndef USB_DEVICE_ADDR
-#define	USB_DEVICE_ADDR			    0x02	      // default USB device address
+  #define USB_DEVICE_ADDR       0x02  // default USB device address
 #endif
 #ifndef DEFAULT_ENDP0_SIZE
-#define DEFAULT_ENDP0_SIZE      8           // default maximum packet size for endpoint 0
+  #define DEFAULT_ENDP0_SIZE    8     // default maximum packet size for endpoint 0
 #endif
 #ifndef DEFAULT_ENDP1_SIZE
-#define DEFAULT_ENDP1_SIZE      8           // default maximum packet size for endpoint 1
+  #define DEFAULT_ENDP1_SIZE    8     // default maximum packet size for endpoint 1
 #endif
 #ifndef MAX_PACKET_SIZE
-#define MAX_PACKET_SIZE         64          // maximum packet size
+  #define MAX_PACKET_SIZE       64    // maximum packet size
 #endif
 #ifndef USB_BO_CBW_SIZE
-#define USB_BO_CBW_SIZE			    0x1F	      // total length of command block CBW
-#define USB_BO_CSW_SIZE			    0x0D	      // total length of command status block CSW
+  #define USB_BO_CBW_SIZE       0x1F  // total length of command block CBW
+  #define USB_BO_CSW_SIZE       0x0D  // total length of command status block CSW
 #endif
 #ifndef USB_BO_CBW_SIG0
-#define USB_BO_CBW_SIG0         0x55        // command block CBW identification flag 'USBC'
-#define USB_BO_CBW_SIG1         0x53
-#define USB_BO_CBW_SIG2         0x42
-#define USB_BO_CBW_SIG3         0x43
-#define USB_BO_CSW_SIG0         0x55        // command status block CSW identification flag 'USBS'
-#define USB_BO_CSW_SIG1         0x53
-#define USB_BO_CSW_SIG2         0x42
-#define USB_BO_CSW_SIG3         0x53
+  #define USB_BO_CBW_SIG0       0x55  // command block CBW identification flag 'USBC'
+  #define USB_BO_CBW_SIG1       0x53
+  #define USB_BO_CBW_SIG2       0x42
+  #define USB_BO_CBW_SIG3       0x43
+  #define USB_BO_CSW_SIG0       0x55  // command status block CSW identification flag 'USBS'
+  #define USB_BO_CSW_SIG1       0x53
+  #define USB_BO_CSW_SIG2       0x42
+  #define USB_BO_CSW_SIG3       0x53
 #endif
 
+// CDC line coding
+#define SET_LINE_CODING         0X20  // configures DTE rate, stop-bits, parity, and number-of-character
+#define GET_LINE_CODING         0X21  // allows the host to find out the currently configured line coding
+#define SET_CONTROL_LINE_STATE  0X22  // generates RS-232/V.24 style control signals
+
+typedef struct _CDC_LINE_CODING_TYPE {
+  uint32_t baudrate;                  // baud rate
+  uint8_t  stopbits;                  // number of stopbits (0:1bit,1:1.5bits,2:2bits)
+  uint8_t  parity;                    // parity (0:none,1:odd,2:even,3:mark,4:space)
+  uint8_t  databits;                  // number of data bits (5,6,7,8 or 16)
+} CDC_LINE_CODING_TYPE, *PCDC_LINE_CODING_TYPE;
+typedef CDC_LINE_CODING_TYPE __xdata *PXCDC_LINE_CODING_TYPE;
+
+// USB descriptor type defines
 typedef struct _USB_SETUP_REQ {
     uint8_t  bRequestType;
     uint8_t  bRequest;
@@ -188,7 +201,6 @@ typedef struct _USB_SETUP_REQ {
     uint8_t  wLengthL;
     uint8_t  wLengthH;
 } USB_SETUP_REQ, *PUSB_SETUP_REQ;
-
 typedef USB_SETUP_REQ __xdata *PXUSB_SETUP_REQ;
 
 typedef struct _USB_DEVICE_DESCR {
@@ -207,7 +219,6 @@ typedef struct _USB_DEVICE_DESCR {
     uint8_t  iSerialNumber;
     uint8_t  bNumConfigurations;
 } USB_DEV_DESCR, *PUSB_DEV_DESCR;
-
 typedef USB_DEV_DESCR __xdata *PXUSB_DEV_DESCR;
 
 typedef struct _USB_CONFIG_DESCR {
@@ -220,7 +231,6 @@ typedef struct _USB_CONFIG_DESCR {
     uint8_t  bmAttributes;
     uint8_t  MaxPower;
 } USB_CFG_DESCR, *PUSB_CFG_DESCR;
-
 typedef USB_CFG_DESCR __xdata *PXUSB_CFG_DESCR;
 
 typedef struct _USB_INTERF_DESCR {
@@ -234,7 +244,6 @@ typedef struct _USB_INTERF_DESCR {
     uint8_t  bInterfaceProtocol;
     uint8_t  iInterface;
 } USB_ITF_DESCR, *PUSB_ITF_DESCR;
-
 typedef USB_ITF_DESCR __xdata *PXUSB_ITF_DESCR;
 
 typedef struct _USB_ITF_ASS_DESCR {
@@ -247,7 +256,6 @@ typedef struct _USB_ITF_ASS_DESCR {
     uint8_t  bFunctionProtocol;
     uint8_t  iFunction;
 } USB_IAD_DESCR, *PUSB_IAD_DESCR;
-
 typedef USB_IAD_DESCR __xdata *PXUSB_IAD_DESCR;
 
 typedef struct _USB_ENDPOINT_DESCR {
@@ -258,7 +266,6 @@ typedef struct _USB_ENDPOINT_DESCR {
     uint16_t wMaxPacketSize;
     uint8_t  bInterval;
 } USB_ENDP_DESCR, *PUSB_ENDP_DESCR;
-
 typedef USB_ENDP_DESCR __xdata *PXUSB_ENDP_DESCR;
 
 typedef struct _USB_CONFIG_DESCR_LONG {
@@ -266,8 +273,18 @@ typedef struct _USB_CONFIG_DESCR_LONG {
     USB_ITF_DESCR   itf_descr;
     USB_ENDP_DESCR  endp_descr[1];
 } USB_CFG_DESCR_LONG, *PUSB_CFG_DESCR_LONG;
-
 typedef USB_CFG_DESCR_LONG __xdata *PXUSB_CFG_DESCR_LONG;
+
+typedef struct _USB_CONFIG_DESCR_CDC {
+  USB_CFG_DESCR config;
+  USB_ITF_DESCR interface0;
+  uint8_t functional[19];
+  USB_ENDP_DESCR ep1IN;
+  USB_ITF_DESCR interface1;
+  USB_ENDP_DESCR ep2OUT;
+  USB_ENDP_DESCR ep2IN;
+} USB_CFG_DESCR_CDC, *PUSB_CFG_DESCR_CDC;
+typedef USB_CFG_DESCR_CDC __xdata *PXUSB_CFG_DESCR_CDC;
 
 typedef struct _USB_HUB_DESCR {
     uint8_t  bDescLength;
@@ -279,7 +296,6 @@ typedef struct _USB_HUB_DESCR {
     uint8_t  DeviceRemovable;
     uint8_t  PortPwrCtrlMask;
 } USB_HUB_DESCR, *PUSB_HUB_DESCR;
-
 typedef USB_HUB_DESCR __xdata *PXUSB_HUB_DESCR;
 
 typedef struct _USB_HID_DESCR {
@@ -292,7 +308,6 @@ typedef struct _USB_HID_DESCR {
     uint8_t  bDescriptorTypeX;
     uint16_t wDescriptorLength;
 } USB_HID_DESCR, *PUSB_HID_DESCR;
-
 typedef USB_HID_DESCR __xdata *PXUSB_HID_DESCR;
 
 typedef struct _UDISK_BOC_CBW {             // command of BulkOnly USB-FlashDisk
@@ -313,7 +328,6 @@ typedef struct _UDISK_BOC_CBW {             // command of BulkOnly USB-FlashDisk
     uint8_t mCBW_CB_Len;                    // length of command block
     uint8_t mCBW_CB_Buf[16];                // command block buffer
 } UDISK_BOC_CBW, *PUDISK_BOC_CBW;
-
 typedef UDISK_BOC_CBW __xdata *PXUDISK_BOC_CBW;
 
 typedef struct _UDISK_BOC_CSW {             // status of BulkOnly USB-FlashDisk
@@ -331,5 +345,4 @@ typedef struct _UDISK_BOC_CSW {             // status of BulkOnly USB-FlashDisk
     uint8_t mCSW_Residue3;                  // uppest byte of remainder length, always is 0
     uint8_t mCSW_Status;                    // return: result status
 } UDISK_BOC_CSW, *PUDISK_BOC_CSW;
-
 typedef UDISK_BOC_CSW __xdata *PXUDISK_BOC_CSW;

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Delay Functions for CH55x
+// Delay Functions for CH551, CH552 and CH554
 // ===================================================================================
 
 #include "ch554.h"
@@ -8,7 +8,7 @@
 // ===================================================================================
 // Delay in Units of us
 // ===================================================================================
-void _delay_us(uint16_t n) {      // delay in us
+void _delay_us(uint16_t n) {        // delay in us
   #ifdef FREQ_SYS
     #if FREQ_SYS <= 6000000
       n >>= 2;
@@ -21,8 +21,8 @@ void _delay_us(uint16_t n) {      // delay in us
     #endif
   #endif
 
-  while(n) {                      // total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
-    SAFE_MOD++;                   // 2 Fsys cycles, for higher Fsys, add operation here
+  while(n) {                        // total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
+    SAFE_MOD++;                     // 2 Fsys cycles, for higher Fsys, add operation here
     #ifdef FREQ_SYS
       #if FREQ_SYS >= 14000000
         SAFE_MOD++;
@@ -52,17 +52,17 @@ void _delay_us(uint16_t n) {      // delay in us
         SAFE_MOD++;
       #endif
       #if FREQ_SYS >= 32000000
-		    SAFE_MOD++;
+        SAFE_MOD++;
       #endif
     #endif
-		n--;
+    n--;
   }
 }
 
 // ===================================================================================
 // Delay in Units of ms
 // ===================================================================================
-void _delay_ms(uint16_t n) {             // delay in ms
+void _delay_ms(uint16_t n) {        // delay in ms
   while(n) {
     _delay_us(1000);
     n--;

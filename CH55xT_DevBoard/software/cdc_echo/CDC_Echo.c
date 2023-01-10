@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   USB-CDC Echo Demo for CH551, Ch552, CH554
+// Project:   USB-CDC Echo Demo for CH551, CH552, CH554
 // Version:   v1.0
 // Year:      2022
 // Author:    Stefan Wagner
@@ -50,48 +50,19 @@ void DeviceUSBInterrupt(void) __interrupt (INT_NO_USB) {
   USB_interrupt();
 }
 
-// Global variables
-__xdata char message[64];                 // stores the received message string
-uint8_t msgptr = 0;                       // message string pointer
-uint8_t complete = 0;                     // message string complete flag
-
-
 // ===================================================================================
 // Main Function
 // ===================================================================================
 
 void main(void) {
   // Setup
-  CLK_config();                           // configure system clock
-  USB_init();                             // init USB
+  CLK_config();                           // configure system clockmake flash
+  CDC_init();                             // init USB CDC
 
   // Loop
   while(1) {
-    while (CDC_available()) {             // incoming data?
-      char serialChar = CDC_read();       // read incoming character
-      if (serialChar == '\n') {           // is it newline command?
-        message[msgptr] = '\0';           // add string terminator
-        if (msgptr > 0) {                 // string not empty?
-          complete = 1;                   // set string complete flag
-          break;                          // exit loop
-        }
-      }
-      else {                              // normal character? (not newline command)
-        message[msgptr++] = serialChar;   // add the character to the string
-        if (msgptr == 63) {               // reached end of string buffer?
-          message[msgptr] = '\0';         // add string terminator
-          complete = 1;                   // set string complete flag
-          break;                          // exit loop
-        }
-      }
-    }
-
-    if (complete) {                       // string complete?
-      CDC_print("ECHO: ");                // send 'ECHO:'
-      CDC_println(message);               // send received message string
-      CDC_flush();                        // flush
-      complete = 0;                       // clear string complete flag
-      msgptr = 0;                         // reset pointer
-    }
+    char c = CDC_read();                  // read incoming character
+    CDC_write(c);                         // echo back character
+    if(c == '\n') CDC_flush();            // flush on newline command
   }
 }

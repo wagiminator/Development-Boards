@@ -25,7 +25,7 @@ Timer/Counter | 3 | 3 | 4
 Touch Key Channels | 6 | 6 | 0
 USB Modes | Device | Host/Device | Host/Device
 USB Type-C | yes | yes | no
-Interfaces | 2x UART, 1x SPI | | 2x UART, 1x SPI | 2x UART, 2x SPI 
+Interfaces | 2x UART, 1x SPI | 2x UART, 1x SPI | 2x UART, 2x SPI 
 Internal Clock | max 24 MHz | max 24 MHz | max 56 MHz 
 
 # Built-in USB Bootloader
