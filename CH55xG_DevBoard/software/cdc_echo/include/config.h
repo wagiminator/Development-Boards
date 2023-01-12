@@ -15,7 +15,7 @@
 #define USB_MAX_POWER_mA    50        // max power in mA 
 
 // USB descriptor strings
-#define MANUFACTURER_STR    'w','a','g','i','m','i','n','a','t','o','r'
-#define PRODUCT_STR         'C','H','5','5','x',' ','D','e','v','B','o','a','r','d'
-#define SERIAL_STR          'C','D','C'
-#define INTERFACE_STR       'C','D','C',' ','S','e','r','i','a','l'
+#define MANUFACTURER_STR        'w','a','g','i','m','i','n','a','t','o','r'
+#define PRODUCT_STR             'C','H','5','5','x',' ','D','e','v','B','o','a','r','d'
+#define SERIAL_STR              'C','D','C'
+#define INTERFACE_STR           'C','D','C',' ','S','e','r','i','a','l'

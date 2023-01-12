@@ -6,40 +6,45 @@
 #include <stdint.h>
 #include "usb_descr.h"
 
-// Endpoint buffer
-extern __xdata __at (EP0_ADDR) uint8_t Ep0Buffer[];
-extern __xdata __at (EP1_ADDR) uint8_t Ep1Buffer[];
-extern __xdata __at (EP2_ADDR) uint8_t Ep2Buffer[];
+// ===================================================================================
+// Endpoint Buffer
+// ===================================================================================
+__xdata __at (EP0_ADDR) uint8_t EP0_buffer[EP0_BUF_SIZE];     
+__xdata __at (EP1_ADDR) uint8_t EP1_buffer[EP1_BUF_SIZE];
+__xdata __at (EP2_ADDR) uint8_t EP2_buffer[2 * EP2_BUF_SIZE];
 
-#define UsbSetupBuf     ((PUSB_SETUP_REQ)Ep0Buffer)
+#define USB_setupBuf ((PUSB_SETUP_REQ)EP0_buffer)
+extern uint8_t SetupReq;
 
-// Out
-#define EP0_OUT_Callback USB_EP0_OUT
-#define EP1_OUT_Callback NOP_Process
-#define EP2_OUT_Callback USB_EP2_OUT
-#define EP3_OUT_Callback NOP_Process
-#define EP4_OUT_Callback NOP_Process
+// ===================================================================================
+// External USB Handler Functions
+// ===================================================================================
+uint8_t CDC_control(void);
+void CDC_setup(void);
+void CDC_reset(void);
+void CDC_EP0_OUT(void);
+void CDC_EP1_IN(void);
+void CDC_EP2_IN(void);
+void CDC_EP2_OUT(void);
 
-// SOF
-#define EP0_SOF_Callback NOP_Process
-#define EP1_SOF_Callback NOP_Process
-#define EP2_SOF_Callback NOP_Process
-#define EP3_SOF_Callback NOP_Process
-#define EP4_SOF_Callback NOP_Process
+// ===================================================================================
+// USB Handler Defines
+// ===================================================================================
+// Custom handler functions
+#define USB_INIT_handler    CDC_setup         // init custom endpoints
+#define USB_RESET_handler   CDC_reset         // costum USB reset handler
+#define USB_CTRL_NS_handler CDC_control       // handle costum non-standard requests
 
-// IN
-#define EP0_IN_Callback USB_EP0_IN
-#define EP1_IN_Callback USB_EP1_IN
-#define EP2_IN_Callback USB_EP2_IN
-#define EP3_IN_Callback NOP_Process
-#define EP4_IN_Callback NOP_Process
+// Endpoint callback functions
+#define EP0_SETUP_callback  USB_EP0_SETUP
+#define EP0_IN_callback     USB_EP0_IN
+#define EP0_OUT_callback    CDC_EP0_OUT
+#define EP1_IN_callback     CDC_EP1_IN
+#define EP2_IN_callback     CDC_EP2_IN
+#define EP2_OUT_callback    CDC_EP2_OUT
 
-// SETUP
-#define EP0_SETUP_Callback USB_EP0_SETUP
-#define EP1_SETUP_Callback NOP_Process
-#define EP2_SETUP_Callback NOP_Process
-#define EP3_SETUP_Callback NOP_Process
-#define EP4_SETUP_Callback NOP_Process
-
+// ===================================================================================
+// Functions
+// ===================================================================================
 void USB_interrupt(void);
 void USB_init(void);

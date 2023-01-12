@@ -5,5 +5,5 @@
 #pragma once
 #include <stdint.h>
 
-void _delay_us(uint16_t n);   // delay in units of us
-void _delay_ms(uint16_t n);   // delay in units of ms
+void DLY_us(uint16_t n);    // delay in units of us
+void DLY_ms(uint16_t n);    // delay in units of ms

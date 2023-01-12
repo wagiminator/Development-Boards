@@ -45,7 +45,7 @@ void main() {
   PIN_output(PIN_LED);        // set LED pin as output
 
   while (1) {
-    _delay_ms(100);           // wait 100ms
+    DLY_ms(100);              // wait 100ms
     PIN_toggle(PIN_LED);      // toggle LED on/off
   }
 }

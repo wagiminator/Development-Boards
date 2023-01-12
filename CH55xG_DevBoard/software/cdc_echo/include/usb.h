@@ -148,6 +148,14 @@
 #define USB_ENDP_TYPE_ISOCH     0x01
 #define USB_ENDP_TYPE_BULK      0x02
 #define USB_ENDP_TYPE_INTER     0x03
+#define USB_ENDP_ADDR_EP1_OUT   0x01
+#define USB_ENDP_ADDR_EP1_IN    0x81
+#define USB_ENDP_ADDR_EP2_OUT   0x02
+#define USB_ENDP_ADDR_EP2_IN    0x82
+#define USB_ENDP_ADDR_EP3_OUT   0x03
+#define USB_ENDP_ADDR_EP3_IN    0x83
+#define USB_ENDP_ADDR_EP4_OUT   0x04
+#define USB_ENDP_ADDR_EP4_IN    0x84
 #endif
 
 #ifndef USB_DEVICE_ADDR
@@ -176,19 +184,6 @@
   #define USB_BO_CSW_SIG2       0x42
   #define USB_BO_CSW_SIG3       0x53
 #endif
-
-// CDC line coding
-#define SET_LINE_CODING         0X20  // configures DTE rate, stop-bits, parity, and number-of-character
-#define GET_LINE_CODING         0X21  // allows the host to find out the currently configured line coding
-#define SET_CONTROL_LINE_STATE  0X22  // generates RS-232/V.24 style control signals
-
-typedef struct _CDC_LINE_CODING_TYPE {
-  uint32_t baudrate;                  // baud rate
-  uint8_t  stopbits;                  // number of stopbits (0:1bit,1:1.5bits,2:2bits)
-  uint8_t  parity;                    // parity (0:none,1:odd,2:even,3:mark,4:space)
-  uint8_t  databits;                  // number of data bits (5,6,7,8 or 16)
-} CDC_LINE_CODING_TYPE, *PCDC_LINE_CODING_TYPE;
-typedef CDC_LINE_CODING_TYPE __xdata *PXCDC_LINE_CODING_TYPE;
 
 // USB descriptor type defines
 typedef struct _USB_SETUP_REQ {
@@ -274,17 +269,6 @@ typedef struct _USB_CONFIG_DESCR_LONG {
     USB_ENDP_DESCR  endp_descr[1];
 } USB_CFG_DESCR_LONG, *PUSB_CFG_DESCR_LONG;
 typedef USB_CFG_DESCR_LONG __xdata *PXUSB_CFG_DESCR_LONG;
-
-typedef struct _USB_CONFIG_DESCR_CDC {
-  USB_CFG_DESCR config;
-  USB_ITF_DESCR interface0;
-  uint8_t functional[19];
-  USB_ENDP_DESCR ep1IN;
-  USB_ITF_DESCR interface1;
-  USB_ENDP_DESCR ep2OUT;
-  USB_ENDP_DESCR ep2IN;
-} USB_CFG_DESCR_CDC, *PUSB_CFG_DESCR_CDC;
-typedef USB_CFG_DESCR_CDC __xdata *PXUSB_CFG_DESCR_CDC;
 
 typedef struct _USB_HUB_DESCR {
     uint8_t  bDescLength;

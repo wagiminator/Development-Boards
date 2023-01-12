@@ -37,7 +37,7 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
     .wTotalLength       = sizeof(CfgDescr),       // total length in bytes
     .bNumInterfaces     = 2,                      // number of interfaces: 2
     .bConfigurationValue= 1,                      // value to select this configuration
-    .iConfiguration     = 4,                      // index of String Descr for this config
+    .iConfiguration     = 0,                      // no configuration string descriptor
     .bmAttributes       = 0x80,                   // attributes = bus powered, no wakeup
     .MaxPower           = USB_MAX_POWER_mA / 2    // in 2mA units
   },
@@ -50,8 +50,8 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
     .bAlternateSetting  = 0,                      // value used to select alternative setting
     .bNumEndpoints      = 1,                      // number of endpoints used: 1
     .bInterfaceClass    = USB_DEV_CLASS_COMM,     // interface class: CDC (0x02)
-    .bInterfaceSubClass = 2,                      // interface sub class
-    .bInterfaceProtocol = 1,                      // interface protocol
+    .bInterfaceSubClass = 2,                      // 2: Abstract Control Model (ACM)
+    .bInterfaceProtocol = 1,                      // 1: AT command protocol
     .iInterface         = 4                       // index of String Descriptor
   },
 
@@ -67,10 +67,10 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
   .ep1IN = {
     .bLength            = sizeof(USB_ENDP_DESCR), // size of the descriptor in bytes: 7
     .bDescriptorType    = USB_DESCR_TYP_ENDP,     // endpoint descriptor: 0x05
-    .bEndpointAddress   = 0x81,                   // endpoint: 1, direction: IN
+    .bEndpointAddress   = USB_ENDP_ADDR_EP1_IN,   // endpoint: 1, direction: IN (0x81)
     .bmAttributes       = USB_ENDP_TYPE_INTER,    // transfer type: interrupt (0x03)
     .wMaxPacketSize     = EP1_SIZE,               // max packet size: 8
-    .bInterval          = 0x02                    // polling intervall
+    .bInterval          = 1                       // polling intervall in ms
   },
 
   // Interface Descriptor: Interface 1 (Data)
@@ -90,20 +90,20 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
   .ep2OUT = {
     .bLength            = sizeof(USB_ENDP_DESCR), // size of the descriptor in bytes: 7
     .bDescriptorType    = USB_DESCR_TYP_ENDP,     // endpoint descriptor: 0x05
-    .bEndpointAddress   = 0x02,                   // endpoint: 2, direction: OUT
+    .bEndpointAddress   = USB_ENDP_ADDR_EP2_OUT,  // endpoint: 2, direction: OUT (0x02)
     .bmAttributes       = USB_ENDP_TYPE_BULK,     // transfer type: bulk (0x02)
     .wMaxPacketSize     = EP2_SIZE,               // max packet size: 64
-    .bInterval          = 0x00                    // polling intervall (ignored for bulk)
+    .bInterval          = 0                       // polling intervall (ignored for bulk)
   },
 
   // Endpoint Descriptor: Endpoint 2 (IN)
   .ep2IN = {
     .bLength            = sizeof(USB_ENDP_DESCR), // size of the descriptor in bytes: 7
     .bDescriptorType    = USB_DESCR_TYP_ENDP,     // endpoint descriptor: 0x05
-    .bEndpointAddress   = 0x82,                   // endpoint: 2, direction: IN
+    .bEndpointAddress   = USB_ENDP_ADDR_EP2_IN,   // endpoint: 2, direction: IN (0x82)
     .bmAttributes       = USB_ENDP_TYPE_BULK,     // transfer type: bulk (0x02)
     .wMaxPacketSize     = EP2_SIZE,               // max packet size: 64
-    .bInterval          = 0x00                    // polling intervall (ignored for bulk)
+    .bInterval          = 0                       // polling intervall (ignored for bulk)
   }
 };
 
@@ -113,25 +113,20 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
 
 // Language Descriptor (Index 0)
 __code uint16_t LangDescr[] = {
-  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(LangDescr), 0x0409   // US English
-};
+  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(LangDescr), 0x0409 };  // US English
 
 // Manufacturer String Descriptor (Index 1)
 __code uint16_t ManufDescr[] = {
-  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(ManufDescr), MANUFACTURER_STR
-};
+  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(ManufDescr), MANUFACTURER_STR };
 
 // Product String Descriptor (Index 2)
 __code uint16_t ProdDescr[] = {
-  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(ProdDescr), PRODUCT_STR
-};
+  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(ProdDescr), PRODUCT_STR };
 
 // Serial String Descriptor (Index 3)
 __code uint16_t SerDescr[] = {
-  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(SerDescr), SERIAL_STR
-};
+  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(SerDescr), SERIAL_STR };
 
 // CDC String Descriptor (Index 4)
 __code uint16_t CDC_Descr[] = {
-  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(CDC_Descr), INTERFACE_STR
-};
+  ((uint16_t)USB_DESCR_TYP_STRING << 8) | sizeof(CDC_Descr), INTERFACE_STR };

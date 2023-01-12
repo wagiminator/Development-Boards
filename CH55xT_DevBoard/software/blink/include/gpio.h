@@ -54,17 +54,13 @@ SBIT(P3_5, 0xB0, 5);
 SBIT(P3_6, 0xB0, 6);
 SBIT(P3_7, 0xB0, 7);
 
-// For pin error
-inline void WRONGPIN(void) {
-}
-
 // ===================================================================================
 // Set pin as INPUT (high impedance, no pullup)
 // ===================================================================================
 #define PIN_input(PIN) \
   ((PIN>=P10)&&(PIN<=P17) ? (P1_DIR_PU &= ~(1<<(PIN&7)), P1_MOD_OC &= ~(1<<(PIN&7))) : \
   ((PIN>=P30)&&(PIN<=P37) ? (P3_DIR_PU &= ~(1<<(PIN&7)), P3_MOD_OC &= ~(1<<(PIN&7))) : \
-(WRONGPIN())))
+(0)))
 
 // ===================================================================================
 // Set pin as INPUT with internal PULLUP resistor (also open-drain output,
@@ -73,7 +69,7 @@ inline void WRONGPIN(void) {
 #define PIN_input_PU(PIN) \
   ((PIN>=P10)&&(PIN<=P17) ? (P1_MOD_OC |= (1<<(PIN&7)), P1_DIR_PU |= (1<<(PIN&7))) : \
   ((PIN>=P30)&&(PIN<=P37) ? (P3_MOD_OC |= (1<<(PIN&7)), P3_DIR_PU |= (1<<(PIN&7))) : \
-(WRONGPIN())))
+(0)))
 
 // ===================================================================================
 // Set pin as OUTPUT (push-pull)
@@ -81,7 +77,7 @@ inline void WRONGPIN(void) {
 #define PIN_output(PIN) \
   ((PIN>=P10)&&(PIN<=P17) ? (P1_MOD_OC &= ~(1<<(PIN&7)), P1_DIR_PU |= (1<<(PIN&7))) : \
   ((PIN>=P30)&&(PIN<=P37) ? (P3_MOD_OC &= ~(1<<(PIN&7)), P3_DIR_PU |= (1<<(PIN&7))) : \
-(WRONGPIN())))
+(0)))
 
 // ===================================================================================
 // Set pin as OPEN-DRAIN OUTPUT (also high-impedance input, no pullup)
@@ -89,7 +85,7 @@ inline void WRONGPIN(void) {
 #define PIN_output_OD(PIN) \
   ((PIN>=P10)&&(PIN<=P17) ? (P1_MOD_OC |= (1<<(PIN&7)), P1_DIR_PU &= ~(1<<(PIN&7))) : \
   ((PIN>=P30)&&(PIN<=P37) ? (P3_MOD_OC |= (1<<(PIN&7)), P3_DIR_PU &= ~(1<<(PIN&7))) : \
-(WRONGPIN())))
+(0)))
 
 // ===================================================================================
 // Set pin to LOW
@@ -111,7 +107,7 @@ inline void WRONGPIN(void) {
   (PIN == P35 ? (P3_5 = 0) : \
   (PIN == P36 ? (P3_6 = 0) : \
   (PIN == P37 ? (P3_7 = 0) : \
-(WRONGPIN())))))))))))))))))
+(0)))))))))))))))))
 
 // ===================================================================================
 // Set pin to HIGH
@@ -133,7 +129,7 @@ inline void WRONGPIN(void) {
   (PIN == P35 ? (P3_5 = 1) : \
   (PIN == P36 ? (P3_6 = 1) : \
   (PIN == P37 ? (P3_7 = 1) : \
-(WRONGPIN())))))))))))))))))
+(0)))))))))))))))))
 
 // ===================================================================================
 // TOGGLE pin
@@ -155,7 +151,7 @@ inline void WRONGPIN(void) {
   (PIN == P35 ? (P3_5 = !P3_5) : \
   (PIN == P36 ? (P3_6 = !P3_6) : \
   (PIN == P37 ? (P3_7 = !P3_7) : \
-(WRONGPIN())))))))))))))))))
+(0)))))))))))))))))
 
 // ===================================================================================
 // READ pin
@@ -177,7 +173,7 @@ inline void WRONGPIN(void) {
   (PIN == P35 ? (P3_5) : \
   (PIN == P36 ? (P3_6) : \
   (PIN == P37 ? (P3_7) : \
-(WRONGPIN())))))))))))))))))
+(0)))))))))))))))))
 
 // ===================================================================================
 // WRITE pin
@@ -199,7 +195,7 @@ inline void WRONGPIN(void) {
   (PIN == P35 ? (P3_5 = val) : \
   (PIN == P36 ? (P3_6 = val) : \
   (PIN == P37 ? (P3_7 = val) : \
-(WRONGPIN())))))))))))))))))
+(0)))))))))))))))))
 
 // ===================================================================================
 // (PORT, PIN) manipulation macros
@@ -223,7 +219,7 @@ inline void WRONGPIN(void) {
   ((PIN == P34) ? (PIN_FUNC &= ~bPWM2_PIN_X, PWM_CTRL |= bPWM2_OUT_EN) : \
   ((PIN == P30) ? (PIN_FUNC |=  bPWM1_PIN_X, PWM_CTRL |= bPWM1_OUT_EN) : \
   ((PIN == P31) ? (PIN_FUNC |=  bPWM2_PIN_X, PWM_CTRL |= bPWM2_OUT_EN) : \
-(WRONGPIN())))))
+(0)))))
 
 // ===================================================================================
 // Set PWM output active level duty cycle on pin
@@ -233,7 +229,7 @@ inline void WRONGPIN(void) {
   ((PIN == P34) ? (PWM_DATA2 = val) : \
   ((PIN == P30) ? (PWM_DATA1 = val) : \
   ((PIN == P31) ? (PWM_DATA2 = val) : \
-(WRONGPIN())))))
+(0)))))
 
 // ===================================================================================
 // Stop PWM on pin
@@ -243,7 +239,7 @@ inline void WRONGPIN(void) {
   ((PIN == P34) ? (PWM_CTRL &= ~bPWM2_OUT_EN) : \
   ((PIN == P30) ? (PWM_CTRL &= ~bPWM1_OUT_EN) : \
   ((PIN == P31) ? (PWM_CTRL &= ~bPWM2_OUT_EN) : \
-(WRONGPIN())))))
+(0)))))
 
 // ===================================================================================
 // Set normal PWM polarity on pin (default low and active high)
@@ -253,7 +249,7 @@ inline void WRONGPIN(void) {
   ((PIN == P34) ? (PWM_CTRL &= ~bPWM2_POLAR) : \
   ((PIN == P30) ? (PWM_CTRL &= ~bPWM1_POLAR) : \
   ((PIN == P31) ? (PWM_CTRL &= ~bPWM2_POLAR) : \
-(WRONGPIN())))))
+(0)))))
 
 // ===================================================================================
 // Set reverse PWM polarity on pin (default high and active low)
@@ -263,7 +259,7 @@ inline void WRONGPIN(void) {
   ((PIN == P34) ? (PWM_CTRL |= bPWM2_POLAR) : \
   ((PIN == P30) ? (PWM_CTRL |= bPWM1_POLAR) : \
   ((PIN == P31) ? (PWM_CTRL |= bPWM2_POLAR) : \
-(WRONGPIN())))))
+(0)))))
 
 // ===================================================================================
 // Set global PWM frequency (in Hertz, range: FREQ_SYS/65536 - FREQ_SYS/256)
