@@ -17,7 +17,7 @@ __xdata __at (EP2_ADDR) uint8_t EP2_buffer[2 * EP2_BUF_SIZE];
 extern uint8_t SetupReq;
 
 // ===================================================================================
-// External USB Handler Functions
+// Custom External USB Handler Functions
 // ===================================================================================
 uint8_t CDC_control(void);
 void CDC_setup(void);
@@ -30,10 +30,10 @@ void CDC_EP2_OUT(void);
 // ===================================================================================
 // USB Handler Defines
 // ===================================================================================
-// Custom handler functions
+// Custom USB handler functions
 #define USB_INIT_handler    CDC_setup         // init custom endpoints
-#define USB_RESET_handler   CDC_reset         // costum USB reset handler
-#define USB_CTRL_NS_handler CDC_control       // handle costum non-standard requests
+#define USB_RESET_handler   CDC_reset         // custom USB reset handler
+#define USB_CTRL_NS_handler CDC_control       // handle custom non-standard requests
 
 // Endpoint callback functions
 #define EP0_SETUP_callback  USB_EP0_SETUP
