@@ -25,6 +25,8 @@
 // PWM_pol_normal(PIN)      Set normal PWM polarity on PIN (default low and active high)
 // PWM_pol_reverse(PIN)     Set reverse PWM polarity on PIN (default high and active low)
 // PWM_set_freq(freq)       Set global PWM frequency (in Hertz)
+//
+// 2022 by Stefan Wagner:   github.com/wagiminator
 
 #pragma once
 #include "ch554.h"

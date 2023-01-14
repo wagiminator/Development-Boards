@@ -63,7 +63,7 @@ void CDC_flush(void) {
 // Write single character to OUT buffer
 void CDC_write(char c) {
   while(!CDC_ready());                                      // wait for ready to write
-  EP2_buffer[EP2_SIZE + CDC_EP2_writePointer++] = c;        // write character
+  EP2_buffer[MAX_PACKET_SIZE + CDC_EP2_writePointer++] = c; // write character
   if(CDC_EP2_writePointer == EP2_SIZE) CDC_flush();         // flush if buffer full
 }
 
