@@ -1,7 +1,7 @@
 # CH55xE Development Stick
 Development stick for the CH552E and CH554E microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
 
-![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
+![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
 
 # Pinout
 Pin|Connected to
@@ -74,8 +74,8 @@ sudo pip install pyusb
 - [CH552 Datasheet](http://www.wch-ic.com/downloads/CH552DS1_PDF.html)
 - [CH554 Datasheet](http://www.wch-ic.com/downloads/CH554DS1_PDF.html)
 
-![CH55xE_DevStick_pic2.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic2.jpg)
-![CH55xE_DevStick_pic3.jpg](https://raw.githubusercontent.com/wagiminator/AVR-Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic3.jpg)
+![CH55xE_DevStick_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic2.jpg)
+![CH55xE_DevStick_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic3.jpg)
 
 # License
 
