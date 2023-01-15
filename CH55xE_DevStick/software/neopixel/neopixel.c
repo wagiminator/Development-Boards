@@ -32,25 +32,27 @@
 // Libraries, Definitions and Macros
 // ===================================================================================
 
-#include <config.h>           // user configurations
-#include <ch554.h>            // CH55x header file
-#include <clock.h>            // system clock functions
-#include <delay.h>            // delay functions
-#include <gpio.h>             // GPIO functions
-#include <neo.h>              // NeoPixel functions
+#include <config.h>             // user configurations
+#include <ch554.h>              // CH55x header file
+#include <clock.h>              // system clock functions
+#include <delay.h>              // delay functions
+#include <gpio.h>               // GPIO functions
+#include <neo.h>                // NeoPixel functions
+
+#define BRIGHT  2               // LED brightness (0..2)
 
 // ===================================================================================
 // Main Function
 // ===================================================================================
 void main(void) {
-  CLK_config();               // configure system clock
-  NEO_init();                 // init NeoPixel
+  CLK_config();                 // configure system clock
+  NEO_init();                   // init NeoPixel
 
   while(1) {
     uint8_t i;
-    for(i=0; i<192; i++) {    // cycle hue values
-      NEO_writeHue(i);        // write hue to pixel
-      DLY_ms(20);             // delay a bit (also latch)
+    for(i=0; i<192; i++) {      // cycle hue values
+      NEO_writeHue(i, BRIGHT);  // write hue and brightness to pixel
+      DLY_ms(20);               // delay a bit (also latch)
     }
   }
 }

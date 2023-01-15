@@ -8,25 +8,20 @@
 // The following must be defined in config.h:
 // PIN_NEO - pin connected to DATA-IN of the pixel strip (via a ~330 ohms resistor).
 // NEO_GRB - type of pixel: NEO_GRB or NEO_RGB
-// NEO_COUNT - number of pixels in the string (max 21845)
 // System clock frequency must be at least 6 MHz.
 //
 // Further information:     https://github.com/wagiminator/ATtiny13-NeoController
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
+// ===================================================================================
+// Libraries, Variables and Constants
+// ===================================================================================
 #include "neo.h"
 #include "gpio.h"
 #include "delay.h"
 #include "config.h"
 
-// ===================================================================================
-// Variables and Constants
-// ===================================================================================
-// Convert PIN_NEO for inline assembly
-#define NEOPIN PIN_asm(PIN_NEO)
-
-// NeoPixel brightness for hue
-__xdata uint8_t NEO_brightness = 2;   // 0..2
+#define NEOPIN PIN_asm(PIN_NEO)     // convert PIN_NEO for inline assembly
 
 // ===================================================================================
 // Protocol Delays
@@ -108,17 +103,6 @@ void NEO_sendByte(uint8_t data) {
 }
 
 // ===================================================================================
-// Send a Stream of Bytes to Pixels and Latch
-// ===================================================================================
-void NEO_sendStream(__xdata uint8_t* buf, uint16_t len) {
-  __bit EA_save = EA;
-  EA = 0;
-  while(len--) NEO_sendByte(*buf++);
-  EA = EA_save;
-  NEO_latch();
-}
-
-// ===================================================================================
 // Write Color to a Single Pixel
 // ===================================================================================
 void NEO_writeColor(uint8_t r, uint8_t g, uint8_t b) {
@@ -132,36 +116,16 @@ void NEO_writeColor(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 // ===================================================================================
-// Write Hue Value (0..191) to a Single Pixel
+// Write Hue Value (0..191) and Brightness (0..2) to a Single Pixel
 // ===================================================================================
-void NEO_writeHue(uint8_t hue) {
+void NEO_writeHue(uint8_t hue, uint8_t bright) {
   uint8_t phase = hue >> 6;
-  uint8_t step  = (hue & 63) << NEO_brightness;
-  uint8_t nstep = (63 << NEO_brightness) - step;
+  uint8_t step  = (hue & 63) << bright;
+  uint8_t nstep = (63 << bright) - step;
   switch(phase) {
     case 0:   NEO_writeColor(nstep,  step,     0); break;
     case 1:   NEO_writeColor(    0, nstep,  step); break;
     case 2:   NEO_writeColor( step,     0, nstep); break;
     default:  break;
   }
-}
-
-// ===================================================================================
-// Switch off all Pixels
-// ===================================================================================
-// A bit of assembly to avoid the garbage SDCC sometimes produces.
-void NEO_clear(void) {
-  __bit EA_save = EA;
-  EA = 0;
-  __asm
-    mov  r7, #(3*NEO_COUNT+255) >> 8
-    mov  r6, #(3*NEO_COUNT) & 0xff
-    01$:
-    mov  dpl, #0
-    lcall	_NEO_sendByte
-    djnz r6, 01$
-    djnz r7, 01$
-  __endasm;
-  EA = EA_save;
-  NEO_latch();
 }
