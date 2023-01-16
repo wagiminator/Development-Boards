@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Blink an LED connected to pin 1.5
+// Blink the built-in LED
 //
 // References:
 // -----------
@@ -21,33 +21,30 @@
 // -------------------------
 // - Chip:  CH551, CH552 or CH554
 // - Clock: doesn't matter
+// - Adjust the firmware parameters in include/config.h if necessary.
 // - Make sure SDCC toolchain and Python3 with PyUSB is installed.
 // - Press BOOT button on the board and keep it pressed while connecting it via USB
 //   with your PC.
 // - Run 'make flash'.
 
-
 // ===================================================================================
 // Libraries, Definitions and Macros
 // ===================================================================================
-
+#include <config.h>           // user configurations
 #include <ch554.h>            // CH55x header file
 #include <clock.h>            // system clock functions
 #include <delay.h>            // delay functions
 #include <gpio.h>             // GPIO functions
 
-#define PIN_LED   P15         // define LED pin
-
 // ===================================================================================
 // Main Function
 // ===================================================================================
-
 void main(void) {
   CLK_config();               // configure system clock
-  PIN_output(PIN_LED);        // set LED pin as output
+  PIN_output(LED_BUILTIN);    // set LED pin as output (actually not needed here)
 
   while(1) {
     DLY_ms(100);              // wait 100ms
-    PIN_toggle(PIN_LED);      // toggle LED on/off
+    PIN_toggle(LED_BUILTIN);  // toggle LED on/off
   }
 }

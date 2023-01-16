@@ -56,7 +56,6 @@ void DeviceUSBInterrupt(void) __interrupt (INT_NO_USB) {
 // ===================================================================================
 // Main Function
 // ===================================================================================
-
 void main(void) {
   // Setup
   CLK_config();                           // configure system clockmake flash
