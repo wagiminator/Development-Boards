@@ -42,7 +42,6 @@
 void main(void) {
   CLK_config();                 // configure system clock
   PIN_high(PIN_LED);            // turn off built-in LED
-  PIN_input_PU(PIN_ACTKEY);     // set ACT key pin to INPUT PULLUP
 
   while(1) {
     if(!PIN_read(PIN_ACTKEY)) { // ACT key pressed?
