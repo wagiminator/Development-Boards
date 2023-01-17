@@ -7,12 +7,16 @@
 // Pin definitions
 #define PIN_NEO             P14       // pin connected to NeoPixel
 #define PIN_LED             P15       // pin connected to LED
-#define PIN_TOUCHKEY        P16       // pin connected to touch key
+#define PIN_TOUCH           P16       // pin connected to touch key
 #define PIN_ACTKEY          P17       // pin connected to ACT-button
 #define LED_BUILTIN         P15       // builtin LED
 
 // NeoPixel configuration
 #define NEO_GRB                       // type of pixel: NEO_GRB or NEO_RGB
+
+// Touchkey configuration
+#define TOUCH_TH_LOW        1800      // key pressed threshold
+#define TOUCH_TH_HIGH       2200      // key released threshold
 
 // USB device descriptor
 #define USB_VENDOR_ID       0x6666    // VID: Prototype
