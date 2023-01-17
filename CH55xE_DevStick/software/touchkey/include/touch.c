@@ -14,7 +14,7 @@
 #include "touch.h"
 #include "ch554.h"
 
-// Store last pressed values
+// Store last touchkey state values
 __idata uint8_t TOUCH_last = 0;
 
 // Get one sample
@@ -25,20 +25,20 @@ uint16_t TOUCH_h_sample(uint8_t channel) {
 }
 
 // Read touch key state (returns 0 = released, 1 = pressed)
-__bit TOUCH_h_read(uint8_t channel) {
+uint8_t TOUCH_h_read(uint8_t channel) {
   uint16_t sample = TOUCH_h_sample(channel);
-  if(TOUCH_last & (1 << channel)) {               // last time pressed?
+  if(TOUCH_last & (1 << channel)) {               // last time on?
     if(sample > TOUCH_TH_HIGH) {                  // but now released?
       TOUCH_last &= ~(1 << channel);              // clear last pressed flag
-      return 0;                                   // return 'released'
+      return TOUCH_RELEASED;                      // return 'just released'
     }
-    return 1;                                     // return 'pressed'
+    return TOUCH_ON;                              // return 'still pressed'
   }
-  else {                                          // last time released?
+  else {                                          // last time off?
     if(sample < TOUCH_TH_LOW) {                   // but now pressed?
       TOUCH_last |= (1 << channel);               // set last pressed flag
-      return 1;                                   // return 'pressed'
+      return TOUCH_PRESSED;                       // return 'just pressed'
     }
-    return 0;                                     // return 'released'
+    return TOUCH_OFF;                             // return 'still released'
   }
 }

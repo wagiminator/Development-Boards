@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Turn on built-in LED if touch key is pressed.
+// Toggle built-in LED by pressing the touch key.
 //
 // References:
 // -----------
@@ -43,9 +43,9 @@
 void main(void) {
   CLK_config();               // configure system clock
   DLY_ms(5);                  // wait for clock to settle
-  TOUCH_start(PIN_TOUCH);     // start touchkey and sample baseline
+  TOUCH_start(PIN_TOUCH);     // start touchkey
 
   while(1) {
-    PIN_write(PIN_LED, !TOUCH_read(PIN_TOUCH));   // set LED according to touchkey state
+    if(TOUCH_pressed(PIN_TOUCH)) PIN_toggle(PIN_LED); // toggle LED on touch
   }
 }
