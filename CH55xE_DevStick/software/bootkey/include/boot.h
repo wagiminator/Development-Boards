@@ -10,5 +10,7 @@ inline void BOOT_now(void) {
   USB_CTRL = 0;
   EA       = 0;
   TMOD     = 0;
-  __asm__("lcall #0x3800");
+  __asm
+    lcall #BOOT_LOAD_ADDR
+  __endasm;
 }
