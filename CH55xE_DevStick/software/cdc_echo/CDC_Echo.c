@@ -58,7 +58,7 @@ void DeviceUSBInterrupt(void) __interrupt (INT_NO_USB) {
 // ===================================================================================
 void main(void) {
   // Setup
-  CLK_config();                           // configure system clockmake flash
+  CLK_config();                           // configure system clock
   CDC_init();                             // init USB CDC
 
   // Loop
