@@ -24,7 +24,7 @@ uint16_t TOUCH_h_sample(uint8_t channel) {
   return TKEY_DAT;                                // return sampling value
 }
 
-// Read touch key state (returns 0 = released, 1 = pressed)
+// Read touch key state
 uint8_t TOUCH_h_read(uint8_t channel) {
   uint16_t sample = TOUCH_h_sample(channel);
   if(TOUCH_last & (1 << channel)) {               // last time on?

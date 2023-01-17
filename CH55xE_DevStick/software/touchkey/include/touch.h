@@ -40,6 +40,7 @@
 #include "gpio.h"
 #include "config.h"
 
+// Pin to touch channel conversion
 #define TOUCH_channel(PIN) \
   ((PIN == P10) ? (0) : \
   ((PIN == P11) ? (1) : \
@@ -49,6 +50,7 @@
   ((PIN == P17) ? (5) : \
 (0)))))))
 
+// Touch key functions
 #define TOUCH_disable()     TKEY_CTRL &= 0xF8
 #define TOUCH_enable()      TKEY_CTRL = TKEY_CTRL & 0xF8 | 7
 #define TOUCH_cycle_1ms()   TKEY_CTRL &= ~bTKC_2MS
@@ -63,8 +65,9 @@
 #define TOUCH_released(PIN) (TOUCH_read(PIN) == TOUCH_RELEASED)
 #define TOUCH_off(PIN)      (TOUCH_read(PIN) == TOUCH_OFF)
 
+// Touch key states
 enum {TOUCH_PRESSED, TOUCH_ON, TOUCH_RELEASED, TOUCH_OFF};
 
 // Helper functions
-uint16_t TOUCH_h_sample(uint8_t channel);         // get one sample
-uint8_t TOUCH_h_read(uint8_t channel);            // read touch key state
+uint16_t TOUCH_h_sample(uint8_t channel); // get one sample
+uint8_t TOUCH_h_read(uint8_t channel);    // read touch key state
