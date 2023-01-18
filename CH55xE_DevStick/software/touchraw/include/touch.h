@@ -61,9 +61,9 @@
 #define TOUCH_read(PIN)     TOUCH_h_read(TOUCH_channel(PIN))
 
 #define TOUCH_pressed(PIN)  (TOUCH_read(PIN) == TOUCH_PRESSED)
-#define TOUCH_on(PIN)       (TOUCH_read(PIN) == TOUCH_ON)
+#define TOUCH_on(PIN)       (TOUCH_read(PIN) <= TOUCH_ON)
 #define TOUCH_released(PIN) (TOUCH_read(PIN) == TOUCH_RELEASED)
-#define TOUCH_off(PIN)      (TOUCH_read(PIN) == TOUCH_OFF)
+#define TOUCH_off(PIN)      (TOUCH_read(PIN) >= TOUCH_RELEASED)
 
 // Touch key states
 enum {TOUCH_PRESSED, TOUCH_ON, TOUCH_RELEASED, TOUCH_OFF};
