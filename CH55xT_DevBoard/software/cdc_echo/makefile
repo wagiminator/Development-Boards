@@ -8,7 +8,7 @@
 # ===================================================================================
 
 # Input and Output File Names
-SKETCH     = CDC_Echo.c
+SKETCH     = cdc_echo.c
 TARGET     = cdc_echo
 INCLUDE    = include
 

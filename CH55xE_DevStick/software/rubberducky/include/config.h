@@ -15,8 +15,8 @@
 #define NEO_GRB                       // type of pixel: NEO_GRB or NEO_RGB
 
 // Touchkey configuration
-#define TOUCH_TH_LOW        1800      // key pressed threshold
-#define TOUCH_TH_HIGH       2200      // key released threshold
+#define TOUCH_TH_LOW        2000      // key pressed threshold
+#define TOUCH_TH_HIGH       2400      // key released threshold
 
 // USB device descriptor
 #define USB_VENDOR_ID       0x6666    // VID: Prototype
@@ -29,5 +29,5 @@
 // USB descriptor strings
 #define MANUFACTURER_STR    'w','a','g','i','m','i','n','a','t','o','r'
 #define PRODUCT_STR         'C','H','5','5','x','E',' ','D','e','v','S','t','i','c','k'
-#define SERIAL_STR          'H','I','D'
-#define INTERFACE_STR       'H','I','D','-','K','e','y','b','o','a','r','d'
+#define SERIAL_STR          'C','D','C'
+#define INTERFACE_STR       'C','D','C','-','S','e','r','i','a','l'

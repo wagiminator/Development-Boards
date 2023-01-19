@@ -100,7 +100,7 @@ void USB_EP0_SETUP(void) {
 
             #ifdef USB_REPORT_DESCR
             case USB_DESCR_TYP_REPORT:
-              if(UsbSetupBuf->wValueL == 0) {
+              if(USB_setupBuf->wValueL == 0) {
                 pDescr = USB_REPORT_DESCR;
                 len = USB_REPORT_DESCR_LEN;
               }
@@ -153,30 +153,46 @@ void USB_EP0_SETUP(void) {
           }
           else if( (USB_setupBuf->bRequestType & USB_REQ_RECIP_MASK) == USB_REQ_RECIP_ENDP ) {
             switch(USB_setupBuf->wIndexL) {
+              #ifdef EP4_IN_callback
               case 0x84:
                 UEP4_CTRL = UEP4_CTRL & ~ ( bUEP_T_TOG | MASK_UEP_T_RES ) | UEP_T_RES_NAK;
                 break;
+              #endif
+              #ifdef EP4_OUT_callback
               case 0x04:
                 UEP4_CTRL = UEP4_CTRL & ~ ( bUEP_R_TOG | MASK_UEP_R_RES ) | UEP_R_RES_ACK;
                 break;
+              #endif
+              #ifdef EP3_IN_callback
               case 0x83:
                 UEP3_CTRL = UEP3_CTRL & ~ ( bUEP_T_TOG | MASK_UEP_T_RES ) | UEP_T_RES_NAK;
                 break;
+              #endif
+              #ifdef EP3_OUT_callback
               case 0x03:
                 UEP3_CTRL = UEP3_CTRL & ~ ( bUEP_R_TOG | MASK_UEP_R_RES ) | UEP_R_RES_ACK;
                 break;
+              #endif
+              #ifdef EP2_IN_callback
               case 0x82:
                 UEP2_CTRL = UEP2_CTRL & ~ ( bUEP_T_TOG | MASK_UEP_T_RES ) | UEP_T_RES_NAK;
                 break;
+              #endif
+              #ifdef EP2_OUT_callback
               case 0x02:
                 UEP2_CTRL = UEP2_CTRL & ~ ( bUEP_R_TOG | MASK_UEP_R_RES ) | UEP_R_RES_ACK;
                 break;
+              #endif
+              #ifdef EP1_IN_callback
               case 0x81:
                 UEP1_CTRL = UEP1_CTRL & ~ ( bUEP_T_TOG | MASK_UEP_T_RES ) | UEP_T_RES_NAK;
                 break;
+              #endif
+              #ifdef EP1_OUT_callback
               case 0x01:
                 UEP1_CTRL = UEP1_CTRL & ~ ( bUEP_R_TOG | MASK_UEP_R_RES ) | UEP_R_RES_ACK;
                 break;
+              #endif
               default:
                 len = 0xFF;                 // unsupported endpoint
                 break;
@@ -195,29 +211,46 @@ void USB_EP0_SETUP(void) {
           else if( (USB_setupBuf->bRequestType & 0x1F) == USB_REQ_RECIP_ENDP ) {
             if( ( ( (uint16_t)USB_setupBuf->wValueH << 8 ) | USB_setupBuf->wValueL ) == 0x00 ) {
               switch( ( (uint16_t)USB_setupBuf->wIndexH << 8 ) | USB_setupBuf->wIndexL ) {
+                #ifdef EP4_IN_callback
                 case 0x84:
                   UEP4_CTRL = UEP4_CTRL & (~bUEP_T_TOG) | UEP_T_RES_STALL;// Set EP4 IN STALL 
                   break;
+                #endif
+                #ifdef EP4_OUT_callback
                 case 0x04:
                   UEP4_CTRL = UEP4_CTRL & (~bUEP_R_TOG) | UEP_R_RES_STALL;// Set EP4 OUT Stall 
                   break;
+                #endif
+                #ifdef EP3_IN_callback
                 case 0x83:
                   UEP3_CTRL = UEP3_CTRL & (~bUEP_T_TOG) | UEP_T_RES_STALL;// Set EP3 IN STALL 
                   break;
+                #endif
+                #ifdef EP3_OUT_callback
                 case 0x03:
                   UEP3_CTRL = UEP3_CTRL & (~bUEP_R_TOG) | UEP_R_RES_STALL;// Set EP3 OUT Stall 
                   break;
+                #endif
+                #ifdef EP2_IN_callback
                 case 0x82:
                   UEP2_CTRL = UEP2_CTRL & (~bUEP_T_TOG) | UEP_T_RES_STALL;// Set EP2 IN STALL 
                   break;
+                #endif
+                #ifdef EP2_OUT_callback
                 case 0x02:
                   UEP2_CTRL = UEP2_CTRL & (~bUEP_R_TOG) | UEP_R_RES_STALL;// Set EP2 OUT Stall 
                   break;
+                #endif
+                #ifdef EP1_IN_callback
                 case 0x81:
                   UEP1_CTRL = UEP1_CTRL & (~bUEP_T_TOG) | UEP_T_RES_STALL;// Set EP1 IN STALL 
                   break;
+                #endif
+                #ifdef EP1_OUT_callback
                 case 0x01:
-                  UEP1_CTRL = UEP1_CTRL & (~bUEP_R_TOG) | UEP_R_RES_STALL;// Set EP1 OUT Stall 
+                  UEP1_CTRL = UEP1_CTRL & (~bUEP_R_TOG) | UEP_R_RES_STALL;// Set EP1 OUT Stall
+                  break;
+                #endif
                 default:
                   len = 0xFF;               // failed
                   break;

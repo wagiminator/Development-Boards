@@ -1,6 +1,15 @@
 // ===================================================================================
 // USB Descriptors and Definitions
 // ===================================================================================
+//
+// Definition of USB descriptors and endpoint sizes and addresses.
+//
+// The following must be defined in config.h:
+// USB_VENDOR_ID            - Vendor ID (16-bit word)
+// USB_PRODUCT_ID           - Product ID (16-bit word)
+// USB_DEVICE_VERSION       - Devide version (16-bit BCD)
+// USB_MAX_POWER_mA         - Device max power in mA
+// All descriptor strings.
 
 #pragma once
 #include <stdint.h>
@@ -26,7 +35,7 @@
 // ===================================================================================
 // Device and Configuration Descriptors
 // ===================================================================================
-typedef struct _USB_CONFIG_DESCR_CDC {
+typedef struct _USB_CFG_DESCR_CDC {
   USB_CFG_DESCR config;
   USB_ITF_DESCR interface0;
   uint8_t functional[19];
@@ -44,14 +53,14 @@ extern __code USB_CFG_DESCR_CDC CfgDescr;
 // String Descriptors
 // ===================================================================================
 extern __code uint16_t LangDescr[];
-extern __code uint16_t SerDescr[];
-extern __code uint16_t ProdDescr[];
-extern __code uint16_t CDC_Descr[];
 extern __code uint16_t ManufDescr[];
+extern __code uint16_t ProdDescr[];
+extern __code uint16_t SerDescr[];
+extern __code uint16_t InterfDescr[];
 
 #define USB_STR_DESCR_i0    (uint8_t*)LangDescr
 #define USB_STR_DESCR_i1    (uint8_t*)ManufDescr
 #define USB_STR_DESCR_i2    (uint8_t*)ProdDescr
 #define USB_STR_DESCR_i3    (uint8_t*)SerDescr
-#define USB_STR_DESCR_i4    (uint8_t*)CDC_Descr
+#define USB_STR_DESCR_i4    (uint8_t*)InterfDescr
 #define USB_STR_DESCR_ix    (uint8_t*)SerDescr
