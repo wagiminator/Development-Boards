@@ -10,8 +10,8 @@
 #define KBD_init() HID_init()         // init keyboard
 void KBD_press(uint8_t key);          // press a key on keyboard
 void KBD_release(uint8_t key);        // release a key on keyboard
+void KBD_write(uint8_t key);          // press and release a key on keyboard
 void KBD_releaseAll(void);            // release all keys on keyboard
-void KBD_write(char c);               // type a character with keyboard
 void KBD_print(char* str);            // type some text on the keyboard
 uint8_t KBD_getState(void);           // get keyboard status LEDs
 

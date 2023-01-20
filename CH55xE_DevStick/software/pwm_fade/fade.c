@@ -36,6 +36,8 @@
 #include <delay.h>                // delay functions
 #include <gpio.h>                 // GPIO functions
 
+#pragma disable_warning 84        // disable warning: variable used before init
+
 // ===================================================================================
 // Main Function
 // ===================================================================================

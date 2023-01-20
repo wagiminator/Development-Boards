@@ -49,6 +49,8 @@
 #include <delay.h>                        // delay functions
 #include <usb_mouse.h>                    // USB HID mouse functions
 
+#pragma disable_warning 84                // disable warning: variable used before init
+
 // Prototypes for used interrupts
 void USB_interrupt(void);
 void DeviceUSBInterrupt(void) __interrupt (INT_NO_USB) {
@@ -60,7 +62,7 @@ void DeviceUSBInterrupt(void) __interrupt (INT_NO_USB) {
 // ===================================================================================
 void main(void) {
   // Setup
-  uint8_t cnt = 0;                        // timing counter
+  uint8_t cnt;                            // timing counter
   CLK_config();                           // configure system clock
   DLY_ms(5);                              // wait for clock to settle
   MOUSE_init();                           // init USB HID mouse
@@ -72,13 +74,11 @@ void main(void) {
       MOUSE_move( 1, 0);                  // move mouse pointer just a tiny bit
       MOUSE_move(-1, 0);                  // move pointer back to where it was
     }
-
     if(!PIN_read(PIN_ACTKEY)) {           // ACT button pressed?
       PIN_toggle(PIN_LED);                // toggle LED and function state
       DLY_ms(10);                         // debounce
       while(!PIN_read(PIN_ACTKEY));       // wait for ACT button released
     }
-
     DLY_ms(100);                          // delay a little
   }
 }
