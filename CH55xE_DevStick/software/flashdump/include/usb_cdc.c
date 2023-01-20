@@ -13,7 +13,7 @@
 // ===================================================================================
 
 // Initialize line coding
-__xdata CDC_LINE_CODING_TYPE CDC_lineCoding = {
+__xdata CDC_LINE_CODING_TYPE CDC_lineCodingB = {
   .baudrate = 57600,        // baudrate 57600
   .stopbits = 0,            // 1 stopbit
   .parity   = 0,            // no parity
@@ -111,16 +111,16 @@ __bit CDC_getRTS(void) {
 // Set line coding handler
 void CDC_setLineCoding(void) {
   uint8_t i;
-  for(i=0; i<((sizeof(CDC_lineCoding)<=USB_RX_LEN)?sizeof(CDC_lineCoding):USB_RX_LEN); i++)
-    ((uint8_t*)&CDC_lineCoding)[i] = EP0_buffer[i]; // receive line coding from host
+  for(i=0; i<((sizeof(CDC_lineCodingB)<=USB_RX_LEN)?sizeof(CDC_lineCodingB):USB_RX_LEN); i++)
+    ((uint8_t*)&CDC_lineCodingB)[i] = EP0_buffer[i]; // receive line coding from host
 }
 
 // Get line coding handler
 uint8_t CDC_getLineCoding(void) {
   uint8_t i;
-  for(i=0; i<sizeof(CDC_lineCoding); i++)
-    EP0_buffer[i] = ((uint8_t*)&CDC_lineCoding)[i]; // transmit line coding to host
-  return sizeof(CDC_lineCoding);
+  for(i=0; i<sizeof(CDC_lineCodingB); i++)
+    EP0_buffer[i] = ((uint8_t*)&CDC_lineCodingB)[i]; // transmit line coding to host
+  return sizeof(CDC_lineCodingB);
 }
 
 // Set control line state handler

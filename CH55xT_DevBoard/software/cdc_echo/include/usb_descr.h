@@ -7,7 +7,7 @@
 // The following must be defined in config.h:
 // USB_VENDOR_ID            - Vendor ID (16-bit word)
 // USB_PRODUCT_ID           - Product ID (16-bit word)
-// USB_DEVICE_VERSION       - Devide version (16-bit BCD)
+// USB_DEVICE_VERSION       - Device version (16-bit BCD)
 // USB_MAX_POWER_mA         - Device max power in mA
 // All descriptor strings.
 

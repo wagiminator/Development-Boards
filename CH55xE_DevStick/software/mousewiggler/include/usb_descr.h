@@ -19,35 +19,38 @@
 // USB Endpoint Addresses and Sizes
 // ===================================================================================
 #define EP0_SIZE        64
-#define EP1_SIZE        16
-#define EP2_SIZE        64
+#define EP1_SIZE        8
 
 #define EP0_ADDR        0
 #define EP1_ADDR        (EP0_ADDR + EP0_BUF_SIZE)
-#define EP2_ADDR        (EP1_ADDR + EP1_BUF_SIZE)
 
 #define EP0_BUF_SIZE    EP_BUF_SIZE(EP0_SIZE)
 #define EP1_BUF_SIZE    EP_BUF_SIZE(EP1_SIZE)
-#define EP2_BUF_SIZE    EP_BUF_SIZE(EP2_SIZE)
 
 #define EP_BUF_SIZE(x)  (x+2<64 ? x+2 : 64)
 
 // ===================================================================================
 // Device and Configuration Descriptors
 // ===================================================================================
-typedef struct _USB_CFG_DESCR_CDC {
+typedef struct _USB_CFG_DESCR_HID {
   USB_CFG_DESCR config;
   USB_ITF_DESCR interface0;
-  uint8_t functional[19];
+  USB_HID_DESCR hid0;
   USB_ENDP_DESCR ep1IN;
-  USB_ITF_DESCR interface1;
-  USB_ENDP_DESCR ep2OUT;
-  USB_ENDP_DESCR ep2IN;
-} USB_CFG_DESCR_CDC, *PUSB_CFG_DESCR_CDC;
-typedef USB_CFG_DESCR_CDC __xdata *PXUSB_CFG_DESCR_CDC;
+} USB_CFG_DESCR_HID, *PUSB_CFG_DESCR_HID;
+typedef USB_CFG_DESCR_HID __xdata *PXUSB_CFG_DESCR_HID;
 
 extern __code USB_DEV_DESCR DevDescr;
-extern __code USB_CFG_DESCR_CDC CfgDescr;
+extern __code USB_CFG_DESCR_HID CfgDescr;
+
+// ===================================================================================
+// HID Report Descriptors
+// ===================================================================================
+extern __code uint8_t ReportDescr[];
+extern __code uint8_t ReportDescrLen;
+
+#define USB_REPORT_DESCR      ReportDescr
+#define USB_REPORT_DESCR_LEN  ReportDescrLen
 
 // ===================================================================================
 // String Descriptors

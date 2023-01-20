@@ -27,6 +27,7 @@ typedef struct _CDC_LINE_CODING_TYPE {
   uint8_t  stopbits;              // number of stopbits (0:1bit,1:1.5bits,2:2bits)
   uint8_t  parity;                // parity (0:none,1:odd,2:even,3:mark,4:space)
   uint8_t  databits;              // number of data bits (5,6,7,8 or 16)
-} CDC_LINE_CODING_TYPE;
+} CDC_LINE_CODING_TYPE, *PCDC_LINE_CODING_TYPE;
 
-extern __xdata CDC_LINE_CODING_TYPE CDC_lineCoding;
+extern __xdata CDC_LINE_CODING_TYPE CDC_lineCodingB;
+#define CDC_lineCoding ((PCDC_LINE_CODING_TYPE)CDC_lineCodingB)
