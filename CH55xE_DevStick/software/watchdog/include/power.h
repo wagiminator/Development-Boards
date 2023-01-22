@@ -23,6 +23,7 @@
 // WAKE_disable(source)     disable wake-up from sleep source
 // WAKE_PIN_enable(PIN)     enable wake-up by PIN low (P13, P14, P15 only)
 // WAKE_PIN_disable(PIN)    disable wake-up by PIN low
+// WAKE_all_disable()       disable all wake-up sources
 //
 // Wake-up from SLEEP sources:
 // ---------------------------
@@ -95,6 +96,7 @@ inline void RST_reset(void) {
 
 #define WAKE_enable(source)     WAKE_CTRL |=  source
 #define WAKE_disable(source)    WAKE_CTRL &= ~source
+#define WAKE_all_disable()      WAKE_CTRL  =  0
 
 #define WAKE_PIN_enable(PIN) \
   ((PIN == P13) ? (WAKE_CTRL |= bWAK_P1_3_LO) : \
