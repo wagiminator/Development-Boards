@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   Blink Demo for CH551, CH552, CH554
+// Project:   Blink Demo for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2022
 // Author:    Stefan Wagner
@@ -40,9 +40,11 @@
 // Main Function
 // ===================================================================================
 void main(void) {
+  // Setup
   CLK_config();               // configure system clock
   PIN_output(LED_BUILTIN);    // set LED pin as output (actually not needed here)
 
+  // Loop
   while(1) {
     DLY_ms(100);              // wait 100ms
     PIN_toggle(LED_BUILTIN);  // toggle LED on/off

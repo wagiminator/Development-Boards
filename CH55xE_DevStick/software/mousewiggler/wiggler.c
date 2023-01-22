@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   Mouse Wiggler for CH551, CH552, CH554
+// Project:   Mouse Wiggler for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner

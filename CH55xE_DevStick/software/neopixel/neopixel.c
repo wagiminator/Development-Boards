@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   NeoPixel Demo for CH551, CH552, CH554
+// Project:   NeoPixel Demo for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2022
 // Author:    Stefan Wagner
@@ -43,9 +43,11 @@
 // Main Function
 // ===================================================================================
 void main(void) {
+  // Setup
   CLK_config();                 // configure system clock
   NEO_init();                   // init NeoPixel
 
+  // Loop
   while(1) {
     uint8_t i;
     for(i=0; i<192; i++) {      // cycle hue values

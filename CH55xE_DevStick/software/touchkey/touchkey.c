@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   Touchkey Demo for CH551, CH552, CH554
+// Project:   Touchkey Demo for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner
@@ -41,10 +41,12 @@
 // Main Function
 // ===================================================================================
 void main(void) {
+  // Setup
   CLK_config();               // configure system clock
   DLY_ms(5);                  // wait for clock to settle
   TOUCH_start(PIN_TOUCH);     // start touchkey
 
+  // Loop
   while(1) {
     if(TOUCH_pressed(PIN_TOUCH)) PIN_toggle(PIN_LED); // toggle LED on touch
   }

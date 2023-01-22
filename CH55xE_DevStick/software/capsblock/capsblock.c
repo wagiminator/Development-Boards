@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   CAPS bLOCK for CH551, CH552, CH554
+// Project:   CAPS bLOCK for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner
@@ -70,7 +70,7 @@ void main(void) {
   while(1) {
     if(!PIN_read(PIN_LED)                 // blocking function activated
        && KBD_CAPS_LOCK_state) {          // and CAPS LOCK was pressed?
-        KBD_write(KBD_KEY_CAPS_LOCK);     // press CAPS LOCK to deactivate
+        KBD_type(KBD_KEY_CAPS_LOCK);      // press CAPS LOCK to deactivate
         DLY_ms(50);                       // wait a bit
     }
 

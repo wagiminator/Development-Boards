@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   Data Flash DUMP via USB-CDC for CH551, CH552, CH554
+// Project:   Data Flash DUMP via USB-CDC for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner

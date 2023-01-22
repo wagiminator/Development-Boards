@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   PWM Fade Demo for CH551, CH552, CH554
+// Project:   PWM Fade Demo for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2022
 // Author:    Stefan Wagner
@@ -42,10 +42,12 @@
 // Main Function
 // ===================================================================================
 void main(void) {
+  // Setup
   CLK_config();                   // configure system clock
   PIN_output(LED_BUILTIN);        // set LED pin as output
   PWM_start(LED_BUILTIN);         // start PWM on LED pin
 
+  // Loop
   while(1) {
     uint8_t i;
     while(++i) {                  // increase PWM value

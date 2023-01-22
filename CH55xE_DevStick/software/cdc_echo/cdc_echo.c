@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   USB-CDC Echo Demo for CH551, CH552, CH554
+// Project:   USB-CDC Echo Demo for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2022
 // Author:    Stefan Wagner

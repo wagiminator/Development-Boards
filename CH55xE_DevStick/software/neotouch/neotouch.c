@@ -44,11 +44,13 @@
 // Main Function
 // ===================================================================================
 void main(void) {
+  // Setup
   uint8_t hue = 0;
   CLK_config();                     // configure system clock
   NEO_init();                       // init NeoPixel
   TOUCH_start(PIN_TOUCH);           // start touchkey
 
+  // Loop
   while(1) {
     if(TOUCH_on(PIN_TOUCH)) {       // touched?
       NEO_writeHue(hue, BRIGHT);    // set hue and brightness

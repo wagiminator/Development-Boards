@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   Rubber Ducky for CH551, CH552, CH554
+// Project:   Rubber Ducky for CH551, CH552 and CH554
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner
@@ -68,7 +68,7 @@ void main(void) {
   while(1) {
     if(!PIN_read(PIN_ACTKEY)) {           // ACT button pressed?
       KBD_print("Hello World!");          // type message
-      KBD_write(KBD_KEY_RETURN);          // press return key
+      KBD_type(KBD_KEY_RETURN);           // press return key
       while(!PIN_read(PIN_ACTKEY));       // wait for ACT button released
       DLY_ms(10);                         // debounce
     }

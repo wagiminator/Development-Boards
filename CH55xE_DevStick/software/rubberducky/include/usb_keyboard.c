@@ -94,7 +94,7 @@ void KBD_release(uint8_t key) {
 // ===================================================================================
 // Press and release a key on keyboard
 // ===================================================================================
-void KBD_write(uint8_t key) {
+void KBD_type(uint8_t key) {
   KBD_press(key);
   KBD_release(key);
 }
@@ -112,7 +112,7 @@ void KBD_releaseAll(void) {
 // Write text with keyboard
 // ===================================================================================
 void KBD_print(char* str) {
-  while(*str) KBD_write(*str++);
+  while(*str) KBD_type(*str++);
 }
 
 // ===================================================================================

@@ -1,7 +1,7 @@
 // ===================================================================================
-// Project:   Bootloader Demo for CH551, CH552 and CH554
+// Project:   Watchdog Demo for CH551, CH552 and CH554
 // Version:   v1.0
-// Year:      2022
+// Year:      2023
 // Author:    Stefan Wagner
 // Github:    https://github.com/wagiminator
 // EasyEDA:   https://easyeda.com/wagiminator
@@ -10,7 +10,8 @@
 //
 // Description:
 // ------------
-// Jump to bootloader on ACT-button press. Built-in LED lights up when in boot mode.
+// Flashes the built-in LED by regular watchdog timer resets. Uses the RESET_KEEP
+// register to retain LED status across reset.
 //
 // References:
 // -----------
@@ -30,24 +31,23 @@
 // ===================================================================================
 // Libraries, Definitions and Macros
 // ===================================================================================
-#include <config.h>             // user configurations
-#include <ch554.h>              // CH55x header file
-#include <clock.h>              // system clock functions
-#include <gpio.h>               // GPIO functions
-#include <boot.h>               // for bootloader functions
+#include <config.h>                     // user configurations
+#include <ch554.h>                      // CH55x header file
+#include <clock.h>                      // system clock functions
+#include <power.h>                      // power, sleep, reset and watchdog functions
+#include <gpio.h>                       // GPIO functions
 
 // ===================================================================================
 // Main Function
 // ===================================================================================
 void main(void) {
   // Setup
-  CLK_config();                 // configure system clock
+  CLK_config();                         // configure system clock
+  RST_keep(!RST_getKeeped());           // toggle value in RESET_KEEP register
+  PIN_write(PIN_LED, RST_getKeeped());  // set LED according to KEEP value
+  WDT_start();                          // start watchdog timer
+  WDT_set(250);                         // set watchdog timer to 250ms
 
   // Loop
-  while(1) {
-    if(!PIN_read(PIN_ACTKEY)) { // ACT key pressed?
-      PIN_low(PIN_LED);         // turn on built-in LED
-      BOOT_now();               // jump to bootloader
-    }
-  }
+  while(1);                             // do nothing, just wait for watchdog reset
 }
