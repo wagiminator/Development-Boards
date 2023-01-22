@@ -43,8 +43,8 @@
 void main(void) {
   // Setup
   CLK_config();                         // configure system clock
-  RST_keep(!RST_getKeeped());           // toggle value in RESET_KEEP register
-  PIN_write(PIN_LED, RST_getKeeped());  // set LED according to KEEP value
+  RST_keep(!RST_getKeep());             // toggle value in RESET_KEEP register
+  PIN_write(PIN_LED, RST_getKeep());    // set LED according to KEEP value
   WDT_start();                          // start watchdog timer
   WDT_set(250);                         // set watchdog timer to 250ms
 

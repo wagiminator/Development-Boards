@@ -12,7 +12,7 @@
 //
 // RST_reset()              perform software reset
 // RST_keep(value)          keep this value after RESET
-// RST_getKeeped()          read the keeped value
+// RST_getKeep()            read the keeped value
 // RST_wasWDT()             check if last RESET was caused by watchdog timer
 // RST_wasPIN()             check if last RESET was caused by RST PIN
 // RST_wasPWR()             check if last RESET was caused by power-on
@@ -67,7 +67,7 @@ inline void WDT_stop(void) {
 // Reset
 // ===================================================================================
 #define RST_keep(value)         RESET_KEEP = value
-#define RST_getKeeped()         (RESET_KEEP)
+#define RST_getKeep()           (RESET_KEEP)
 #define RST_wasWDT()            ((PCON & MASK_RST_FLAG) == RST_FLAG_WDOG)
 #define RST_wasPIN()            ((PCON & MASK_RST_FLAG) == RST_FLAG_PIN)
 #define RST_wasPWR()            ((PCON & MASK_RST_FLAG) == RST_FLAG_POR)
