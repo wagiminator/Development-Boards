@@ -19,13 +19,13 @@
 // RST_wasSOFT()            check if last RESET was caused by software
 //
 // SLEEP_now()              put device into sleep
-// WAKE_enable(source)      enable a wake from sleep source (see below)
-// WAKE_disable(source)     disable wake from sleep source
+// WAKE_enable(source)      enable wake-up from sleep source (see below)
+// WAKE_disable(source)     disable wake-up from sleep source
 // WAKE_PIN_enable(PIN)     enable wake-up by PIN low (P13, P14, P15 only)
-// WAKE_PIN_disable(PIN)    enable wake-up by PIN low
+// WAKE_PIN_disable(PIN)    disable wake-up by PIN low
 //
-// Wake from SLEEP sources:
-// ------------------------
+// Wake-up from SLEEP sources:
+// ---------------------------
 // WAKE_USB                 enable wake-up by USB event
 // WAKE_RXD0                enable wake-up by RXD0 low level
 // WAKE_RXD1                enable wake-up by RXD1 low level
@@ -66,12 +66,12 @@ inline void WDT_stop(void) {
 // ===================================================================================
 // Reset
 // ===================================================================================
-#define RST_keep(value)         RESET_KEEP = value
-#define RST_getKeep()           (RESET_KEEP)
-#define RST_wasWDT()            ((PCON & MASK_RST_FLAG) == RST_FLAG_WDOG)
-#define RST_wasPIN()            ((PCON & MASK_RST_FLAG) == RST_FLAG_PIN)
-#define RST_wasPWR()            ((PCON & MASK_RST_FLAG) == RST_FLAG_POR)
-#define RST_wasSOFT()           ((PCON & MASK_RST_FLAG) == RST_FLAG_SW)
+#define RST_keep(value)   RESET_KEEP = value
+#define RST_getKeep()     (RESET_KEEP)
+#define RST_wasWDT()      ((PCON & MASK_RST_FLAG) == RST_FLAG_WDOG)
+#define RST_wasPIN()      ((PCON & MASK_RST_FLAG) == RST_FLAG_PIN)
+#define RST_wasPWR()      ((PCON & MASK_RST_FLAG) == RST_FLAG_POR)
+#define RST_wasSOFT()     ((PCON & MASK_RST_FLAG) == RST_FLAG_SW)
 
 inline void RST_reset(void) {
   SAFE_MOD    = 0x55;
@@ -82,16 +82,16 @@ inline void RST_reset(void) {
 // ===================================================================================
 // Sleep
 // ===================================================================================
-#define SLEEP_now()             PCON |= PD
+#define SLEEP_now()       PCON |= PD
 
-#define WAKE_USB                bWAK_BY_USB     // enable wake-up by USB event
-#define WAKE_RXD0               bWAK_RXD0_LO    // enable wake-up by RXD0 low level
-#define WAKE_RXD1               bWAK_RXD1_LO    // enable wake-up by RXD1 low level
-#define WAKE_P13                bWAK_P1_3_LO    // enable wake-up by pin P1.3 low level
-#define WAKE_P14                bWAK_P1_4_LO    // enable wake-up by pin P1.4 low level
-#define WAKE_P15                bWAK_P1_5_LO    // enable wake-up by pin P1.5 low level
-#define WAKE_RST                bWAK_RST_HI     // enable wake-up by pin RST high level
-#define WAKE_INT                bWAK_P3_2E_3L   // enable wake-up by pin P3.2 (INT0) edge or pin P3.3 (INT1) low level
+#define WAKE_USB          bWAK_BY_USB     // enable wake-up by USB event
+#define WAKE_RXD0         bWAK_RXD0_LO    // enable wake-up by RXD0 low level
+#define WAKE_RXD1         bWAK_RXD1_LO    // enable wake-up by RXD1 low level
+#define WAKE_P13          bWAK_P1_3_LO    // enable wake-up by pin P1.3 low level
+#define WAKE_P14          bWAK_P1_4_LO    // enable wake-up by pin P1.4 low level
+#define WAKE_P15          bWAK_P1_5_LO    // enable wake-up by pin P1.5 low level
+#define WAKE_RST          bWAK_RST_HI     // enable wake-up by pin RST high level
+#define WAKE_INT          bWAK_P3_2E_3L   // enable wake-up by pin P3.2 (INT0) edge or pin P3.3 (INT1) low level
 
 #define WAKE_enable(source)     WAKE_CTRL |=  source
 #define WAKE_disable(source)    WAKE_CTRL &= ~source
