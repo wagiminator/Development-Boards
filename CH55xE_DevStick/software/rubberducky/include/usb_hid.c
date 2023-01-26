@@ -54,6 +54,7 @@ void HID_setup(void) {
 void HID_reset(void) {
   UEP1_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;
   UEP2_CTRL = bUEP_AUTO_TOG | UEP_R_RES_ACK;
+  HID_EP1_writeBusyFlag = 0;
 }
 
 // Endpoint 1 IN handler (HID report transfer to host)
