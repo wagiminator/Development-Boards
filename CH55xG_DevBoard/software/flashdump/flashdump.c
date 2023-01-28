@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Transfers content of data flash via USB-CDC on ACT-Button press.
+// Transfers content of data flash via USB-CDC.
 //
 // References:
 // -----------
@@ -34,7 +34,7 @@
 // - Connect the board via USB to your PC. It should be detected as a CDC device.
 // - Open a serial monitor and select the correct serial port (BAUD rate doesn't
 //   matter).
-// - The data flash conent is transmitted once a second via CDC.
+// - The data flash content is transmitted once a second via CDC.
 
 
 // ===================================================================================
