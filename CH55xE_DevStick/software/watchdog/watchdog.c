@@ -32,9 +32,7 @@
 // Libraries, Definitions and Macros
 // ===================================================================================
 #include <config.h>                     // user configurations
-#include <ch554.h>                      // CH55x header file
-#include <clock.h>                      // system clock functions
-#include <power.h>                      // power, sleep, reset and watchdog functions
+#include <system.h>                     // system functions
 #include <gpio.h>                       // GPIO functions
 
 // ===================================================================================

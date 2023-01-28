@@ -44,9 +44,8 @@
 
 // Libraries
 #include <config.h>                       // user configurations
-#include <ch554.h>                        // CH55x header file
+#include <system.h>                       // system functions
 #include <gpio.h>                         // GPIO functions
-#include <clock.h>                        // system clock functions
 #include <delay.h>                        // delay functions
 #include <usb_keyboard.h>                 // USB HID keyboard functions
 

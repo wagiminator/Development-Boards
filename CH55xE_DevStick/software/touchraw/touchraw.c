@@ -43,8 +43,7 @@
 
 // Libraries
 #include <config.h>                       // user configurations
-#include <ch554.h>                        // CH55x header file
-#include <clock.h>                        // system clock functions
+#include <system.h>                       // system functions
 #include <delay.h>                        // delay functions
 #include <usb_cdc.h>                      // USB-CDC serial functions
 #include <touch.h>                        // touchkey functions

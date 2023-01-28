@@ -1,5 +1,5 @@
 // ===================================================================================
-// Touch Key Functions for CH551, CH552 and CH554
+// Touch Key Functions for CH551, CH552 and CH554                             * v1.0 *
 // ===================================================================================
 //
 // Simple touch key control functions without using baseline detection and interrupts.

@@ -1,5 +1,5 @@
 // ===================================================================================
-// GPIO and PWM Functions for CH551, CH552 and CH554
+// Basic GPIO, PWM and ADC Functions for CH551, CH552 and CH554               * v1.2 *
 // ===================================================================================
 //
 // Pins must be defined as P10, P11, P12, etc. - e.g.:
@@ -21,6 +21,9 @@
 // PIN_asm(PIN)             Convert PIN for inline assembly: setb PIN_asm(PIN_LED)
 // PIN_set(PIN)             Convert PIN for direct manipulation: PIN_set(PIN_LED) = 1;
 //
+// PIN_WAKE_enable(PIN)     enable wake-up from sleep by PIN low (P13, P14, P15 only)
+// PIN_WAKE_disable(PIN)    disable wake-up from sleep by PIN low
+//
 // PWM_start(PIN)           Start PWM output on PIN, can be (P15 or P30) and (P34 or P31)
 // PWM_stop(PIN)            Stop PWM output on PIN
 // PWM_write(PIN, val)      Set PWM output active level duty cycle on PIN
@@ -29,9 +32,28 @@
 // PWM_pol_reverse(PIN)     Set reverse PWM polarity on PIN (default high and active low)
 // PWM_set_freq(freq)       Set global PWM frequency (in Hertz)
 //
+// ADC_enable()             Enable ADC
+// ADC_disable()            Disable ADC
+// ADC_fast()               Set ADC fast mode ( 96 clock cycles per sample, less accurate)
+// ADC_slow()               Set ADC slow mode (384 clock cycles per sample, more accurate)
+// ADC_input(PIN)           Set ADC input pin (P11, P14, P15, P32 only)
+// ADC_read()               Sample and read ADC value (0..255)
+//
+// CMP_enable()             Enable comparator
+// CMP_disable()            Disable comparator
+// CMP_positive(PIN)        Set CMP non-inverting input pin (P11, P14, P15, P32 only)
+// CMP_negative(PIN)        Set CMP inverting input pin (P14, P32 only)
+// CMP_read()               Read CMP output (0: pos < neg, 1: pos > neg)
+//
+// Notes:
+// ------
+// Pins used for PWM should be set as OUTPUT beforehand.
+// Pins used for ADC or CMP must have been set as INPUT (high impedance) beforehand.
+//
 // 2022 by Stefan Wagner:   https://github.com/wagiminator
 
 #pragma once
+#include <stdint.h>
 #include "ch554.h"
 
 // ===================================================================================
@@ -134,10 +156,25 @@ SBIT(PP37, 0xB0, 7);
 #define PORT_write(PORT,PIN,val)  PORT_h_w(PORT, PIN, val)  // WRITE pin value
 
 // ===================================================================================
-// Convert Pin for Inline Assembly and Direct Manipulation
+// Convert pin for inline assembly and direct manipulation
 // ===================================================================================
 #define PIN_asm(PIN)        PIN_h_a(PIN)
 #define PIN_set(PIN)        PIN_h_s(PIN)
+
+// ===================================================================================
+// Enable/disable WAKE-up from sleep by pin LOW (P13, P14, P15 only)
+// ===================================================================================
+#define WAKE_PIN_enable(PIN) \
+  ((PIN == P13) ? (WAKE_CTRL |= bWAK_P1_3_LO) : \
+  ((PIN == P14) ? (WAKE_CTRL |= bWAK_P1_4_LO) : \
+  ((PIN == P15) ? (WAKE_CTRL |= bWAK_P1_5_LO) : \
+(0)))))
+
+#define WAKE_PIN_disable(SOURCE) \
+  ((PIN == P13) ? (WAKE_CTRL &= ~bWAK_P1_3_LO) : \
+  ((PIN == P14) ? (WAKE_CTRL &= ~bWAK_P1_4_LO) : \
+  ((PIN == P15) ? (WAKE_CTRL &= ~bWAK_P1_5_LO) : \
+(0)))))
 
 // ===================================================================================
 // Start PWM on pin, must be a PWM-capable pin: (P15 or P30) and (P34 or P31)
@@ -197,3 +234,55 @@ SBIT(PP37, 0xB0, 7);
   (((FREQ_SYS / 256 / (frq) - 1) > 255) ? (PWM_CK_SE = 255) : \
   (PWM_CK_SE = (uint8_t)(FREQ_SYS / 256 / (frq) - 1))         \
 ))
+
+// ===================================================================================
+// Pin to ADC channel conversion (P11, P14, P15, P32 only)
+// ===================================================================================
+#define ADC_channel(PIN) \
+  ((PIN == P11) ? (0) : \
+  ((PIN == P14) ? (1) : \
+  ((PIN == P15) ? (2) : \
+  ((PIN == P32) ? (3) : \
+(0)))))
+
+// ===================================================================================
+// ADC functions (P11, P14, P15, P32 only)
+// ===================================================================================
+#define ADC_enable()    ADC_CFG |=  bADC_EN
+#define ADC_disable()   ADC_CFG &= ~bADC_EN
+#define ADC_fast()      ADC_CFG |=  bADC_CLK
+#define ADC_slow()      ADC_CFG &= ~bADC_CLK
+
+#define ADC_input(PIN) \
+  ((PIN == P11) ? (ADC_CHAN1 = 0, ADC_CHAN0 = 0) : \
+  ((PIN == P14) ? (ADC_CHAN1 = 0, ADC_CHAN0 = 1) : \
+  ((PIN == P15) ? (ADC_CHAN1 = 1, ADC_CHAN0 = 0) : \
+  ((PIN == P32) ? (ADC_CHAN1 = 1, ADC_CHAN0 = 1) : \
+(0)))))
+
+inline uint8_t ADC_read(void) {
+  ADC_START = 1;
+  while(ADC_START);
+  return ADC_DATA;
+}
+
+// ===================================================================================
+// Pin to comparator inverting input conversion (P14, P32 only)
+// ===================================================================================
+#define CMP_channel(PIN) \
+  ((PIN == P14) ? (0) : \
+  ((PIN == P32) ? (1) : \
+(0)))
+
+// ===================================================================================
+// Comparator functions (positive: P11, P14, P15, P32, negative: P14, P32 only)
+// ===================================================================================
+#define CMP_enable()    ADC_CFG |=  bCMP_EN
+#define CMP_disable()   ADC_CFG &= ~bCMP_EN
+#define CMP_read()      (CMPO)
+
+#define CMP_positive(PIN)   ADC_input(PIN)
+#define CMP_negative(PIN) \
+  ((PIN == P14) ? (CMP_CHAN = 0) : \
+  ((PIN == P32) ? (CMP_CHAN = 1) : \
+(0)))

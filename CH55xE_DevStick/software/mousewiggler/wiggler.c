@@ -11,7 +11,9 @@
 // Description:
 // ------------
 // Mouse Wiggler is a tool that simulates movements of the mouse pointer so that 
-// no screen saver is activated and the PC or notebook is not put to sleep.
+// no screen saver is activated and the PC or notebook is not put to sleep. The
+// mouse pointer movements are imperceptibly small, so that you can continue to
+// work normally on your PC even with the function activated.
 //
 // References:
 // -----------
@@ -43,9 +45,8 @@
 
 // Libraries
 #include <config.h>                       // user configurations
-#include <ch554.h>                        // CH55x header file
+#include <system.h>                       // system functions
 #include <gpio.h>                         // GPIO functions
-#include <clock.h>                        // system clock functions
 #include <delay.h>                        // delay functions
 #include <usb_mouse.h>                    // USB HID mouse functions
 

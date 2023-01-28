@@ -32,9 +32,9 @@
 // Operating Instructions:
 // -----------------------
 // - Connect the board via USB to your PC. It should be detected as a CDC device.
-// - Open a serial monitor or a serial plotter and select the correct serial port
-//   (BAUD rate doesn't matter).
-// - The touchkey raw sample values are continuously transmitted via CDC.
+// - Open a serial monitor and select the correct serial port (BAUD rate doesn't
+//   matter).
+// - Press ACT button to transmit data flash content via USB-CDC.
 
 
 // ===================================================================================
@@ -43,13 +43,11 @@
 
 // Libraries
 #include <config.h>                       // user configurations
-#include <ch554.h>                        // CH55x header file
 #include <gpio.h>                         // GPIO functions
-#include <clock.h>                        // system clock functions
+#include <system.h>                       // system functions
 #include <delay.h>                        // delay functions
-#include <usb_cdc.h>                      // USB-CDC serial functions
 #include <flash.h>                        // data flash functions
-#include <stdio.h>                        // for printf
+#include <usb_cdc.h>                      // USB-CDC serial functions
 
 // Prototypes for used interrupts
 void USB_interrupt(void);

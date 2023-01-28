@@ -43,8 +43,7 @@
 // ===================================================================================
 
 // Libraries
-#include <ch554.h>                        // CH55x header file
-#include <clock.h>                        // system clock functions
+#include <system.h>                       // system functions
 #include <usb_cdc.h>                      // for USB-CDC serial
 
 // Prototypes for used interrupts

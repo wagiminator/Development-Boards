@@ -31,10 +31,8 @@
 // Libraries, Definitions and Macros
 // ===================================================================================
 #include <config.h>             // user configurations
-#include <ch554.h>              // CH55x header file
-#include <clock.h>              // system clock functions
+#include <system.h>             // system functions
 #include <gpio.h>               // GPIO functions
-#include <boot.h>               // for bootloader functions
 
 // ===================================================================================
 // Main Function

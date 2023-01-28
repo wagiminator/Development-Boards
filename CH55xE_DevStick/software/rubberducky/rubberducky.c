@@ -11,7 +11,8 @@
 // Description:
 // ------------
 // Identifies itself as a USB HID keyboard and types a message when the ACT key is
-// pressed. The built-in LED shows the status of CAPS LOCK.
+// pressed. It can be used to control the PC via keyboard shortcuts. The built-in
+// LED shows the status of CAPS LOCK (just for demonstration).
 //
 // References:
 // -----------
@@ -43,9 +44,8 @@
 
 // Libraries
 #include <config.h>                       // user configurations
-#include <ch554.h>                        // CH55x header file
+#include <system.h>                       // system functions
 #include <gpio.h>                         // GPIO functions
-#include <clock.h>                        // system clock functions
 #include <delay.h>                        // delay functions
 #include <usb_keyboard.h>                 // USB HID keyboard functions
 
