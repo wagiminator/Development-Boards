@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO, PWM and ADC Functions for CH551, CH552 and CH554               * v1.2 *
+// Basic GPIO, PWM and ADC Functions for CH551, CH552 and CH554               * v1.3 *
 // ===================================================================================
 //
 // Pins must be defined as P10, P11, P12, etc. - e.g.:
@@ -30,7 +30,7 @@
 //
 // PWM_pol_normal(PIN)      Set normal PWM polarity on PIN (default low and active high)
 // PWM_pol_reverse(PIN)     Set reverse PWM polarity on PIN (default high and active low)
-// PWM_set_freq(freq)       Set global PWM frequency (in Hertz)
+// PWM_set_freq(FREQ)       Set global PWM frequency (in Hertz)
 //
 // ADC_enable()             Enable ADC
 // ADC_disable()            Disable ADC
@@ -170,7 +170,7 @@ SBIT(PP37, 0xB0, 7);
   ((PIN == P15) ? (WAKE_CTRL |= bWAK_P1_5_LO) : \
 (0)))))
 
-#define WAKE_PIN_disable(SOURCE) \
+#define WAKE_PIN_disable(PIN) \
   ((PIN == P13) ? (WAKE_CTRL &= ~bWAK_P1_3_LO) : \
   ((PIN == P14) ? (WAKE_CTRL &= ~bWAK_P1_4_LO) : \
   ((PIN == P15) ? (WAKE_CTRL &= ~bWAK_P1_5_LO) : \
@@ -229,10 +229,10 @@ SBIT(PP37, 0xB0, 7);
 // ===================================================================================
 // Set global PWM frequency (in Hertz, range: FREQ_SYS/65536 - FREQ_SYS/256)
 // ===================================================================================
-#define PWM_set_freq(freq) \
-  (((freq) >= FREQ_SYS / 256) ? (PWM_CK_SE = 0)             : \
-  (((FREQ_SYS / 256 / (frq) - 1) > 255) ? (PWM_CK_SE = 255) : \
-  (PWM_CK_SE = (uint8_t)(FREQ_SYS / 256 / (frq) - 1))         \
+#define PWM_set_freq(FREQ) \
+  (((FREQ) >= FREQ_SYS / 256) ? (PWM_CK_SE = 0)              : \
+  (((FREQ_SYS / 256 / (FREQ) - 1) > 255) ? (PWM_CK_SE = 255) : \
+  (PWM_CK_SE = (uint8_t)(FREQ_SYS / 256 / (FREQ) - 1))         \
 ))
 
 // ===================================================================================

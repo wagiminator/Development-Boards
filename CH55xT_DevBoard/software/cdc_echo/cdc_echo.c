@@ -45,7 +45,7 @@
 
 // Prototypes for used interrupts
 void USB_interrupt(void);
-void DeviceUSBInterrupt(void) __interrupt (INT_NO_USB) {
+void USB_ISR(void) __interrupt(INT_NO_USB) {
   USB_interrupt();
 }
 
