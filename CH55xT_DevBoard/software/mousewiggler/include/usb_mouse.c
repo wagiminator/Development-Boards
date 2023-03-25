@@ -17,7 +17,7 @@
 typedef struct _HID_MOUSE_REPORT_TYPE {
   uint8_t buttons;                    // button states
   int8_t  xmove;                      // relative movement on the x-axis
-  int8_t  ymove;                      // relative movement on the x-axis
+  int8_t  ymove;                      // relative movement on the y-axis
 } HID_MOUSE_REPORT_TYPE, *PHID_MOUSE_REPORT_TYPE;
 
 // Initialize HID report

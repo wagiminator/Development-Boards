@@ -64,8 +64,8 @@ void main(void) {
 
   // Loop
   while(1) {
+    DLY_ms(60000);                        // wait a minute
     MOUSE_move( 1, 0);                    // move mouse pointer just a tiny bit
     MOUSE_move(-1, 0);                    // move pointer back to where it was
-    DLY_ms(60000);                        // wait a minute
   }
 }

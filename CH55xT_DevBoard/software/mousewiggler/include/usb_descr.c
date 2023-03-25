@@ -11,7 +11,7 @@
 __code USB_DEV_DESCR DevDescr = {
   .bLength            = sizeof(DevDescr),       // size of the descriptor in bytes: 18
   .bDescriptorType    = USB_DESCR_TYP_DEVICE,   // device descriptor: 0x01
-  .bcdUSB             = 0x0200,                 // USB specification: USB 2.0
+  .bcdUSB             = 0x0110,                 // USB specification: USB 1.1
   .bDeviceClass       = 0,                      // interface will define class
   .bDeviceSubClass    = 0,                      // unused
   .bDeviceProtocol    = 0,                      // unused
