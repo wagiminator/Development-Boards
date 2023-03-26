@@ -11,7 +11,7 @@
 __code USB_DEV_DESCR DevDescr = {
   .bLength            = sizeof(DevDescr),       // size of the descriptor in bytes: 18
   .bDescriptorType    = USB_DESCR_TYP_DEVICE,   // device descriptor: 0x01
-  .bcdUSB             = 0x0200,                 // USB specification: USB 2.0
+  .bcdUSB             = 0x0110,                 // USB specification: USB 1.1
   .bDeviceClass       = 0,                      // interface will define class
   .bDeviceSubClass    = 0,                      // unused
   .bDeviceProtocol    = 0,                      // unused
@@ -42,6 +42,18 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
     .MaxPower           = USB_MAX_POWER_mA / 2    // in 2mA units
   },
 
+  // Interface Association Descriptor
+  .association = {
+    .bLength            = sizeof(USB_IAD_DESCR),  // size of the descriptor in bytes
+    .bDescriptorType    = USB_DESCR_TYP_IAD,      // interf association descr: 0x0B
+    .bFirstInterface    = 0,                      // first interface
+    .bInterfaceCount    = 2,                      // total number of interfaces
+    .bFunctionClass     = USB_DEV_CLASS_COMM,     // function class: CDC (0x02)
+    .bFunctionSubClass  = 2,                      // 2: Abstract Control Model (ACM)
+    .bFunctionProtocol  = 1,                      // 1: AT command protocol
+    .iFunction          = 4                       // index of String Descriptor
+  },
+
   // Interface Descriptor: Interface 0 (CDC)
   .interface0 = {
     .bLength            = sizeof(USB_ITF_DESCR),  // size of the descriptor in bytes: 9
@@ -58,7 +70,7 @@ __code USB_CFG_DESCR_CDC CfgDescr = {
   // Functional Descriptors for Interface 0
   .functional = {
     0x05,0x24,0x00,0x10,0x01,                     // header functional descriptor
-    0x05,0x24,0x01,0x00,0x01,                     // call management functional descriptor
+    0x05,0x24,0x01,0x00,0x00,                     // call management functional descriptor
     0x04,0x24,0x02,0x02,                          // direct line management functional descriptor
     0x05,0x24,0x06,0x00,0x01                      // union functional descriptor: CDC IF0, Data IF1
   },

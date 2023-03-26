@@ -52,7 +52,7 @@ If you do not want to use the Arduino IDE, you can install the [CH55x Software D
 In order for some programming tools to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [pyusb](https://github.com/pyusb/pyusb) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
-sudo apt install sdcc python3 python3-pip
+sudo apt install build-essential sdcc python3 python3-pip
 sudo pip install pyusb
 ```
 

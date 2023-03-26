@@ -9,8 +9,8 @@
 #define PIN_LED             P33       // pin connected to LED
 
 // USB device descriptor
-#define USB_VENDOR_ID       0x6666    // VID (prototype)
-#define USB_PRODUCT_ID      0x6666    // PID (prototype)
+#define USB_VENDOR_ID       0x16C0    // VID (shared www.voti.nl)
+#define USB_PRODUCT_ID      0x27DD    // PID (shared CDC-ACM)
 #define USB_DEVICE_VERSION  0x0100    // v1.0 (BCD-format)
 
 // USB configuration descriptor

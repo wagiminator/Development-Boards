@@ -37,6 +37,7 @@
 // ===================================================================================
 typedef struct _USB_CFG_DESCR_CDC {
   USB_CFG_DESCR config;
+  USB_IAD_DESCR association;
   USB_ITF_DESCR interface0;
   uint8_t functional[19];
   USB_ENDP_DESCR ep1IN;
