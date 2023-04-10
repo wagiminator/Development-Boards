@@ -1,6 +1,6 @@
 // ===================================================================================
 // Project:   NeoPixel Demo for CH551, CH552 and CH554
-// Version:   v1.0
+// Version:   v1.1
 // Year:      2022
 // Author:    Stefan Wagner
 // Github:    https://github.com/wagiminator
@@ -20,21 +20,23 @@
 // Compilation Instructions:
 // -------------------------
 // - Chip:  CH551, CH552 or CH554
-// - Clock: min. 6 MHz internal
-// - Adjust the firmware parameters in include/config.h if necessary.
+// - Clock: 16 MHz internal
+// - Adjust the firmware parameters in src/config.h if necessary.
 // - Make sure SDCC toolchain and Python3 with PyUSB is installed.
 // - Press BOOT button on the board and keep it pressed while connecting it via USB
 //   with your PC.
-// - Run 'make flash'.
+// - Run 'make flash' immediatly afterwards.
+// - To compile the firmware using the Arduino IDE, follow the instructions in the 
+//   .ino file.
 
 // ===================================================================================
 // Libraries, Definitions and Macros
 // ===================================================================================
-#include <config.h>             // user configurations
-#include <system.h>             // system functions
-#include <delay.h>              // delay functions
-#include <gpio.h>               // GPIO functions
-#include <neo.h>                // NeoPixel functions
+#include "src/config.h"         // user configurations
+#include "src/system.h"         // system functions
+#include "src/delay.h"          // delay functions
+#include "src/gpio.h"           // GPIO functions
+#include "src/neo.h"            // NeoPixel functions
 
 #define BRIGHT  2               // LED brightness (0..2)
 
