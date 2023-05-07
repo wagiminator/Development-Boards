@@ -450,7 +450,7 @@ void USB_init(void) {
   UDEV_CTRL  |= bUD_LOW_SPEED;
   #endif
 
-  UEP0_DMA    = EP0_ADDR;                   // EP0 data transfer address
+  UEP0_DMA    = (uint16_t)EP0_buffer;       // EP0 data transfer address
   UEP0_CTRL   = UEP_R_RES_ACK               // EP0 Manual flip, OUT transaction returns ACK
               | UEP_T_RES_NAK;              // EP0 IN transaction returns NAK
 

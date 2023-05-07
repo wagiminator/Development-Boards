@@ -16,18 +16,18 @@
 #include "usb.h"
 
 // ===================================================================================
-// USB Endpoint Addresses and Sizes
+// USB Endpoint Definitions
 // ===================================================================================
 #define EP0_SIZE        8
 #define EP1_SIZE        8
-
-#define EP0_ADDR        0
-#define EP1_ADDR        (EP0_ADDR + EP0_BUF_SIZE)
 
 #define EP0_BUF_SIZE    EP_BUF_SIZE(EP0_SIZE)
 #define EP1_BUF_SIZE    EP_BUF_SIZE(EP1_SIZE)
 
 #define EP_BUF_SIZE(x)  (x+2<64 ? x+2 : 64)
+
+extern __xdata uint8_t EP0_buffer[];
+extern __xdata uint8_t EP1_buffer[];
 
 // ===================================================================================
 // Device and Configuration Descriptors

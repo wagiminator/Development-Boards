@@ -11,7 +11,7 @@
 //   following board options:
 //   - Clock Source:  16 MHz (internal)
 //   - Upload Method: USB
-//   - USB Settings:  USER CODE /w 266B USB RAM
+//   - USB Settings:  USER CODE /w 0B USB RAM
 // - Press BOOT button on the board and keep it pressed while connecting it via USB
 //   with your PC.
 // - Click on "Upload" immediatly afterwards.
