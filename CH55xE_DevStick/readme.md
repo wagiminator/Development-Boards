@@ -14,8 +14,14 @@ P3.6|USB D+
 P3.7|USB D-
 RST|Physical RESET-button
 
-# Features of the CH55xE
+# The CH55xE Family of 8-bit USB Microcontrollers
+## Overview
 The CH55x is a low-cost, 8-bit enhanced E8051 core microcontroller compatible with the MCS51 instruction set. 79% of its instructions are single-byte single-cycle instructions, and the average instruction speed is 8 - 15 times faster than that of the standard MCS51. The special xRAM supports direct memory access (DMA), data fast copy command, and double DPTR pointers. The CH55x has a built-in USB 2.0 controller and USB transceiver, it supports USB-Host mode (CH554 only) and USB-Device mode, USB Type-C master-slave detection, full-speed (12Mbps) and low-speed (1.5Mbps) traffic, data packets of up to 64 bytes, and DMA. It has a factory built-in bootloader so firmware can be uploaded directly via USB without the need for an additional programming device.
+
+## Block Diagram
+![CH55xG_DevBoard_block.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_block.jpg)
+
+## Features
 
  Specifications |  CH552E |  CH554E 
 :-------------- | :------ | :------ 

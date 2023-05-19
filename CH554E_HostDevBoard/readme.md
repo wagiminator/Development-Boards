@@ -1,4 +1,4 @@
-# CH554E USB Host Development Board
+# CH554E USB Host Development Stick
 Development board for the USB host capabilities of the CH554E microcontroller with an integrated USB-A female connector for connecting USB devices like keyboards, mice, printers, hubs, etc. and a USB-A male connector for providing a serial interface for analysis and debugging on the PC.
 
 ![CH554E_HostDevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH554E_HostDevBoard/documentation/CH554E_HostDevBoard_pic1.jpg)
@@ -8,7 +8,13 @@ Development board for the USB host capabilities of the CH554E microcontroller wi
 ![CH554E_HostDevBoard_wiring.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH554E_HostDevBoard/documentation/CH554E_HostDevBoard_wiring.png)
 
 ## CH554E 8-bit USB Host Microcontroller
+### Overview
 The CH554 is a low-cost, 8-bit enhanced E8051 core microcontroller compatible with the MCS51 instruction set. 79% of its instructions are single-byte single-cycle instructions, and the average instruction speed is 8 - 15 times faster than that of the standard MCS51. The special xRAM supports direct memory access (DMA), data fast copy command, and double DPTR pointers. The CH554 has a built-in USB 2.0 controller and USB transceiver, it supports USB-Host mode and USB-Device mode, USB Type-C master-slave detection, full-speed (12Mbps) and low-speed (1.5Mbps) traffic, data packets of up to 64 bytes, and DMA. It has a factory built-in bootloader so firmware can be uploaded directly via USB without the need for an additional programming device.
+
+### Block Diagram
+![CH55xG_DevBoard_block.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_block.jpg)
+
+### Features
 
  Specifications |  CH554E 
 :-------------- | :------ 
@@ -55,7 +61,7 @@ If you do not want to use the Arduino IDE, you can install the [CH55x Software D
 In order for some programming tools to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [pyusb](https://github.com/pyusb/pyusb) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
-sudo apt install sdcc python3 python3-pip
+sudo apt install build-essential sdcc python3 python3-pip
 sudo pip install pyusb
 ```
 
