@@ -1,5 +1,5 @@
 # CH55xT Development Board
-Development board for the CH552T, CH554T and CH559T microcontrollers with native USB 2.0 and Arduino IDE support.
+Development board for the CH552T, CH554T and CH559T low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
 
 ![CH55xT_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic1.jpg)
 

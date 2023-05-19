@@ -1,5 +1,5 @@
 # CH55xE Development Stick
-Development stick for the CH552E and CH554E microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
+Development stick for the CH552E and CH554E 8-bit USB microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
 
 ![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
 

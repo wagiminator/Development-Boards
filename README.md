@@ -5,17 +5,17 @@ Collection of various development boards for microcontrollers and CPLDs. More de
 - [SAMD Development Boards and Programmers](https://github.com/wagiminator/SAMD-Development-Boards)
 
 ## [CH55xG Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard)
-Development board for the CH551G, CH552G and CH554G microcontrollers with native USB 2.0 and Arduino IDE support.
+Development board for the CH551G, CH552G and CH554G low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
 
 ![CH55xG_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic1.jpg)
 
 ## [CH55xT Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH55xT_DevBoard)
-Development board for the CH552T, CH554T and CH559T microcontrollers with native USB 2.0 and Arduino IDE support.
+Development board for the CH552T, CH554T and CH559T low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
 
 ![CH55xT_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic1.jpg)
 
 ## [CH55xE Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH55xE_DevStick)
-Development stick for the CH552E and CH554E microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
+Development stick for the CH552E and CH554E 8-bit USB microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
 
 ![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
 
