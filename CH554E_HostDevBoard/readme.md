@@ -79,6 +79,7 @@ sudo pip install pyusb
 - [CH55x SDK for SDCC](https://github.com/Blinkinlabs/ch554_sdcc)
 - [ch55xduino](https://github.com/DeqingSun/ch55xduino)
 - [CH554 Datasheet](http://www.wch-ic.com/downloads/CH554DS1_PDF.html)
+- [WCH Official Store on AliExpress](https://wchofficialstore.aliexpress.com)
 
 ![CH554E_HostDevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH554E_HostDevBoard/documentation/CH554E_HostDevBoard_pic2.jpg)
 ![CH554E_HostDevBoard_pic6.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH554E_HostDevBoard/documentation/CH554E_HostDevBoard_pic6.jpg)

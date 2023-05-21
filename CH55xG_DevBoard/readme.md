@@ -71,6 +71,7 @@ sudo pip install pyusb
 - [ch55xduino](https://github.com/DeqingSun/ch55xduino)
 - [CH551/552 Datasheet](http://www.wch-ic.com/downloads/CH552DS1_PDF.html)
 - [CH554 Datasheet](http://www.wch-ic.com/downloads/CH554DS1_PDF.html)
+- [WCH Official Store on AliExpress](https://wchofficialstore.aliexpress.com)
 
 ![CH55xG_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic3.jpg)
 ![CH55xG_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic2.jpg)
