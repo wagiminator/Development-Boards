@@ -1,5 +1,5 @@
 // ===================================================================================
-// USB CDC Functions for CH551, CH552 and CH554
+// Basic USB CDC Functions for CH551, CH552 and CH554                         * v1.2 *
 // ===================================================================================
 
 #pragma once
@@ -16,8 +16,16 @@ void CDC_print(char* str);        // write string to OUT buffer
 void CDC_println(char* str);      // write string with newline to OUT buffer and flush
 uint8_t CDC_available(void);      // check number of bytes in the IN buffer
 __bit CDC_ready(void);            // check if OUT buffer is ready to be written
-__bit CDC_getDTR(void);           // get DTR flag
-__bit CDC_getRTS(void);           // get RTS flag
+#define CDC_writeflush(c)         {CDC_write(c);CDC_flush();}   // write & flush char
+
+// ===================================================================================
+// CDC Control Line State
+// ===================================================================================
+extern volatile __xdata uint8_t CDC_controlLineState;       // control line state
+#define CDC_DTR_flag    (CDC_controlLineState & 1)          // DTR flag
+#define CDC_RTS_flag    ((CDC_controlLineState >> 1) & 1)   // RTS flag
+#define CDC_getDTR()    (CDC_DTR_flag)                      // get DTR flag
+#define CDC_getRTS()    (CDC_RTS_flag)                      // get RTS flag
 
 // ===================================================================================
 // CDC Line Coding
@@ -30,4 +38,5 @@ typedef struct _CDC_LINE_CODING_TYPE {
 } CDC_LINE_CODING_TYPE, *PCDC_LINE_CODING_TYPE;
 
 extern __xdata CDC_LINE_CODING_TYPE CDC_lineCodingB;
-#define CDC_lineCoding ((PCDC_LINE_CODING_TYPE)CDC_lineCodingB)
+#define CDC_lineCoding  ((PCDC_LINE_CODING_TYPE)CDC_lineCodingB)
+#define CDC_getBAUD()   (CDC_lineCoding->baudrate)

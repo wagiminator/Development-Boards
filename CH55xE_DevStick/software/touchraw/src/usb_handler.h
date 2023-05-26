@@ -1,5 +1,5 @@
 // ===================================================================================
-// USB Handler for CH551, CH552 and CH554
+// USB Handler for CH551, CH552 and CH554                                     * v1.2 *
 // ===================================================================================
 
 #pragma once
@@ -10,7 +10,8 @@
 // Variables
 // ===================================================================================
 #define USB_setupBuf ((PUSB_SETUP_REQ)EP0_buffer)
-extern uint8_t SetupReq;
+extern volatile uint8_t  SetupReq;
+extern volatile uint16_t SetupLen;
 
 // ===================================================================================
 // Custom External USB Handler Functions

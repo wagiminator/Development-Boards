@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO, PWM and ADC Functions for CH551, CH552 and CH554               * v1.4 *
+// Basic GPIO, PWM and ADC Functions for CH551, CH552 and CH554               * v1.5 *
 // ===================================================================================
 //
 // Pins must be defined as P10, P11, P12, etc. - e.g.:
@@ -7,43 +7,43 @@
 //
 // Functions available:
 // --------------------
-// PIN_input(PIN)           Set PIN as INPUT (high impedance, no pullup)
-// PIN_input_PU(PIN)        Set PIN as INPUT with internal PULLUP
-// PIN_output(PIN)          Set PIN as OUTPUT (push-pull)
-// PIN_output_OD(PIN)       Set PIN as OUTPUT (open-drain)
+// PIN_input(PIN)           set PIN as INPUT (high impedance, no pullup)
+// PIN_input_PU(PIN)        set PIN as INPUT with internal PULLUP
+// PIN_output(PIN)          set PIN as OUTPUT (push-pull)
+// PIN_output_OD(PIN)       set PIN as OUTPUT (open-drain)
 //
-// PIN_low(PIN)             Set PIN output value to LOW
-// PIN_high(PIN)            Set PIN output value to HIGH
+// PIN_low(PIN)             set PIN output value to LOW
+// PIN_high(PIN)            set PIN output value to HIGH
 // PIN_toggle(PIN)          TOGGLE PIN output value
-// PIN_read(PIN)            Read PIN input value
-// PIN_write(PIN, val)      Write PIN output value (0 = LOW / 1 = HIGH)
+// PIN_read(PIN)            read PIN input value
+// PIN_write(PIN, val)      write PIN output value (0 = LOW / 1 = HIGH)
 //
-// PIN_asm(PIN)             Convert PIN for inline assembly: setb PIN_asm(PIN_LED)
-// PIN_set(PIN)             Convert PIN for direct manipulation: PIN_set(PIN_LED) = 1;
+// PIN_asm(PIN)             convert PIN for inline assembly: setb PIN_asm(PIN_LED)
+// PIN_set(PIN)             convert PIN for direct manipulation: PIN_set(PIN_LED) = 1;
 //
 // PIN_WAKE_enable(PIN)     enable wake-up from sleep by PIN low (P13, P14, P15 only)
 // PIN_WAKE_disable(PIN)    disable wake-up from sleep by PIN low
 //
-// PWM_start(PIN)           Start PWM output on PIN, can be (P15 or P30) and (P34 or P31)
-// PWM_stop(PIN)            Stop PWM output on PIN
-// PWM_write(PIN, val)      Set PWM output active level duty cycle on PIN
+// PWM_start(PIN)           start PWM output on PIN, can be (P15 or P30) and (P34 or P31)
+// PWM_stop(PIN)            stop PWM output on PIN
+// PWM_write(PIN, val)      set PWM output active level duty cycle on PIN
 //
-// PWM_pol_normal(PIN)      Set normal PWM polarity on PIN (default low and active high)
-// PWM_pol_reverse(PIN)     Set reverse PWM polarity on PIN (default high and active low)
-// PWM_set_freq(FREQ)       Set global PWM frequency (in Hertz)
+// PWM_pol_normal(PIN)      set normal PWM polarity on PIN (default low and active high)
+// PWM_pol_reverse(PIN)     set reverse PWM polarity on PIN (default high and active low)
+// PWM_set_freq(FREQ)       set global PWM frequency (in Hertz)
 //
-// ADC_enable()             Enable ADC
-// ADC_disable()            Disable ADC
-// ADC_fast()               Set ADC fast mode ( 96 clock cycles per sample, less accurate)
-// ADC_slow()               Set ADC slow mode (384 clock cycles per sample, more accurate)
-// ADC_input(PIN)           Set ADC input pin (P11, P14, P15, P32 only)
-// ADC_read()               Sample and read ADC value (0..255)
+// ADC_enable()             enable ADC
+// ADC_disable()            disable ADC
+// ADC_fast()               set ADC fast mode ( 96 clock cycles per sample, less accurate)
+// ADC_slow()               set ADC slow mode (384 clock cycles per sample, more accurate)
+// ADC_input(PIN)           set ADC input pin (P11, P14, P15, P32 only)
+// ADC_read()               sample and read ADC value (0..255)
 //
-// CMP_enable()             Enable comparator
-// CMP_disable()            Disable comparator
-// CMP_positive(PIN)        Set CMP non-inverting input pin (P11, P14, P15, P32 only)
-// CMP_negative(PIN)        Set CMP inverting input pin (P14, P32 only)
-// CMP_read()               Read CMP output (0: pos < neg, 1: pos > neg)
+// CMP_enable()             enable comparator
+// CMP_disable()            disable comparator
+// CMP_positive(PIN)        set CMP non-inverting input pin (P11, P14, P15, P32 only)
+// CMP_negative(PIN)        set CMP inverting input pin (P14, P32 only)
+// CMP_read()               read CMP output (0: pos < neg, 1: pos > neg)
 //
 // Notes:
 // ------
@@ -107,6 +107,9 @@ SBIT(PP37, 0xB0, 7);
   ((PIN>=P30)&&(PIN<=P37) ? (P3_DIR_PU &= ~(1<<(PIN&7)), P3_MOD_OC &= ~(1<<(PIN&7))) : \
 (0)))
 
+#define PIN_input_HI    PIN_input
+#define PIN_input_FL    PIN_input
+
 // ===================================================================================
 // Set pin as INPUT with internal PULLUP resistor (also open-drain output,
 // when output changes from LOW to HIGH, it will drive HIGH for 2 clock cycles)
@@ -123,6 +126,8 @@ SBIT(PP37, 0xB0, 7);
   ((PIN>=P10)&&(PIN<=P17) ? (P1_MOD_OC &= ~(1<<(PIN&7)), P1_DIR_PU |= (1<<(PIN&7))) : \
   ((PIN>=P30)&&(PIN<=P37) ? (P3_MOD_OC &= ~(1<<(PIN&7)), P3_DIR_PU |= (1<<(PIN&7))) : \
 (0)))
+
+#define PIN_output_PP   PIN_output
 
 // ===================================================================================
 // Set pin as OPEN-DRAIN OUTPUT (also high-impedance input, no pullup)

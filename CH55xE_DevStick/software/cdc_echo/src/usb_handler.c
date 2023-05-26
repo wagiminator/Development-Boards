@@ -1,12 +1,15 @@
 // ===================================================================================
-// USB Handler for CH551, CH552 and CH554
+// USB Handler for CH551, CH552 and CH554                                     * v1.2 *
 // ===================================================================================
 
 #include "ch554.h"
 #include "usb_handler.h"
 
-uint16_t SetupLen;
-uint8_t  SetupReq, UsbConfig;
+// ===================================================================================
+// Variables
+// ===================================================================================
+volatile uint16_t SetupLen;
+volatile uint8_t  SetupReq, UsbConfig;
 __code uint8_t *pDescr;
 
 // ===================================================================================
@@ -38,7 +41,6 @@ void USB_EP0_copyDescr(uint8_t len) {
 // ===================================================================================
 // Endpoint Handler
 // ===================================================================================
-
 void USB_EP0_SETUP(void) {
   uint8_t len = USB_RX_LEN;
   if(len == (sizeof(USB_SETUP_REQ))) {
@@ -92,9 +94,6 @@ void USB_EP0_SETUP(void) {
                 #endif
                 #ifdef USB_STR_DESCR_i9
                 case 9:   pDescr = USB_STR_DESCR_i9; break;
-                #endif
-                #ifdef USB_STR_DESCR_ixee
-                case 0xee: pDescr = USB_STR_DESCR_ixee; break;
                 #endif
                 default:  pDescr = USB_STR_DESCR_ix; break;
               }
@@ -326,7 +325,6 @@ void USB_EP0_OUT(void) {
 // ===================================================================================
 // USB Interrupt Service Routine
 // ===================================================================================
-
 #pragma save
 #pragma nooverlay
 void USB_interrupt(void) {   // inline not really working in multiple files in SDCC
@@ -437,7 +435,6 @@ void USB_interrupt(void) {   // inline not really working in multiple files in S
 // ===================================================================================
 // USB Init Function
 // ===================================================================================
-
 void USB_init(void) {
   USB_CTRL    = bUC_DEV_PU_EN               // USB internal pull-up enable
               | bUC_INT_BUSY                // Return NAK if USB INT flag not clear
@@ -445,7 +442,7 @@ void USB_init(void) {
   UDEV_CTRL   = bUD_PD_DIS                  // Disable UDP/UDM pulldown resistor
               | bUD_PORT_EN;                // Enable port, full-speed
 
-  #if F_CPU < 12000000                      // Set low-speed mode if SysFreq < 12 MHz
+  #if F_CPU < 6000000                       // Set low-speed mode if SysFreq < 6 MHz
   USB_CTRL   |= bUC_LOW_SPEED;
   UDEV_CTRL  |= bUD_LOW_SPEED;
   #endif

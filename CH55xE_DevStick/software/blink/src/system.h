@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for CH551, CH552 and CH554                          * v1.4 *
+// Basic System Functions for CH551, CH552 and CH554                          * v1.5 *
 // ===================================================================================
 //
 // Functions available:
@@ -159,8 +159,20 @@ inline void RST_now(void) {
 // ===================================================================================
 inline void BOOT_now(void) {
   __asm
-    lcall #BOOT_LOAD_ADDR
+    ljmp #BOOT_LOAD_ADDR
   __endasm;
+}
+
+inline void BOOT_prepare(void) {
+  ES = 0;
+  PS = 0;
+  TMOD       = 0;
+  P1_DIR_PU  = 0;
+  P1_MOD_OC  = 0;	
+  P1         = 0xFF;
+  USB_INT_EN = 0;
+  USB_CTRL   = 0x06;
+  EA = 0;
 }
 
 // ===================================================================================
