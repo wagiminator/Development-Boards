@@ -137,7 +137,8 @@ void DLY_ticks(uint32_t n);                             // delay n system ticks
 #define RST_wasPin()      (RCC->RSTSCKR & RCC_PORRSTF)
 
 // Independent watchdog timer (IWDG) functions
-void IWDG_start(uint16_t ms);                           // start IWDT with time in ms
+void IWDG_start(uint16_t ms);                           // start IWDG with time in ms
+void IWDG_reload(uint16_t ms);                          // reload IWDG with time in ms
 #define IWDG_feed()       IWDG->CTLR = 0xAAAA           // feed the dog (reload time)
 
 // Sleep functions
