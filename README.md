@@ -19,6 +19,16 @@ Development stick for the CH552E and CH554E 8-bit USB microcontrollers with a bu
 
 ![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
 
+## [CH32V003A4M6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003A4M6_DevBoard)
+Development board for the CH32V003A4M6 ultra-cheap (10 cents) 32-bit RISC-V microcontroller.
+
+![CH32V003A4M6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003A4M6_DevBoard/documentation/CH32V003A4M6_DevBoard_pic1.jpg)
+
+## [CH32V003F4P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003F4P6_DevBoard)
+Development board for the CH32V003F4P6 ultra-cheap (10 cents) 32-bit RISC-V microcontroller.
+
+![CH32V003F4P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003F4P6_DevBoard_pic1.jpg)
+
 ## [CH554E USB Host Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH554E_HostDevBoard)
 Development board for the USB host capabilities of the CH554E microcontroller with an integrated USB-A female connector for connecting USB devices like keyboards, mice, printers, hubs, etc. and a USB-A male connector for providing a serial interface for analysis and debugging on the PC.
 
