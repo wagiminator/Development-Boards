@@ -3,12 +3,12 @@
 // ===================================================================================
 
 #pragma once
-#include <stdint.h>
-#include "ch32v003.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "ch32v003.h"
 
 // UART parameters
 #define UART_BAUD         115200          // default UART baud rate

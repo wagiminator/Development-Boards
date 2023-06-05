@@ -62,7 +62,6 @@ const uint32_t DIVIDER[] = {1, 10, 100, 1000, 10000, 100000, 1000000,
 
 // Print decimal value (BCD conversion by substraction method)
 void DEBUG_printD(uint32_t value) {
-  #if DEBUG_ENABLE == 1
   uint8_t digits   = 10;                          // print 10 digits
   uint8_t leadflag = 0;                           // flag for leading spaces
   while(digits--) {                               // for all digits digits
@@ -76,36 +75,27 @@ void DEBUG_printD(uint32_t value) {
     if(!digits)  leadflag++;                      // least digit has to be printed
     if(leadflag) DEBUG_write(digitval + '0');     // print the digit
   }
-  #endif
 }
 
 // Convert byte nibble into hex character and print it via UART
 void DEBUG_printN(uint8_t nibble) {
-  #if DEBUG_ENABLE == 1
   DEBUG_write((nibble <= 9) ? ('0' + nibble) : ('A' - 10 + nibble));
-  #endif
 }
 
 // Convert byte into hex characters and print it via UART
 void DEBUG_printB(uint8_t value) {
-  #if DEBUG_ENABLE == 1
   DEBUG_printN(value >> 4);
   DEBUG_printN(value & 0x0f);
-  #endif
 }
 
 // Convert word into hex characters and print it via UART
 void DEBUG_printW(uint16_t value) {
-  #if DEBUG_ENABLE == 1
   DEBUG_printB(value >> 8);
   DEBUG_printB(value);
-  #endif
 }
 
 // Convert long into hex characters and print it via UART
 void DEBUG_printH(uint32_t value) {
-  #if DEBUG_ENABLE == 1
   DEBUG_printW(value >> 16);
   DEBUG_printW(value);
-  #endif
 }

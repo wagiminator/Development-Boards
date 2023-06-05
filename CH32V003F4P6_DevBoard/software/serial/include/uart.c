@@ -4,9 +4,12 @@
 
 #include "uart.h"
 
+// UART calculate BAUD rate setting
+#define UART_BRR    (((2 * (F_CPU) / (UART_BAUD)) + 1) / 2)
+
 // Init UART
 void UART_init(void) {
-  #if UART_REMAP == 0
+#if UART_REMAP == 0
   // Enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
 
@@ -15,8 +18,7 @@ void UART_init(void) {
   GPIOD->CFGLR &= ~((0b1111<<(5<<2)) | (0b1111<<(6<<2)));
   GPIOD->CFGLR |=  ((0b1001<<(5<<2)) | (0b1000<<(6<<2)));
   GPIOD->OUTDR |=  1<<6;
-
-  #elif UART_REMAP == 1
+#elif UART_REMAP == 1
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
   AFIO->PCFR1    |= 1<<2;
@@ -26,8 +28,7 @@ void UART_init(void) {
   GPIOD->CFGLR &= ~((0b1111<<(0<<2)) | (0b1111<<(1<<2)));
   GPIOD->CFGLR |=  ((0b1001<<(0<<2)) | (0b1000<<(1<<2)));
   GPIOD->OUTDR |=  1<<1;
-
-  #elif UART_REMAP == 2
+#elif UART_REMAP == 2
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
   AFIO->PCFR1    |= 1<<21;
@@ -37,8 +38,7 @@ void UART_init(void) {
   GPIOD->CFGLR &= ~((0b1111<<(6<<2)) | (0b1111<<(5<<2)));
   GPIOD->CFGLR |=  ((0b1001<<(6<<2)) | (0b1000<<(5<<2)));
   GPIOD->OUTDR |=  1<<5;
-
-  #elif UART_REMAP == 3
+#elif UART_REMAP == 3
   // Remap UART pins, enable GPIO port C and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPCEN | RCC_USART1EN;
   AFIO->PCFR1    |= (1<<21) | (1<<2);
@@ -48,13 +48,12 @@ void UART_init(void) {
   GPIOC->CFGLR &= ~((0b1111<<(0<<2)) | (0b1111<<(1<<2)));
   GPIOC->CFGLR |=  ((0b1001<<(0<<2)) | (0b1000<<(1<<2)));
   GPIOC->OUTDR |=  1<<1;
-
-  #else
-    #warning Wrong UART REMAP
-  #endif
+#else
+  #warning Wrong UART REMAP
+#endif
 	
   // Setup and start UART (8N1, RX/TX, default BAUD rate)
-  USART1->BRR   = (((2 * (F_CPU) / (UART_BAUD)) + 1) / 2);
+  USART1->BRR   = UART_BRR;
   USART1->CTLR1 = USART_CTLR1_RE | USART_CTLR1_TE | USART_CTLR1_UE;
 }
 

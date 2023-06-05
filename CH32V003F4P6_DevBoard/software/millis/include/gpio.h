@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO Functions for CH32V003                                          * v1.0 *
+// Basic GPIO Functions for CH32V003                                          * v1.1 *
 // ===================================================================================
 //
 // Pins must be defined as PA0, PA1, .., PC0, PC1, etc. - e.g.:
@@ -21,13 +21,56 @@
 // PIN_write(PIN, val)      Write PIN output value (0 = LOW / 1 = HIGH)
 //
 // PORT_enable(PIN)         Enable GPIO PORT of PIN
-// PORT_disable(PIN)        Disable GPIO PORT of PIN
+// PORTA_enable()           Enable GPIO PORT A
+// PORTC_enable()           Enable GPIO PORT C
+// PORTD_enable()           Enable GPIO PORT D
 // PORTS_enable()           Enable all GPIO PORTS
+//
+// PORT_disable(PIN)        Disable GPIO PORT of PIN
+// PORTA_disable()          Disable GPIO PORT A
+// PORTC_disable()          Disable GPIO PORT C
+// PORTD_disable()          Disable GPIO PORT D
 // PORTS_disable()          Disable all GPIO PORTS
+//
+// ADC_init()               Init, enable and calibrate ADC (must be called first)
+// ADC_enable()             enable ADC (power-up)
+// ADC_disable()            disable ADC (power-down)
+// ADC_fast()               set fast mode   ( 28 clock cycles, least accurate, default)
+// ADC_slow()               set slow mode   (504 clock cycles, most accurate)
+// ADC_medium()             set medium mode (168 clock cycles, medium accurate)
+//
+// ADC_input(PIN)           Set PIN as ADC input
+// ADC_input_VREF()         Set internal voltage referece (Vref) as ADC input
+// ADC_input_VCAL()         Set calibration voltage (Vcal) as ADC input
+//
+// ADC_read()               Sample and read ADC value (0..1023)
+// ADC_read_VDD()           Sample and read supply voltage (VDD) in millivolts (mV)
+//
+// OPA_enable()             Enable OPA comparator
+// OPA_disable()            Disable OPA comparator
+// OPA_negative(PIN)        Set OPA inverting input PIN (PA1, PD0 only)
+// OPA_positive(PIN)        Set OPA non-inverting input PIN (PA2, PD7 only)
+// OPA_output()             Enable OPA output (push-pull) on pin PD4
+// OPA_output_OD()          Enable OPA output (open-drain) on pin PD4
+// OPA_read()               Read OPA output (0: pos < neg, 1: pos > neg)
+//
+// Notes:
+// ------
+// - Pins used for ADC must be set with PIN_input_AN beforehand. Only the following 
+//   pins can be used as INPUT for the ADC: PA1, PA2, PC4, PD2, PD3, PD4, PD5, PD6.
+// - Pins used as input for OPA comparator must be set with PIN_input_AN beforehand.
+//   Only the following pins can be used for the OPA: PA1 or PD0 as negative
+//   (inverting) input, PA2 or PD7 as positive (non-inverting) input and PD4 as
+//   ouput.
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
 #pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "ch32v003.h"
 
 // ===================================================================================
@@ -89,6 +132,8 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
   ((PIN>=PC0)&&(PIN<=PC7) ? ( GPIOC->CFGLR &= ~(0b1111<<(((PIN)&7)<<2)) ) : \
   ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR &= ~(0b1111<<(((PIN)&7)<<2)) ) : \
 (0))))
+#define PIN_input_AD  PIN_input_AN
+#define PIN_input_ADC PIN_input_AN
 
 // ===================================================================================
 // Set PIN as OUTPUT (push-pull, maximum speed 10MHz)
@@ -157,8 +202,13 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
 #define PIN_write(PIN, val) (val)?(PIN_high(PIN)):(PIN_low(PIN))
 
 // ===================================================================================
-// Enable GPIO PORT of PIN
+// Enable GPIO PORTS
 // ===================================================================================
+#define PORTA_enable()      RCC->APB2PCENR |= RCC_IOPAEN;
+#define PORTC_enable()      RCC->APB2PCENR |= RCC_IOPCEN;
+#define PORTD_enable()      RCC->APB2PCENR |= RCC_IOPDEN;
+#define PORTS_enable()      RCC->APB2PCENR |= RCC_IOPAEN | RCC_IOPCEN | RCC_IOPDEN
+
 #define PORT_enable(PIN) \
   ((PIN>=PA0)&&(PIN<=PA7) ? ( RCC->APB2PCENR |= RCC_IOPAEN ) : \
   ((PIN>=PC0)&&(PIN<=PC7) ? ( RCC->APB2PCENR |= RCC_IOPCEN ) : \
@@ -166,8 +216,13 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
 (0))))
 
 // ===================================================================================
-// Disable GPIO PORT of PIN
+// Disable GPIO PORTS
 // ===================================================================================
+#define PORTA_disable()     RCC->APB2PCENR &= ~RCC_IOPAEN
+#define PORTC_disable()     RCC->APB2PCENR &= ~RCC_IOPCEN
+#define PORTD_disable()     RCC->APB2PCENR &= ~RCC_IOPDEN
+#define PORTS_disable()     RCC->APB2PCENR &= ~(RCC_IOPAEN | RCC_IOPCEN | RCC_IOPDEN)
+
 #define PORT_disable(PIN) \
   ((PIN>=PA0)&&(PIN<=PA7) ? ( RCC->APB2PCENR &= ~RCC_IOPAEN ) : \
   ((PIN>=PC0)&&(PIN<=PC7) ? ( RCC->APB2PCENR &= ~RCC_IOPCEN ) : \
@@ -175,11 +230,90 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
 (0))))
 
 // ===================================================================================
-// Enable all GPIO PORTS
+// ADC Functions
 // ===================================================================================
-#define PORTS_enable()      RCC->APB2PCENR |= RCC_IOPAEN | RCC_IOPCEN | RCC_IOPDEN
+#define ADC_enable()        ADC1->CTLR2  |=  ADC_ADON
+#define ADC_disable()       ADC1->CTLR2  &= ~ADC_ADON
+#define ADC_fast()          ADC1->SAMPTR2 = 0b00000000000000000000000000000000
+#define ADC_slow()          ADC1->SAMPTR2 = 0b00111111111111111111111111111111
+#define ADC_medium()        ADC1->SAMPTR2 = 0b00110110110110110110110110110110
+
+#define ADC_input_VREF()    ADC1->RSQR3 = 8
+#define ADC_input_VCAL()    ADC1->RSQR3 = 9
+
+#define ADC_input(PIN) \
+  (PIN == PA1 ? (ADC1->RSQR3 = 1) : \
+  (PIN == PA2 ? (ADC1->RSQR3 = 0) : \
+  (PIN == PC4 ? (ADC1->RSQR3 = 2) : \
+  (PIN == PD2 ? (ADC1->RSQR3 = 3) : \
+  (PIN == PD3 ? (ADC1->RSQR3 = 4) : \
+  (PIN == PD4 ? (ADC1->RSQR3 = 7) : \
+  (PIN == PD5 ? (ADC1->RSQR3 = 5) : \
+  (PIN == PA6 ? (ADC1->RSQR3 = 6) : \
+(0)))))))))
+
+static inline void ADC_init(void) {
+  RCC->APB2PCENR |= RCC_ADC1EN | RCC_AFIOEN;    // enable ADC and AFIO
+  ADC1->CTLR2   = ADC_ADON | ADC_EXTSEL;        // turn on ADC, software triggering
+  ADC1->CTLR2  |= ADC_RSTCAL;                   // reset calibration
+  while(ADC1->CTLR2 & ADC_RSTCAL);              // wait until finished
+  ADC1->CTLR2  |= ADC_CAL;                      // start calibration
+  while(ADC1->CTLR2 & ADC_CAL);                 // wait until finished
+}
+
+static inline uint16_t ADC_read(void) {
+  ADC1->CTLR2 |= ADC_SWSTART;                   // start conversion
+  while(!(ADC1->STATR & ADC_EOC));              // wait until finished
+  return ADC1->RDATAR;                          // return result
+}
+
+static inline uint16_t ADC_read_VDD(void) {
+  ADC_input_VREF();                             // set VREF as ADC input
+  return((uint32_t)1200 * 1023 / ADC_read());   // return VDD im mV
+}
 
 // ===================================================================================
-// Disable all GPIO PORTS
+// OPA Functions
 // ===================================================================================
-#define PORTS_disable()     RCC->APB2PCENR &= ~(RCC_IOPAEN | RCC_IOPCEN | RCC_IOPDEN)
+#define OPA_enable()        EXTEN->EXTEN_CTR |=  EXTEN_OPA_EN
+#define OPA_disable()       EXTEN->EXTEN_CTR &= ~EXTEN_OPA_EN
+#define OPA_read()          ((GPIOD->INDR >> 4) & 1)
+
+#define OPA_negative(PIN) \
+  (PIN == PA1 ? (EXTEN->EXTEN_CTR &= ~EXTEN_OPA_NSEL) : \
+  (PIN == PD0 ? (EXTEN->EXTEN_CTR |=  EXTEN_OPA_NSEL) : \
+(0)))
+
+#define OPA_positive(PIN) \
+  (PIN == PA2 ? (EXTEN->EXTEN_CTR &= ~EXTEN_OPA_PSEL) : \
+  (PIN == PD7 ? (EXTEN->EXTEN_CTR |=  EXTEN_OPA_PSEL) : \
+(0)))
+
+#define OPA_output() {                 \
+  RCC->APB2PCENR |=   RCC_AFIOEN;      \
+  GPIOD->CFGLR   &= ~(0b1111<<(4<<2)); \
+  GPIOD->CFGLR   |=   0b1001<<(4<<2);  \
+}
+
+#define OPA_output_OD() {              \
+  RCC->APB2PCENR |=   RCC_AFIOEN;      \
+  GPIOD->CFGLR   &= ~(0b1111<<(4<<2)); \
+  GPIOD->CFGLR   |=   0b1101<<(4<<2);  \
+}
+
+#define OPA_output_PP       OPA_output
+
+// ===================================================================================
+// CMP Functions
+// ===================================================================================
+#define CMP_enable          OPA_enable
+#define CMP_disable         OPA_disable
+#define CMP_negative        OPA_negative
+#define CMP_positive        OPA_positive
+#define CMP_output          OPA_output
+#define CMP_output_PP       OPA_output_PP
+#define CMP_output_OD       OPA_output_OD
+
+#ifdef __cplusplus
+};
+#endif

@@ -3,12 +3,12 @@
 // ===================================================================================
 
 #pragma once
-#include <stdint.h>
-#include "ch32v003.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "ch32v003.h"
 
 // UART parameters
 #define UART_BAUD         115200          // default UART baud rate
@@ -29,6 +29,7 @@ void UART_printH(uint32_t value);         // send hex long value as string
 void UART_printW(uint16_t value);         // send hex word value as string
 void UART_printB(uint8_t value);          // send hex byte value as string
 char UART_read(void);                     // read character via UART
+#define UART_printS UART_print            // alias
 
 // UART_REMAP   TX-pin  RX-pin
 //         0     PD5     PD6
