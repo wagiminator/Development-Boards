@@ -74,15 +74,16 @@ sudo apt install build-essential libnewlib-dev gcc-riscv64-unknown-elf libusb-1.
 ```
 
 ## Arduino IDE and PlatformIO Support
-There are projects around to make the CH32V003 compatible with the [Arduino IDE](https://github.com/AlexanderMandera/arduino-wch32v003) and [PlatformIO](https://github.com/Community-PIO-CH32V/platform-ch32v).
+There are projects around to make the CH32V003 compatible with the Arduino IDE ([arduino_core_ch32](https://github.com/openwch/arduino_core_ch32) and [arduino-wch32v003](https://github.com/AlexanderMandera/arduino-wch32v003)) and PlatformIO ([platform-ch32v](https://github.com/Community-PIO-CH32V/platform-ch32v)).
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
 - [MounRiver Studio](http://www.mounriver.com/)
 - [ch32003fun SDK](https://github.com/cnlohr/ch32v003fun)
-- [CH32V003 on openwch](https://github.com/openwch/ch32v003)
-- [CH32V003 with Arduino](https://github.com/AlexanderMandera/arduino-wch32v003)
+- [arduino_core_ch32](https://github.com/openwch/arduino_core_ch32)
+- [arduino-wch32v003](https://github.com/AlexanderMandera/arduino-wch32v003)
 - [CH32V003 with PlatformIO](https://github.com/Community-PIO-CH32V/platform-ch32v)
+- [CH32V003 on openwch](https://github.com/openwch/ch32v003)
 - [CH32V003 datasheets](http://www.wch-ic.com/products/CH32V003.html)
 - [MuseLab nanoCH32V003](https://github.com/wuxx/nanoCH32V003)
 - [WCH Official Store on AliExpress](https://wchofficialstore.aliexpress.com)
