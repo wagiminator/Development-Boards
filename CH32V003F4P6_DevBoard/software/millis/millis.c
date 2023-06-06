@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Blink an LED using millis counter.
+// Blink built-in LED using millis counter.
 //
 // References:
 // -----------

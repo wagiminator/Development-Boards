@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Blink an LED using deep sleep with automatic wake-up timer.
+// Blink built-in LED using deep sleep with automatic wake-up timer.
 //
 // References:
 // -----------

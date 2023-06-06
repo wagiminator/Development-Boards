@@ -19,7 +19,7 @@ void DEBUG_init(void) {
   GPIOD->CFGLR |=   0b1001<<(5<<2);
 	
   // Setup and start UART (8N1, TX only)
-  USART1->BRR   = DEBUG_BRR;
+  USART1->BRR   = ((2 * F_CPU / DEBUG_BAUD) + 1) / 2;
   USART1->CTLR1 = USART_CTLR1_TE | USART_CTLR1_UE;
   #endif
 }
@@ -95,7 +95,7 @@ void DEBUG_printW(uint16_t value) {
 }
 
 // Convert long into hex characters and print it via UART
-void DEBUG_printH(uint32_t value) {
+void DEBUG_printL(uint32_t value) {
   DEBUG_printW(value >> 16);
   DEBUG_printW(value);
 }

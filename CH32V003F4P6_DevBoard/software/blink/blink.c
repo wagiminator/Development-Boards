@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Blink an LED using delay.
+// Blink built-in LED using delay.
 //
 // References:
 // -----------

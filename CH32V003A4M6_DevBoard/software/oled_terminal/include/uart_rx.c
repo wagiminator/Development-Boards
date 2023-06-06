@@ -50,7 +50,7 @@ void UART_init(void) {
   #endif
 	
   // Setup and start UART (8N1, RX, default BAUD rate)
-  USART1->BRR   = (((2 * (F_CPU) / (UART_BAUD)) + 1) / 2);
+  USART1->BRR   = ((2 * (F_CPU) / (UART_BAUD)) + 1) / 2;
   USART1->CTLR1 = USART_CTLR1_RE | USART_CTLR1_UE;
 }
 

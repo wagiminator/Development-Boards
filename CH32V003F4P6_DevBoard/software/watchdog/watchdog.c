@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Blink an LED using independent watchdog resets.
+// Blink built-in LED using independent watchdog resets.
 //
 // References:
 // -----------

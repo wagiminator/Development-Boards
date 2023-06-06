@@ -4,9 +4,6 @@
 
 #include "uart.h"
 
-// UART calculate BAUD rate setting
-#define UART_BRR    (((2 * (F_CPU) / (UART_BAUD)) + 1) / 2)
-
 // Init UART
 void UART_init(void) {
 #if UART_REMAP == 0
@@ -53,7 +50,7 @@ void UART_init(void) {
 #endif
 	
   // Setup and start UART (8N1, RX/TX, default BAUD rate)
-  USART1->BRR   = UART_BRR;
+  USART1->BRR   = ((2 * F_CPU / UART_BAUD) + 1) / 2;
   USART1->CTLR1 = USART_CTLR1_RE | USART_CTLR1_TE | USART_CTLR1_UE;
 }
 
@@ -119,7 +116,7 @@ void UART_printW(uint16_t value) {
 }
 
 // Convert long into hex characters and print it via UART
-void UART_printH(uint32_t value) {
+void UART_printL(uint32_t value) {
   UART_printW(value >> 16);
   UART_printW(value);
 }

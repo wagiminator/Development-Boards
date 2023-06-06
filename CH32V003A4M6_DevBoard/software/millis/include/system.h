@@ -147,13 +147,13 @@ void DLY_ticks(uint32_t n);                             // delay n system ticks
 // Reset functions
 // ===================================================================================
 #define RST_now()         PFIC->CFGR    = PFIC_RESETSYS | PFIC_KEY3
-#define RST_clearFlags()  RCC->RSTSCKR |= RCC_PINRSTF
+#define RST_clearFlags()  RCC->RSTSCKR |= RCC_RMVF
 #define RST_wasLowPower() (RCC->RSTSCKR & RCC_LPWRRSTF)
 #define RST_wasWWDG()     (RCC->RSTSCKR & RCC_WWDGRSTF)
 #define RST_wasIWDG()     (RCC->RSTSCKR & RCC_IWDGRSTF)
 #define RST_wasSoftware() (RCC->RSTSCKR & RCC_SFTRSTF)
 #define RST_wasPower()    (RCC->RSTSCKR & RCC_PORRSTF)
-#define RST_wasPin()      (RCC->RSTSCKR & RCC_PORRSTF)
+#define RST_wasPin()      (RCC->RSTSCKR & RCC_PINRSTF)
 
 // ===================================================================================
 // Independent watchdog timer (IWDG) functions
