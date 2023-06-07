@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic UART Functions (RX only) for CH32V003                                * v1.0 *
+// UART with DMA (RX only) for CH32V003                                       * v1.0 *
 // ===================================================================================
 //
 // Functions available:
@@ -30,14 +30,15 @@ extern "C" {
 // UART parameters
 #define UART_BAUD         115200          // default UART baud rate
 #define UART_REMAP        0               // UART pin remapping (see above)
+#define UART_RX_BUF_SIZE  64              // UART RX buffer size
 
 // UART macros
-#define UART_available()  (USART1->STATR & USART_STATR_RXNE)  // ready to read
 #define UART_setBAUD(n)   USART1->BRR = ((2*F_CPU/(n))+1)/2;  // set BAUD rate
 
 // UART functions
 void UART_init(void);                     // init UART with default BAUD rate
 char UART_read(void);                     // read character via UART
+uint8_t UART_available(void);             // check if there is something to read
 
 #ifdef __cplusplus
 };

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   OLED Terminal Demo for CH32V003
+// Project:   UART DMA Serial Demo for CH32V003
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner
@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Displays text sent via UART on an SSD1306 128x64 pixels OLED.
+// Echoes data sent via UART. Uses DMA for UART RX.
 //
 // References:
 // -----------
@@ -23,25 +23,17 @@
 // ===================================================================================
 #include <system.h>           // system functions
 #include <gpio.h>             // GPIO functions
-#include <uart_dma_rx.h>      // UART RX functions
-#include <oled_term.h>        // OLED terminal functions
+#include <uart_dma.h>         // UART functions
 
 // ===================================================================================
 // Main Function
 // ===================================================================================
 int main(void) {
   // Setup
-  UART_init();                // init UART
-  OLED_init();                // init OLED
+  UART_init();                // init UART with default BAUD rate (115200)
   
-  // Print start message
-  OLED_print("UART TO OLED TERMINAL");
-  OLED_print("---------------------");
-  OLED_print("Ready\n");
-  OLED_print("_\r");
-
   // Loop
   while(1) {
-    OLED_write(UART_read());  // print incoming character on OLED
+    UART_write(UART_read());  // echo any received character
   }
 }

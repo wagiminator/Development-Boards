@@ -23,7 +23,7 @@
 // ===================================================================================
 #include <system.h>           // system functions
 #include <gpio.h>             // GPIO functions
-#include <uart_rx.h>          // UART RX functions
+#include <uart_dma_rx.h>      // UART RX functions
 #include <oled_term.h>        // OLED terminal functions
 
 // ===================================================================================
@@ -32,7 +32,6 @@
 int main(void) {
   // Setup
   UART_init();                // init UART
-  UART_setBAUD(9600);         // slower BAUD rate for I2C to keep up
   OLED_init();                // init OLED
   
   // Print start message

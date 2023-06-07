@@ -1,8 +1,13 @@
 // ===================================================================================
-// Basic UART Functions (RX only) for CH32V003                                * v1.0 *
+// UART with DMA (RX only) for CH32V003                                       * v1.0 *
 // ===================================================================================
 
-#include "uart_rx.h"
+#include "uart_dma_rx.h"
+
+// Circular RX buffer
+char UART_RX_buffer[UART_RX_BUF_SIZE];
+uint8_t UART_RX_tptr = 0;
+#define UART_RX_hptr (UART_RX_BUF_SIZE - DMA1_Channel5->CNTR)
 
 // Init UART
 void UART_init(void) {
@@ -50,12 +55,30 @@ void UART_init(void) {
   #endif
 	
   // Setup and start UART (8N1, RX, default BAUD rate)
-  USART1->BRR   = ((2 * (F_CPU) / (UART_BAUD)) + 1) / 2;
-  USART1->CTLR1 = USART_CTLR1_RE | USART_CTLR1_UE;
+  USART1->BRR    = ((2 * (F_CPU) / (UART_BAUD)) + 1) / 2;
+  USART1->CTLR3 |= USART_CTLR3_DMAR;
+  USART1->CTLR1  = USART_CTLR1_RE | USART_CTLR1_UE;
+
+  // Setup DMA Channel 5
+  RCC->AHBPCENR |= RCC_DMA1EN;
+  DMA1_Channel5->CNTR  = (uint16_t)UART_RX_BUF_SIZE;
+  DMA1_Channel5->MADDR = (uint32_t)UART_RX_buffer;
+  DMA1_Channel5->PADDR = (uint32_t)&USART1->DATAR;
+  DMA1_Channel5->CFGR  = DMA_CFGR1_MINC       // increment memory address
+                       | DMA_CFGR1_CIRC       // circular mode
+                       | DMA_CFGR1_EN;        // enable
 }
 
-// Read byte via UART
+// Check if something is in the RX buffer
+uint8_t UART_available(void) {
+  return(UART_RX_hptr != UART_RX_tptr);
+}
+
+// Read from UART buffer
 char UART_read(void) {
+  char result;
   while(!UART_available());
-  return USART1->DATAR;
+  result = UART_RX_buffer[UART_RX_tptr++];
+  if(UART_RX_tptr >= UART_RX_BUF_SIZE) UART_RX_tptr = 0;
+  return result;
 }
