@@ -41,6 +41,7 @@ Alternatively, there is a platform-independent open-source tool called minichlin
 To use the WCH-LinkE on Linux, you need to grant access permissions beforehand by executing the following commands:
 ```
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="8010", MODE="666"' | sudo tee /etc/udev/rules.d/99-WCH-LinkE.rules
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="8012", MODE="666"' | sudo tee -a /etc/udev/rules.d/99-WCH-LinkE.rules
 sudo udevadm control --reload-rules
 ```
 
