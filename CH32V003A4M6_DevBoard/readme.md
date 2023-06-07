@@ -56,7 +56,7 @@ WCH-LinkE      DevBoard
 +-------+      +------+
 ```
 
-If the blue LED stays on after plugging in the WCH-LinkE into the USB port, then the device is in ARM mode and needs to be switched to the Risc-V mode first. This can be done by selecting the "WCH-LinkRV" mode using the software provided by WCH (MounRiver Studio or WCH-LinkUtility). Alternatively, the ModeS button on the device can be held down while plugging it into the USB port. More information can be found in the [WCH-Link User Manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html).
+If the blue LED on the WCH-LinkE stays on after plugging it into the USB port, then the device is in ARM mode and needs to be switched to RISC-V mode first. This can be done by selecting "WCH-LinkRV" using the software provided by WCH (MounRiver Studio or WCH-LinkUtility). Alternatively, the ModeS button on the device can be held down while plugging it into the USB port. More information can be found in the [WCH-Link User Manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html).
 
 ## Open-Source Debugging Devices
 As part of his [ch32v003fun](https://github.com/cnlohr/ch32v003fun) project, Charles Lohr has also developed open-source programmers/debuggers based on STM32F042 and ESP32S2. Furthermore, the schematic diagram of the WCH-LinkE based on the CH32V305F is available on the manufacturer's [website](https://www.wch.cn/products/WCH-Link.html), but the [firmware](https://github.com/openwch/ch32v003) can only be downloaded as a binary file.
@@ -87,7 +87,7 @@ There are projects around to make the CH32V003 compatible with the Arduino IDE (
 - [CH32V003 on openwch](https://github.com/openwch/ch32v003)
 - [MuseLab nanoCH32V003](https://github.com/wuxx/nanoCH32V003)
 - [CH32V003 datasheets](http://www.wch-ic.com/products/CH32V003.html)
-- [WCH-LinkE user manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html)
+- [WCH-Link user manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html)
 - [WCH Official Store on AliExpress](https://wchofficialstore.aliexpress.com)
 
 ![CH32V003A4M6_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003A4M6_DevBoard/documentation/CH32V003A4M6_DevBoard_pic2.jpg)
