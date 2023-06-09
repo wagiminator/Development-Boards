@@ -1,24 +1,24 @@
 // ===================================================================================
-// Basic FLASH Functions for CH32V003                                         * v1.0 *
+// Basic FLASH Functions for CH32V003                                         * v1.1 *
 // ===================================================================================
 
 #include "flash.h"
 
-#define FLASH_KEY1          0x45670123
-#define FLASH_KEY2          0xCDEF89AB
-#define FLASH_RDPRT         0x00A5
-
-#define FLASH_OB_BASE       0b11100010
-
+#define FLASH_OB_MASK       0b11100010
 #define FLASH_busy()        (FLASH->STATR & FLASH_STATR_BSY)
 #define FLASH_error()       (FLASH->STATR & FLASH_STATR_WRPRTERR)
 #define FLASH_eop()         (FLASH->STATR & FLASH_STATR_EOP)
-#define FLASH_locked()      (FLASH->CTLR  & FLASH_CTLR_LOCK)
-#define FLASH_OB_locked()   (!(FLASH->CTLR & FLASH_CTLR_OPTWRE))
 
-#define FLASH_WRE_unlock() {  \
-  FLASH->OBKEYR = FLASH_KEY1; \
-  FLASH->OBKEYR = FLASH_KEY2; \
+// Erase FLASH page (64 bytes)
+void FLASH_PAGE_erase(uint8_t page) {
+  uint32_t addr = FLASH_PAGE_BASE(page);
+  FLASH_FAST_unlock();
+  FLASH->CTLR |=  FLASH_CTLR_PAGE_ER;
+  FLASH->ADDR  =  addr;
+  FLASH->CTLR |=  FLASH_CTLR_STRT;
+  while(FLASH_busy());
+  FLASH->CTLR &= ~FLASH_CTLR_PAGE_ER;
+  FLASH_FAST_lock();
 }
 
 // Write 16-bit data to FLASH addr
@@ -29,15 +29,43 @@ void FLASH_write(uint32_t addr, uint16_t data) {
   FLASH->CTLR &= ~FLASH_CTLR_PG;
 }
 
-// Remove option bytes write protection
-void FLASH_OB_unlock(void) {
-  FLASH_unlock();
-  FLASH_WRE_unlock();
+// Write option byte to FLASH addr
+void FLASH_OB_write(uint32_t addr, uint8_t data) {
+  FLASH->CTLR |= FLASH_CTLR_OPTPG;
+  *(__IO uint16_t *)addr = data;
+  while(FLASH_busy());
+  FLASH->CTLR &= ~FLASH_CTLR_OPTPG;
 }
 
-// Erase option bytes and remove read protection
-void FLASH_OB_erase(void) {
+// Unlock FLASH and remove option bytes write protection
+void FLASH_OB_unlock_full(void) {
+  FLASH_unlock();
   FLASH_OB_unlock();
+}
+
+// Set option bytes read protection and CODE FLASH write protection
+void FLASH_OB_protect(void) {
+  FLASH_OB_unlock_full();
+  FLASH->CTLR |=  FLASH_CTLR_OPTPG;
+  OB->RDPR = 0x0001;
+  while(FLASH_busy());
+  FLASH->CTLR &= ~FLASH_CTLR_OPTPG;
+  FLASH_lock();
+}
+
+// Remove option bytes read protection and CODE FLASH write protection
+void FLASH_OB_unprotect(void) {
+  FLASH_OB_unlock_full();
+  FLASH->CTLR |=  FLASH_CTLR_OPTPG;
+  OB->RDPR = FLASH_RDPRT;
+  while(FLASH_busy());
+  FLASH->CTLR &= ~FLASH_CTLR_OPTPG;
+  FLASH_lock();
+}
+
+// Erase option bytes area and remove protection
+void FLASH_OB_erase(void) {
+  FLASH_OB_unlock_full();
   FLASH->CTLR |=  FLASH_CTLR_OPTER;
   FLASH->CTLR |=  FLASH_CTLR_STRT;
   while(FLASH_busy());
@@ -49,19 +77,11 @@ void FLASH_OB_erase(void) {
   FLASH_lock();
 }
 
-// Write option byte to addr
-void FLASH_OB_write(uint32_t addr, uint8_t data) {
-  FLASH->CTLR |= FLASH_CTLR_OPTPG;
-  *(__IO uint16_t *)addr = data;
-  while(FLASH_busy());
-  FLASH->CTLR &= ~FLASH_CTLR_OPTPG;
-}
-
 // Write option bytes user flags
 void FLASH_OB_USER_write(uint8_t flags) {
-  FLASH_OB_unlock();
+  FLASH_OB_unlock_full();
   FLASH->CTLR |= FLASH_CTLR_OPTPG;
-  OB->USER = (uint16_t)(FLASH_OB_BASE | flags);
+  OB->USER = (uint16_t)(FLASH_OB_MASK | flags);
   while(FLASH_busy());
   FLASH->CTLR &= ~FLASH_CTLR_OPTPG;
   FLASH_lock();
@@ -69,7 +89,7 @@ void FLASH_OB_USER_write(uint8_t flags) {
 
 // Write option bytes user data
 void FLASH_OB_DATA_write(uint16_t data) {
-  FLASH_OB_unlock();
+  FLASH_OB_unlock_full();
   FLASH->CTLR |= FLASH_CTLR_OPTPG;
   OB->Data0 = (uint16_t)(data & 0x00FF);
   while(FLASH_busy());
