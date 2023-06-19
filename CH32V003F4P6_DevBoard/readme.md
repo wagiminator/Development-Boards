@@ -56,7 +56,12 @@ WCH-LinkE      DevBoard
 +-------+      +------+
 ```
 
-If the blue LED on the WCH-LinkE stays on after plugging it into the USB port, then the device is in ARM mode and needs to be switched to RISC-V mode first. This can be done by selecting "WCH-LinkRV" using the software provided by WCH (MounRiver Studio or WCH-LinkUtility). Alternatively, the ModeS button on the device can be held down while plugging it into the USB port. More information can be found in the [WCH-Link User Manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html).
+If the blue LED on the WCH-LinkE remains illuminated once it is connected to the USB port, it means that the device is currently in ARM mode and must be switched to RISC-V mode initially. There are a few ways to accomplish this:
+- You can utilize the Python tool called rvmode.py, which is provided with the examples in the software folder.
+- Alternatively, you can select "WCH-LinkRV" in the software provided by WCH, such as MounRiver Studio or WCH-LinkUtility.
+- Another option is to hold down the ModeS button on the device while plugging it into the USB port.
+
+More information can be found in the [WCH-Link User Manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html).
 
 ## Open-Source Debugging Devices
 As part of his [ch32v003fun](https://github.com/cnlohr/ch32v003fun) project, Charles Lohr has also developed open-source programmers/debuggers based on STM32F042 and ESP32S2. Furthermore, the schematic diagram of the WCH-LinkE based on the CH32V305F is available on the manufacturer's [website](https://www.wch.cn/products/WCH-Link.html), but the [firmware](https://github.com/openwch/ch32v003) can only be downloaded as a binary file.
@@ -71,7 +76,7 @@ You can download a complete toolchain (GCC and OpenOCD) for Linux and Mac from t
 To install the GCC compiler on Linux, you can use the following commands:
 
 ```
-sudo apt install build-essential libnewlib-dev gcc-riscv64-unknown-elf libusb-1.0-0-dev libudev-dev
+sudo apt install build-essential libnewlib-dev gcc-riscv64-unknown-elf
 ```
 
 ## Arduino IDE and PlatformIO Support
