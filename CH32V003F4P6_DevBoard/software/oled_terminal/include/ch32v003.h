@@ -1,5 +1,5 @@
 // ===================================================================================
-// Header file for CH32V003                                                   * v1.1 *
+// Header file for CH32V003                                                   * v1.2 *
 // ===================================================================================
 // This contains a copy of ch32v00x.h and core_riscv.h and other misc functions.
 // NOTE: This file includes modifications by CNLohr.
@@ -1246,10 +1246,11 @@ typedef struct
 #define FLASH_CTLR_OPTWRE                       ((uint16_t)0x0200)     /* Option Bytes Write Enable */
 #define FLASH_CTLR_ERRIE                        ((uint16_t)0x0400)     /* Error Interrupt Enable */
 #define FLASH_CTLR_EOPIE                        ((uint16_t)0x1000)     /* End of operation interrupt enable */
-#define FLASH_CTLR_PAGE_PG                      ((uint16_t)0x00010000) /* Page Programming 64Byte */
-#define FLASH_CTLR_PAGE_ER                      ((uint16_t)0x00020000) /* Page Erase 64Byte */
-#define FLASH_CTLR_BUF_LOAD                     ((uint16_t)0x00040000) /* Buffer Load */
-#define FLASH_CTLR_BUF_RST                      ((uint16_t)0x00080000) /* Buffer Reset */
+#define FLASH_CTLR_FLOCK                        ((uint16_t)0x8000)     /* Fast programming lock */
+#define FLASH_CTLR_PAGE_PG                      ((uint32_t)0x00010000) /* Page Programming 64Byte */
+#define FLASH_CTLR_PAGE_ER                      ((uint32_t)0x00020000) /* Page Erase 64Byte */
+#define FLASH_CTLR_BUF_LOAD                     ((uint32_t)0x00040000) /* Buffer Load */
+#define FLASH_CTLR_BUF_RST                      ((uint32_t)0x00080000) /* Buffer Reset */
 
 /*******************  Bit definition for FLASH_ADDR register  *******************/
 #define FLASH_ADDR_FAR                          ((uint32_t)0xFFFFFFFF) /* Flash Address */
