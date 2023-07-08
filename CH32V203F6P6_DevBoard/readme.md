@@ -94,7 +94,7 @@ There are projects around to make the CH32V203 compatible with the Arduino IDE (
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
 - [MounRiver Studio](http://www.mounriver.com/)
-- [arduino_core_ch32](https://github.com/openwch/arduino_core_ch32)
+- [CH32V203 with Arduino IDE](https://github.com/openwch/arduino_core_ch32)
 - [CH32V203 with PlatformIO](https://github.com/Community-PIO-CH32V/platform-ch32v)
 - [CH32V203 on openwch](https://github.com/openwch/ch32v203)
 - [CH32V203 datasheets](http://www.wch-ic.com/products/CH32V203.html)
