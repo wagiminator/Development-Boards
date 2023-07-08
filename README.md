@@ -29,6 +29,11 @@ Development board for the CH32V003F4P6 ultra-cheap (10 cents) 32-bit RISC-V micr
 
 ![CH32V003F4P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003F4P6_DevBoard_pic1.jpg)
 
+## [CH32V203F6P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard)
+Development board for the CH32V203F6P6 low-cost 32-bit RISC-V microcontroller with native USB 2.0 and Arduino IDE support.
+
+![CH32V203F6P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V203F6P6_DevBoard/documentation/CH32V203F6P6_DevBoard_pic1.jpg)
+
 ## [CH554E USB Host Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH554E_HostDevBoard)
 Development board for the USB host capabilities of the CH554E microcontroller with an integrated USB-A female connector for connecting USB devices like keyboards, mice, printers, hubs, etc. and a USB-A male connector for providing a serial interface for analysis and debugging on the PC.
 
