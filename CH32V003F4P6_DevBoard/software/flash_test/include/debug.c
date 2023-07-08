@@ -1,59 +1,42 @@
 // ===================================================================================
-// Basic Serial Debug Functions for CH32V003                                  * v1.0 *
+// Basic Serial Debug Functions for CH32V003                                  * v1.1 *
 // ===================================================================================
+// 2023 by Stefan Wagner:   https://github.com/wagiminator
 
 #include "debug.h"
 
-// DEBUG calculate BAUD rate setting
-#define DEBUG_BRR   (((2 * (F_CPU) / (DEBUG_BAUD)) + 1) / 2)
+#if DEBUG_ENABLE > 0
 
 // Init debug interface (UART TX)
 void DEBUG_init(void) {
-  #if DEBUG_ENABLE == 1
-  
-  // Enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
-
-  // Set pin PD5 to output, push-pull, 10MHz, auxiliary
-  GPIOD->CFGLR &= ~(0b1111<<(5<<2));
-  GPIOD->CFGLR |=   0b1001<<(5<<2);
-	
-  // Setup and start UART (8N1, TX only)
-  USART1->BRR   = ((2 * F_CPU / DEBUG_BAUD) + 1) / 2;
-  USART1->CTLR1 = USART_CTLR1_TE | USART_CTLR1_UE;
-  #endif
-}
-
-// Send byte via UART (for printf)
-int putchar(int c) {
-  #if DEBUG_ENABLE == 1
-  while(!(USART1->STATR & USART_STATR_TC));
-  USART1->DATAR = (const char)c;
-  #endif
-  return 1;
+  GPIOD->CFGLR    = (GPIOD->CFGLR & ~((uint32_t)0b1111<<(5<<2)))
+                                  |  ((uint32_t)0b1001<<(5<<2));
+  USART1->BRR     = ((2 * F_CPU / DEBUG_BAUD) + 1) / 2;
+  USART1->CTLR1   = USART_CTLR1_TE | USART_CTLR1_UE;
 }
 
 // Send byte via UART
 void DEBUG_write(const char c) {
-  #if DEBUG_ENABLE == 1
   while(!(USART1->STATR & USART_STATR_TC));
   USART1->DATAR = c;
-  #endif
+}
+
+// Send string via UART (for printf)
+int puts(const char* str) {
+  while(*str) DEBUG_write(*str++);
+  return 1;
 }
 
 // Send string via UART
 void DEBUG_print(const char* str) {
-  #if DEBUG_ENABLE == 1
   while(*str) DEBUG_write(*str++);
-  #endif
 }
 
 // Send string via UART with newline
 void DEBUG_println(const char* str) {
-  #if DEBUG_ENABLE == 1
   DEBUG_print(str);
   DEBUG_write('\n');
-  #endif
 }
 
 // For BCD conversion
@@ -99,3 +82,5 @@ void DEBUG_printL(uint32_t value) {
   DEBUG_printW(value >> 16);
   DEBUG_printW(value);
 }
+
+#endif

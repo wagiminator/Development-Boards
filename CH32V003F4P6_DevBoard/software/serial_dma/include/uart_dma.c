@@ -1,6 +1,7 @@
 // ===================================================================================
 // UART with DMA RX Buffer for CH32V003                                       * v1.0 *
 // ===================================================================================
+// 2023 by Stefan Wagner:   https://github.com/wagiminator
 
 #include "uart_dma.h"
 
@@ -15,12 +16,11 @@ void UART_init(void) {
   // Enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
 
-
   // Set pin PD5 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PD6 (RX) to input, pullup
-  GPIOD->CFGLR &= ~((0b1111<<(5<<2)) | (0b1111<<(6<<2)));
-  GPIOD->CFGLR |=  ((0b1001<<(5<<2)) | (0b1000<<(6<<2)));
-  GPIOD->OUTDR |=  1<<6;
+  GPIOD->CFGLR  = (GPIOD->CFGLR & ~(((uint32_t)0b1111<<(5<<2)) | ((uint32_t)0b1111<<(6<<2))))
+                                |  (((uint32_t)0b1001<<(5<<2)) | ((uint32_t)0b1000<<(6<<2)));
+  GPIOD->OUTDR |= 1<<6;
 #elif UART_REMAP == 1
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
@@ -28,9 +28,9 @@ void UART_init(void) {
   
   // Set pin PD0 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PD1 (RX) to input, pullup
-  GPIOD->CFGLR &= ~((0b1111<<(0<<2)) | (0b1111<<(1<<2)));
-  GPIOD->CFGLR |=  ((0b1001<<(0<<2)) | (0b1000<<(1<<2)));
-  GPIOD->OUTDR |=  1<<1;
+  GPIOD->CFGLR  = (GPIOD->CFGLR & ~(((uint32_t)0b1111<<(0<<2)) | ((uint32_t)0b1111<<(1<<2))))
+                                |  (((uint32_t)0b1001<<(0<<2)) | ((uint32_t)0b1000<<(1<<2)));
+  GPIOD->OUTDR |= 1<<1;
 #elif UART_REMAP == 2
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
@@ -38,9 +38,9 @@ void UART_init(void) {
 
   // Set pin PD6 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PD5 (RX) to input, pullup
-  GPIOD->CFGLR &= ~((0b1111<<(6<<2)) | (0b1111<<(5<<2)));
-  GPIOD->CFGLR |=  ((0b1001<<(6<<2)) | (0b1000<<(5<<2)));
-  GPIOD->OUTDR |=  1<<5;
+  GPIOD->CFGLR  = (GPIOD->CFGLR & ~(((uint32_t)0b1111<<(6<<2)) | ((uint32_t)0b1111<<(5<<2))))
+                                |  (((uint32_t)0b1001<<(6<<2)) | ((uint32_t)0b1000<<(5<<2)));
+  GPIOD->OUTDR |= 1<<5;
 #elif UART_REMAP == 3
   // Remap UART pins, enable GPIO port C and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPCEN | RCC_USART1EN;
@@ -48,9 +48,9 @@ void UART_init(void) {
 
   // Set pin PC0 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PC1 (RX) to input, pullup
-  GPIOC->CFGLR &= ~((0b1111<<(0<<2)) | (0b1111<<(1<<2)));
-  GPIOC->CFGLR |=  ((0b1001<<(0<<2)) | (0b1000<<(1<<2)));
-  GPIOC->OUTDR |=  1<<1;
+  GPIOC->CFGLR  = (GPIOC->CFGLR & ~(((uint32_t)0b1111<<(0<<2)) | ((uint32_t)0b1111<<(1<<2))))
+                                |  (((uint32_t)0b1001<<(0<<2)) | ((uint32_t)0b1000<<(1<<2)));
+  GPIOC->OUTDR |= 1<<1;
 #else
   #warning Wrong UART REMAP
 #endif
