@@ -51,8 +51,8 @@ To upload firmware and perform debugging, you need to ensure that the developmen
 WCH-LinkE      DevBoard
 +-------+      +------+
 |  SWDIO| <--> |DIO   |
-|    3V3| ---> |3V3   |
 |    GND| ---> |GND   |
+|    3V3| ---> |3V3   |
 +-------+      +------+
 ```
 
