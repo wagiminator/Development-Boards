@@ -15,11 +15,10 @@
 #
 # References:
 # -----------
-# chprog is based on chflasher and wchprog:
-# - https://ATCnetz.de (Aaron Christophel)
-# - https://github.com/atc1441/chflasher (Aaron Christophel)
-# - https://github.com/juliuswwj/wchprog
-# - https://github.com/frank-zago/isp55e0
+# chprog is based on isp55e0, chflasher, and wchprog:
+# - Frank Zago, https://github.com/frank-zago/isp55e0
+# - Aaron Christophel, https://github.com/atc1441/chflasher
+# - juliuswwj, https://github.com/juliuswwj/wchprog
 #
 # Dependencies:
 # -------------
@@ -55,7 +54,7 @@ def _main():
         sys.exit(1)
 
     try:
-        print('Connecting to device ...')
+        print('Connecting to bootloader ...')
         isp = Programmer()
         isp.detect()
         print('Found', isp.chipname, 'with bootloader v' + isp.bootloader + '.')
@@ -90,16 +89,18 @@ class Programmer:
 
         # Set initial chip parameters
         self.device    = None
-        self.idlen     = 4
+        self.uidlen    = 4
         self.lastwrite = False
         self.wpremove  = False
+        self.xorkey    = bytearray(CH_XOR_KEY_LEN)
 
     # Send command and return reply
     def sendcommand(self, stream):
         self.dev.write(CH_USB_EP_OUT, stream)
-        return self.dev.read(CH_USB_EP_IN, CH_USB_PACKET_SIZE, CH_USB_TIMEOUT)
+        try:    return self.dev.read(CH_USB_EP_IN, CH_USB_PACKET_SIZE, CH_USB_TIMEOUT)
+        except: return None
 
-    # Detect and identify chip
+    # Detect, identify and setup chip
     def detect(self):
         # Read type of chip
         identanswer = self.sendcommand(CH_STR_CHIP_DETECT)
@@ -130,27 +131,36 @@ class Programmer:
         self.code_flash_size = self.device['code_size']
         self.data_flash_size = self.device['data_size']
         if self.chipfamily > 0x11:
-            self.idlen = 8
+            self.uidlen = 8
         if self.chipfamily in LASTWRITELIST:
             self.lastwrite = True
         if self.chipfamily in WPREMOVELIST:
             self.wpremove = True
+        self.chipuid = cfganswer[22:(22 + self.uidlen)]
 
-        # Calculate and send remote encryption key
-        outbuffer = bytearray(64)
-        outbuffer[0] = CH_CMD_KEY_SET
-        outbuffer[1] = 0x30
-        outbuffer[2] = 0x00
-        checksum = 0
-        for x in range(self.idlen):
-            checksum += cfganswer[22 + x]
-        for x in range(0x30):
-            outbuffer[x + 3] = checksum & 0xff
-        self.sendcommand(outbuffer)
+        # Create local encryption key
+        sum = 0
+        for x in range(self.uidlen):
+            sum += self.chipuid[x]
+        for x in range(CH_XOR_KEY_LEN - 1):
+            self.xorkey[x] = sum & 0xff
+        self.xorkey[CH_XOR_KEY_LEN - 1] = (sum + self.chiptype) & 0xff
+
+        # Send encryption key
+        sum = 0
+        for x in range(CH_XOR_KEY_LEN):
+            sum += self.xorkey[x]
+        stream = bytes((CH_CMD_KEY_SET, 0x1e, 0x00)) + bytes(0x1e)
+        reply = self.sendcommand(stream)
+        if reply[4] != (sum & 0xff):
+            raise Exception('Failed to set encryption key')
 
         # Unlock chip (remove read protection)
         if (self.wpremove) and (self.configdata[0] == 0xff):
             self.configdata[0] = 0xa5
+            self.sendcommand(b'\xa8\x0e\x00\x07\x00' + self.configdata)
+        if self.chipid == 0x1379:
+            self.configdata[8] &= 0x7f
             self.sendcommand(b'\xa8\x0e\x00\x07\x00' + self.configdata)
 
     # Erase code flash
@@ -159,9 +169,9 @@ class Programmer:
             raise Exception('Not enough memory')
         size = (size + 1023) // 1024
         if size < 8:  size = 8
-        stream = (CH_CMD_CODE_ERASE, 0x02, 0x00, size & 0xff, size >> 8)
-        buffer = self.sendcommand(stream)
-        if buffer[4] != 0x00:
+        stream = (CH_CMD_CODE_ERASE, 0x04, 0x00, size & 0xff, size >> 8, 0x00, 0x00)
+        reply = self.sendcommand(stream)
+        if reply[4] != 0x00:
             raise Exception('Failed to erase chip')
 
     # Write data stream to code flash
@@ -177,45 +187,40 @@ class Programmer:
 
     # Reboot and exit
     def exit(self):
-        self.dev.write(CH_USB_EP_OUT, CH_STR_REBOOT)
+        self.sendcommand(CH_STR_REBOOT)
 
     # Perform flash operations
     def writeflash(self, data, mode):
-        if (len(data) % 8) > 0:
-            data += b'0xff' * (8 - (len(data) % 8))
-        rest = len(data)
-        curr_addr = 0
-        pkt_length = 0
-        outbuffer = bytearray(64)
-        outbuffer[0] = mode
-        outbuffer[2] = 0x00
+        # Encrypt data
+        if (len(data) % CH_XOR_KEY_LEN) > 0:
+            data += b'0xff' * (CH_XOR_KEY_LEN - (len(data) % CH_XOR_KEY_LEN))
+        data = bytearray(data)
+        for x in range(len(data)):
+            data[x] ^= self.xorkey[x % CH_XOR_KEY_LEN]
+
+        # Send data in chunks of 56 bytes
+        rest    = len(data)
+        offset  = 0
+        pkt_len = 0
         while rest > 0:
-            if rest >= 0x38:
-                pkt_length = 0x38
-            else:
-                pkt_length = rest
-            outbuffer[1] = (pkt_length + 5)
-            outbuffer[3] = (curr_addr & 0xff)
-            outbuffer[4] = ((curr_addr >>  8) & 0xff)
-            outbuffer[5] = ((curr_addr >> 16) & 0xff)
-            outbuffer[6] = ((curr_addr >> 24) & 0xff)
-            outbuffer[7] = rest & 0xff
-            for x in range(pkt_length):
-                outbuffer[x + 8] = data[curr_addr + x]
-            for x in range(pkt_length + 8):
-                if x % 8 == 7:
-                    outbuffer[x] ^= self.chiptype
-            buffer = self.sendcommand(outbuffer[:(pkt_length + 8)])
-            curr_addr += pkt_length
-            rest -= pkt_length
-            if buffer is not None:
-                if buffer[4] != 0x00 and buffer[4] != 0xfe and buffer[4] != 0xf5:
-                    if mode == CH_CMD_CODE_WRITE:
-                        raise Exception('Write failed')
-                    elif mode == CH_CMD_CODE_VERIFY:
-                        raise Exception('Verify failed')
+            if rest >= 0x38:  pkt_len = 0x38
+            else:             pkt_len = rest
+            stream  = bytes((mode, pkt_len + 5, 0))
+            stream += offset.to_bytes(4, byteorder='little')
+            stream += (rest & 0xff).to_bytes(1, byteorder='little')
+            stream += data[offset:(offset + pkt_len)]
+            reply   = self.sendcommand(stream)
+            if reply[4] != 0x00 and reply[4] != 0xfe and reply[4] != 0xf5:
+                if mode == CH_CMD_CODE_WRITE:
+                    raise Exception('Failed to write at offset 0x%08x' % offset)
+                elif mode == CH_CMD_CODE_VERIFY:
+                    raise Exception('Failed to verify at offset 0x%08x' % offset)
+            offset += pkt_len
+            rest   -= pkt_len
+
+        # Some chips need a last empty write
         if (self.lastwrite) and (mode == CH_CMD_CODE_WRITE):
-            stream = bytes((mode, 5, 0)) + curr_addr.to_bytes(4, byteorder='little') + b'\x00'
+            stream = bytes((mode, 5, 0)) + offset.to_bytes(4, byteorder='little') + b'\x00'
             self.sendcommand(stream)
 
 # ===================================================================================
@@ -247,6 +252,8 @@ CH_STR_CONFIG_READ  = (0xa7, 0x02, 0x00, 0x1f, 0x00)
 CH_STR_CODE_ERASE   = (0xa4, 0x04, 0x00, 0x08, 0x00, 0x00, 0x00)
 CH_STR_DATA_ERASE   = (0xa9, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02)
 CH_STR_REBOOT       = (0xa2, 0x01, 0x00, 0x01)
+
+CH_XOR_KEY_LEN      = 8
 
 # ===================================================================================
 # Device definitions
