@@ -173,9 +173,9 @@ void RTC_ALARM_set(uint32_t n) {
 // ===================================================================================
 
 // Wait n counts of SysTick
-void DLY_ticks(uint64_t n) {
-  uint64_t end = STK->CNT + n;
-  while(((int64_t)(STK->CNT - end)) < 0 );
+void DLY_ticks(uint32_t n) {
+  uint32_t end = STK->CNTL + n;
+  while(((int32_t)(STK->CNTL - end)) < 0 );
 }
 
 // ===================================================================================
@@ -434,29 +434,21 @@ void default_handler(void) { while(1); }
 void reset_handler(void) {
   uint32_t *src, *dst;
   
-  // Set global pointer and stack pointer
-  asm volatile( "\n\
-    .align  1\n\
-    .option push\n\
-    .option norelax\n\
-    la gp, __global_pointer$\n\
-    .option pop\n\
-    la sp, _eusrstack\n"
-    #if __GNUC__ > 10
-"   .option arch, +zicsr\n"
-    #endif
-
-    // Setup the interrupt vector, processor status and INTSYSCR
-"   li a0, 0x1f\n\
-    csrw 0xbc0, a0\n\
-    li a0, 0x88\n\
-    csrw mstatus, a0\n\
-    li a3, 0x3\n\
-    csrw 0x804, a3\n\
-    la a0, vectors\n\
-    or a0, a0, a3\n\
-    csrw mtvec, a0\n" 
-    : : : "a0", "a3", "memory"
+  // Set pointers, vectors, processor status, and interrupts
+  asm volatile(
+  " la gp, __global_pointer$  \n\
+    la sp, _eusrstack         \n\
+    li a0, 0x1f               \n\
+    csrw 0xbc0, a0            \n\
+    li a0, 0x88               \n\
+    csrw mstatus, a0          \n\
+    li a1, 0x3                \n\
+    csrw 0x804, a1            \n\
+    la a0, vectors            \n\
+    or a0, a0, a1             \n\
+    csrw mtvec, a0            \n\
+    csrw mepc, %[main]        \n"
+    : : [main] "r" (main) : "a0", "a1" , "memory"
   );
 
   // Copy data from FLASH to RAM
@@ -476,9 +468,6 @@ void reset_handler(void) {
   // Init system
   SYS_init();
 
-  // Set mepc to be main as the root app
-  asm volatile(
-"   csrw mepc, %[main]\n"
-"   mret\n" : : [main]"r"(main)
-  );
+  // Return
+  asm volatile("mret");
 }

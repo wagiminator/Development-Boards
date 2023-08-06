@@ -481,8 +481,8 @@ static inline int8_t ADC_read_TEMP(void) {
                    OPA->CTLR      |=  OPA_CTLR_MODE1   ) : \
 (0)))
 
-#define OPA1_output_PP  OPA1_output
-#define OPA2_output_PP  OPA2_output
+#define OPA1_output_PP      OPA1_output
+#define OPA2_output_PP      OPA2_output
 
 // ===================================================================================
 // CMP Functions (alias)

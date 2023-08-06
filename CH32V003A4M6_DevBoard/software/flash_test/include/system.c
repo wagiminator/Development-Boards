@@ -172,10 +172,7 @@ void STDBY_WFE_now(void) {
 // Based on CNLohr ch32v003fun: https://github.com/cnlohr/ch32v003fun
 // ===================================================================================
 #ifdef __cplusplus
-// This is required to allow pure virtual functions to be defined.
 extern void __cxa_pure_virtual() { while (1); }
-
-// These magic symbols are provided by the linker.
 extern void (*__preinit_array_start[]) (void) __attribute__((weak));
 extern void (*__preinit_array_end[]) (void) __attribute__((weak));
 extern void (*__init_array_start[]) (void) __attribute__((weak));
@@ -291,27 +288,20 @@ void default_handler(void) { while(1); }
 // Reset handler
 void reset_handler(void) {
   uint32_t *src, *dst;
-
-  // Set global pointer and stack pointer
-  asm volatile( "\n\
-    .option push\n\
-    .option norelax\n\
-    la gp, __global_pointer$\n\
-    .option pop\n\
-    la sp, _eusrstack\n"
-    #if __GNUC__ > 10
-  " .option arch, +zicsr\n"
-    #endif
-
-    // Setup the interrupt vector, processor status and INTSYSCR
-  " li a0, 0x80\n\
-    csrw mstatus, a0\n\
-    li a3, 0x3\n\
-    ;csrw 0x804, a3\n\
-    la a0, jump_reset\n\
-    or a0, a0, a3\n\
-    csrw mtvec, a0\n" 
-    : : : "a0", "a3", "memory"
+  
+  // Set pointers, vectors, processor status, and interrupts
+  asm volatile(
+  " la gp, __global_pointer$  \n\
+    la sp, _eusrstack         \n\
+    li a0, 0x80               \n\
+    csrw mstatus, a0          \n\
+    li a1, 0x3                \n\
+    csrw 0x804, a1            \n\
+    la a0, jump_reset         \n\
+    or a0, a0, a1             \n\
+    csrw mtvec, a0            \n\
+    csrw mepc, %[main]        \n"
+    : : [main] "r" (main) : "a0", "a1" , "memory"
   );
 
   // Copy data from FLASH to RAM
@@ -331,9 +321,6 @@ void reset_handler(void) {
   // Init system
   SYS_init();
 
-  // Set mepc to be main as the root app
-  asm volatile(
-  " csrw mepc, %[main]\n"
-  " mret\n" : : [main]"r"(main)
-  );
+  // Return
+  asm volatile("mret");
 }

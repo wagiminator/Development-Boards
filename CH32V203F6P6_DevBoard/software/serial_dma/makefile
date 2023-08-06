@@ -22,12 +22,13 @@ CC       = $(PREFIX)-gcc
 OBJCOPY  = $(PREFIX)-objcopy
 OBJDUMP  = $(PREFIX)-objdump
 OBJSIZE  = $(PREFIX)-size
-FLASHER  = python3 ./tools/rvprog.py -f $(TARGET).bin
+FLASHER  = python3 ./tools/chprog.py $(TARGET).bin
 CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 
 # Compiler Flags
-CFLAGS   = -g -Os -flto -ffunction-sections -static-libgcc -march=rv32imacxw -mabi=ilp32
-CFLAGS  += -I/usr/include/newlib -I$(INCLUDE) -I. -DF_CPU=$(F_CPU) -nostdlib  -Wall
+CFLAGS   = -g -Os -flto -ffunction-sections -fno-builtin -static-libgcc -nostdlib
+CFLAGS  += -march=rv32imac -mabi=ilp32 -DF_CPU=$(F_CPU)
+CFLAGS  += -I/usr/include/newlib -I$(INCLUDE) -I. -Wall
 LDFLAGS  = -T$(LINKER)/ch32v203.ld -Wl,--gc-sections -L$(LINKER) -lgcc
 CFILES   = $(SKETCH) $(wildcard $(INCLUDE)/*.c) $(wildcard $(INCLUDE)/*.s)
 

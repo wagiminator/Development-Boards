@@ -221,7 +221,7 @@ void RTC_ALARM_set(uint32_t n);   // set RTC ALARM
 #define DLY_us(n)         DLY_ticks((n) * DLY_US_TIME)  // delay n microseconds
 #define DLY_ms(n)         DLY_ticks((n) * DLY_MS_TIME)  // delay n milliseconds
 #define DLY_cycles        DLY_ticks                     // alias
-void DLY_ticks(uint64_t n);                             // delay n system ticks
+void DLY_ticks(uint32_t n);                             // delay n system ticks
 
 // ===================================================================================
 // Reset Functions
