@@ -22,7 +22,7 @@ CC       = $(PREFIX)-gcc
 OBJCOPY  = $(PREFIX)-objcopy
 OBJDUMP  = $(PREFIX)-objdump
 OBJSIZE  = $(PREFIX)-size
-FLASHER  = ./tools/minichlink -w $(TARGET).bin flash -b
+FLASHER  = python3 ./tools/rvprog.py -f $(TARGET).bin
 CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 
 # Compiler Flags
