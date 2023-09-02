@@ -1,38 +1,38 @@
 # CH55xT Development Board
-Development board for the CH552T, CH554T and CH559T low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
+Development board for the CH552T, CH554T. CH558T, and CH559T low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
 
 ![CH55xT_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic1.jpg)
 
 # Pinout
 ![CH55xT_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pinout.png)
 
-Note: The CH559T partially has a different pinout. Refer to the [datasheet](http://www.wch-ic.com/downloads/CH559DS1_PDF.html) for more information.
+Note: The CH558T and CH559T partially have a different pinout. Refer to the [datasheet](http://www.wch-ic.com/downloads/CH559DS1_PDF.html) for more information.
 
 # The CH55xT Family of 8-bit USB Microcontrollers
 ## Overview
-The CH55x is an 8-bit enhanced E8051 core MCU compatible with the MCS51 instruction set. 79% of its instructions are single-byte single-cycle instructions, and the average instruction speed is 8 - 15 times faster than that of the standard MCS51. The special xRAM supports direct memory access (DMA), data fast copy command, and double DPTR pointers. The CH55x has a built-in USB controller and USB transceiver, it supports USB-Host mode (except CH552) and USB-Device mode, USB Type-C master-slave detection (except CH559), USB 2.0 full-speed (12Mbps) and low-speed (1.5Mbps) traffic, data packets of up to 64 bytes, and DMA. It has a factory built-in bootloader so firmware can be uploaded directly via USB without the need for an additional programming device.
+The CH55x is an 8-bit enhanced E8051 core MCU compatible with the MCS51 instruction set. 79% of its instructions are single-byte single-cycle instructions, and the average instruction speed is 8 - 15 times faster than that of the standard MCS51. The special xRAM supports direct memory access (DMA), data fast copy command, and double DPTR pointers. The CH55x has a built-in USB controller and USB transceiver, it supports USB-Host mode (except CH552 and CH558) and USB-Device mode, USB Type-C master-slave detection (except CH558 and CH559), USB 2.0 full-speed (12Mbps) and low-speed (1.5Mbps) traffic, data packets of up to 64 bytes, and DMA. It has a factory built-in bootloader so firmware can be uploaded directly via USB without the need for an additional programming device.
 
 ## Block Diagram
 ![CH55xG_DevBoard_block.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_block.jpg)
 
 ## Features
 
- Specifications |  CH552T |  CH554T |  CH559T 
-:-------------- | :------ | :------ | :------ 
-Program ROM  | 14 KB | 14 KB | 60 KB
-Bootloader | 2 KB | 2 KB | 3 KB
-Data Flash | 128 bytes | 128 bytes | 1 KB
-iRAM | 256 bytes | 256 bytes | 256 bytes 
-xRAM | 1024 bytes | 1024 bytes | 6144 bytes
-GPIO Pins | 16 (14 usable) | 16 (14 usable) | 16 (14 usable)
-ADC Channels | 4x 8-bit | 4x 8-bit | 8x 10/11-bit
-PWM Channels | 2x 8-bit | 2x 8-bit | 2x 8-bit, 1x 16-bit
-Timer/Counter | 3 | 3 | 4
-Touch Key Channels | 6 | 6 | 0
-USB Modes | Device | Host/Device | Host/Device
-USB Type-C | yes | yes | no
-Interfaces | 2x UART, 1x SPI | 2x UART, 1x SPI | 2x UART, 2x SPI 
-Internal Clock | max 24 MHz | max 24 MHz | max 56 MHz 
+ Specifications |  CH552T |  CH554T |  CH558T |  CH559T 
+:-------------- | :------ | :------ | :------ | :------ 
+Code Flash | 14 KB | 14 KB | 32 KB | 60 KB
+Data Flash | 128 bytes | 128 bytes | 5 KB | 1 KB
+Bootloader | 2 KB | 2 KB | 3 KB | 3 KB
+iRAM | 256 bytes | 256 bytes | 256 bytes | 256 bytes 
+xRAM | 1 KB | 1 KB | 4 KB | 6 KB
+GPIO Pins | 16 (14 usable) | 16 (14 usable) | 16 (14 usable) | 16 (14 usable)
+ADC Channels | 4x 8-bit | 4x 8-bit | 8x 10/11-bit | 8x 10/11-bit
+PWM Channels | 2x 8-bit | 2x 8-bit | 2x 8-bit, 1x 16-bit | 2x 8-bit, 1x 16-bit
+Timer/Counter | 3 | 3 | 4 | 4
+Touch Key Channels | 6 | 6 | 0 | 0
+USB Modes | Device | Host/Device | Device | Host/Device
+USB Type-C | yes | yes | no | no
+Interfaces | 2x UART, 1x SPI | 2x UART, 1x SPI | 2x UART, 1x SPI | 2x UART, 2x SPI 
+Internal Clock | max 24 MHz | max 24 MHz | max 56 MHz | max 56 MHz 
 
 # Built-in USB Bootloader
 ## Installing Drivers for the Bootloader
