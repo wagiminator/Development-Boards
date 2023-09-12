@@ -10,7 +10,7 @@ Development board for the CH551G, CH552G and CH554G low-cost 8-bit microcontroll
 ![CH55xG_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic1.jpg)
 
 ## [CH55xT Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH55xT_DevBoard)
-Development board for the CH552T, CH554T and CH559T low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
+Development board for the CH552T, CH554T, CH558T, and CH559T low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
 
 ![CH55xT_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic1.jpg)
 

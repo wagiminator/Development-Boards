@@ -4,9 +4,9 @@ Development board for the CH552T, CH554T, CH558T, and CH559T low-cost 8-bit micr
 ![CH55xT_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic1.jpg)
 
 # Pinout
-![CH55xT_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pinout.png)
+![CH552T_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH552T_DevBoard_pinout.png)
 
-Note: The CH558T and CH559T partially have a different pinout. Refer to the [datasheet](http://www.wch-ic.com/downloads/CH559DS1_PDF.html) for more information.
+![CH559T_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH559T_DevBoard_pinout.png)
 
 # The CH55xT Family of 8-bit USB Microcontrollers
 ## Overview
