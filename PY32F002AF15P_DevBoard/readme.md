@@ -6,7 +6,7 @@ Development board for the PY32F002AF15P ultra-cheap 32-bit ARM Cortex microcontr
 # Pinout
 ![PY32F002AF15P_DevBoard_pinout.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/PY32F002AF15P_DevBoard/documentation/PY32F002AF15P_DevBoard_pinout.png)
 
-# The PY32F002A Family of 32-bit RISC-V Microcontrollers
+# The PY32F002A Family of 32-bit ARM Microcontrollers
 ## Overview
 The PY32F002A series microcontrollers are cost-effective MCUs with a high performance 32-bit ARM® Cortex®-M0+ core. They feature a wide voltage operating range (1.7V - 5.5V), 20 Kbytes flash, 3 Kbytes SRAM memory, and a maximum operating frequency of 24 MHz. The chip integrates multi-channel I2C, SPI, USART, and other communication peripherals, one channel 12-bit ADC, two 16-bit timers, and two-channel comparators. The PY32F002A series contains various products in different package types.
 
