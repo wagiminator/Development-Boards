@@ -22,7 +22,7 @@ void DEBUG_init(void) {
 
 // Send byte via UART
 void DEBUG_write(const char c) {
-  while(!(USART2->STATR & USART_STATR_TC));
+  while(!(USART2->STATR & USART_STATR_TXE));
   USART2->DATAR = c;
 }
 

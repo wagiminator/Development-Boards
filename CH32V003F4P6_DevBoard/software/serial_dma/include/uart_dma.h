@@ -45,7 +45,7 @@ extern "C" {
 #define UART_RX_BUF_SIZE  64              // UART RX buffer size
 
 // UART macros
-#define UART_ready()      (USART1->STATR & USART_STATR_TC)    // ready to write
+#define UART_ready()      (USART1->STATR & USART_STATR_TXE)   // ready to write
 #define UART_setBAUD(n)   USART1->BRR = ((2*F_CPU/(n))+1)/2;  // set BAUD rate
 
 // UART functions

@@ -18,7 +18,7 @@ void DEBUG_init(void) {
 
 // Send byte via UART
 void DEBUG_write(const char c) {
-  while(!(USART1->STATR & USART_STATR_TC));
+  while(!(USART1->STATR & USART_STATR_TXE));
   USART1->DATAR = c;
 }
 

@@ -44,11 +44,11 @@ extern "C" {
 #define UART2_REMAP       0               // UART2 pin remapping (see above)
 
 // UART macros
-#define UART1_ready()     (USART1->STATR & USART_STATR_TC)    // ready to write
+#define UART1_ready()     (USART1->STATR & USART_STATR_TXE)   // ready to write
 #define UART1_available() (USART1->STATR & USART_STATR_RXNE)  // ready to read
 #define UART1_setBAUD(n)  USART1->BRR = ((2*F_CPU/(n))+1)/2;  // set BAUD rate
 
-#define UART2_ready()     (USART2->STATR & USART_STATR_TC)    // ready to write
+#define UART2_ready()     (USART2->STATR & USART_STATR_TXE)   // ready to write
 #define UART2_available() (USART2->STATR & USART_STATR_RXNE)  // ready to read
 #define UART2_setBAUD(n)  USART2->BRR = ((2*F_CPU/(n))+1)/2;  // set BAUD rate
 
