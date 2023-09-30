@@ -1,4 +1,4 @@
-# CH32V203F6P6 Development Board
+# CH32V203 F6P6 Development Board
 Development board for the CH32V203F6P6 low-cost 32-bit RISC-V microcontroller with native USB 2.0 and Arduino IDE support.
 
 ![CH32V203F6P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V203F6P6_DevBoard/documentation/CH32V203F6P6_DevBoard_pic1.jpg)
@@ -151,6 +151,8 @@ There are projects around to make the CH32V203 compatible with the Arduino IDE (
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
+- [MCU Templates](https://github.com/wagiminator/MCU-Templates)
+- [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 - [MounRiver Studio](http://www.mounriver.com/)
 - [CH32V203 with Arduino IDE](https://github.com/openwch/arduino_core_ch32)
 - [CH32V203 with PlatformIO](https://github.com/Community-PIO-CH32V/platform-ch32v)

@@ -3,6 +3,8 @@ Collection of various development boards for microcontrollers and CPLDs. More de
 - [AVR Development Boards](https://github.com/wagiminator/AVR-Development-Boards)
 - [AVR Programmers](https://github.com/wagiminator/AVR-Programmer)
 - [SAMD Development Boards and Programmers](https://github.com/wagiminator/SAMD-Development-Boards)
+- [MCU Templates](https://github.com/wagiminator/MCU-Templates)
+- [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 
 ## [CH55xG Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard)
 Development board for the CH551G, CH552G and CH554G low-cost 8-bit microcontrollers with native USB 2.0 and Arduino IDE support.
@@ -19,17 +21,17 @@ Development stick for the CH552E and CH554E 8-bit USB microcontrollers with a bu
 
 ![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
 
-## [CH32V003A4M6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003A4M6_DevBoard)
+## [CH32V003 A4M6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003A4M6_DevBoard)
 Development board for the CH32V003A4M6 ultra-cheap (10 cents) 32-bit RISC-V microcontroller.
 
 ![CH32V003A4M6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003A4M6_DevBoard/documentation/CH32V003A4M6_DevBoard_pic1.jpg)
 
-## [CH32V003F4P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003F4P6_DevBoard)
+## [CH32V003 F4P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003F4P6_DevBoard)
 Development board for the CH32V003F4P6 ultra-cheap (10 cents) 32-bit RISC-V microcontroller.
 
 ![CH32V003F4P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003F4P6_DevBoard_pic1.jpg)
 
-## [CH32V203F6P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard)
+## [CH32V203 F6P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard)
 Development board for the CH32V203F6P6 low-cost 32-bit RISC-V microcontroller with native USB 2.0 and Arduino IDE support.
 
 ![CH32V203F6P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V203F6P6_DevBoard/documentation/CH32V203F6P6_DevBoard_pic1.jpg)

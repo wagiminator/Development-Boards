@@ -1,4 +1,4 @@
-# CH32V003A4M6 Development Board
+# CH32V003 A4M6 Development Board
 Development board for the CH32V003A4M6 ultra-cheap 32-bit RISC-V microcontroller.
 
 ![CH32V003A4M6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003A4M6_DevBoard/documentation/CH32V003A4M6_DevBoard_pic1.jpg)
@@ -84,6 +84,8 @@ There are projects around to make the CH32V003 compatible with the Arduino IDE (
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
+- [MCU Templates](https://github.com/wagiminator/MCU-Templates)
+- [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 - [MounRiver Studio](http://www.mounriver.com/)
 - [ch32003fun SDK](https://github.com/cnlohr/ch32v003fun)
 - [arduino_core_ch32](https://github.com/openwch/arduino_core_ch32)

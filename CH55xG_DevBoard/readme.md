@@ -67,6 +67,8 @@ sudo pip install pyusb
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator/ch55xg-development-board)
+- [MCU Templates](https://github.com/wagiminator/MCU-Templates)
+- [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 - [CH55x SDK for SDCC](https://github.com/Blinkinlabs/ch554_sdcc)
 - [ch55xduino](https://github.com/DeqingSun/ch55xduino)
 - [CH551/552 Datasheet](http://www.wch-ic.com/downloads/CH552DS1_PDF.html)
