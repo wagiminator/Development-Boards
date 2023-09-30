@@ -36,6 +36,11 @@ Development board for the CH32V203F6P6 low-cost 32-bit RISC-V microcontroller wi
 
 ![CH32V203F6P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V203F6P6_DevBoard/documentation/CH32V203F6P6_DevBoard_pic1.jpg)
 
+## [PY32F002A F15P Development Board](https://github.com/wagiminator/Development-Boards/tree/main/PY32F002AF15P_DevBoard)
+Development board for the PY32F002AF15P ultra-cheap 32-bit ARM Cortex microcontroller with integrated USB-to-serial adapter which can also be used to upload firmware utilizing the factory built-in serial bootloader.
+
+![PY32F002AF15P_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/PY32F002AF15P_DevBoard/documentation/PY32F002AF15P_DevBoard_pic1.jpg)
+
 ## [CH554E USB Host Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH554E_HostDevBoard)
 Development board for the USB host capabilities of the CH554E microcontroller with an integrated USB-A female connector for connecting USB devices like keyboards, mice, printers, hubs, etc. and a USB-A male connector for providing a serial interface for analysis and debugging on the PC.
 
