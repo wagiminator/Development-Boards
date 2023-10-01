@@ -75,7 +75,7 @@ def _main():
     try:
         print('Connecting to MCU via USB-to-serial converter ...')
         isp = Programmer()
-        print('SUCCESS: Connection established.')
+        print('SUCCESS: Connection established via', isp.port + '.')
     except Exception as ex:
         sys.stderr.write('ERROR: ' + str(ex) + '!\n')
         sys.exit(1)

@@ -385,12 +385,12 @@ enum{
 #define ADC_TSCAL1          (*(uint32_t *)(0x1FFF0F14))
 #define ADC_TSCAL2          (*(uint32_t *)(0x1FFF0F18))
 
-#define ADC_input_TEMP()    ADC1->CHSELR = 11
-#define ADC_input_VREF()    ADC1->CHSELR = 12
+#define ADC_input_TEMP()    ADC1->CHSELR = (uint16_t)1<<11
+#define ADC_input_VREF()    ADC1->CHSELR = (uint16_t)1<<12
 
 #define ADC_input(PIN) \
-  ((PIN>=PA0)&&(PIN<=PA7) ? ( ADC1->CHSELR =  (PIN)&7    ) : \
-  ((PIN>=PB0)&&(PIN<=PB1) ? ( ADC1->CHSELR = ((PIN)&7)+8 ) : \
+  ((PIN>=PA0)&&(PIN<=PA7) ? ( ADC1->CHSELR = (uint16_t)1<<( (PIN)&7)    ) : \
+  ((PIN>=PB0)&&(PIN<=PB1) ? ( ADC1->CHSELR = (uint16_t)1<<(((PIN)&7)+8) ) : \
 (0)))
 
 static inline void ADC_enable(void) {
@@ -410,9 +410,7 @@ static inline void ADC_disable(void) {
 
 static inline void ADC_init(void) {
   RCC->APBENR2 |= RCC_APBENR2_ADCEN;            // power on ADC
-  ADC1->CR = ADC_CR_ADCAL;                      // start calibration
-  while(ADC1->CR & ADC_CR_ADCAL);               // wait until finished
-  ADC1->CFGR2 = (uint32_t)0b1011 << 28;         // set HSI/8 as ADC clock source
+  ADC1->CFGR2 = (uint32_t)0b0100 << 28;         // set PCLK/16 as ADC clock source
   ADC1->SMPR = 0b110;                           // sampling time = 71.5 ADC clock cycles
   ADC_enable();                                 // turn on ADC
 }
