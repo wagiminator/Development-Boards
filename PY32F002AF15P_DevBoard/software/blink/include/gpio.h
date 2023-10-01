@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO Functions for PY32F002, PY32F003, and PY32F030                  * v0.1 *
+// Basic GPIO Functions for PY32F002, PY32F003, and PY32F030                  * v0.2 *
 // ===================================================================================
 //
 // Pins must be defined as PA0, PA1, .., PF14, PF15 - e.g.:
@@ -10,13 +10,20 @@
 // PIN_input(PIN)           Set PIN as INPUT (floating, no pullup/pulldown)
 // PIN_input_PU(PIN)        Set PIN as INPUT with internal PULLUP resistor
 // PIN_input_PD(PIN)        Set PIN as INPUT with internal PULLDOWN resistor
-// PIN_input_AN(PIN)        Set PIN as INPUT for analog peripherals (e.g. ADC)
+// PIN_input_AN(PIN)        Set PIN as INPUT for analog peripherals (e.g. ADC) (*)
 // PIN_output(PIN)          Set PIN as OUTPUT (push-pull)
 // PIN_output_OD(PIN)       Set PIN as OUTPUT (open-drain)
 // PIN_output_OD_PU(PIN)    Set PIN as OUTPUT (open-drain, pullup)
-// PIN_speed(PIN, s)        Set PIN output SPEED (0: very low ... 3: very high)
 //
-// PIN_low(PIN)             Set PIN output value to LOW
+// PIN_pullup(PIN)          Enable PULLUP resistor on PIN
+// PIN_pulldown(PIN)        Enable PULLDOWN resistor on PIN
+// PIN_pulloff(PIN)         Disable PULLUP/PULLDOWN resistor on PIN (*)
+// PIN_pushpull(PIN)        Set PIN output type to push-pull (*)
+// PIN_opendrain(PIN)       Set PIN output type to open-drain
+// PIN_speed(PIN, s)        Set PIN output SPEED (0: very low (*) .. 3: very high)
+// PIN_alternate(PIN, AF)   Set alternate function AF (0..15) for PIN
+//
+// PIN_low(PIN)             Set PIN output value to LOW (*)
 // PIN_high(PIN)            Set PIN output value to HIGH
 // PIN_toggle(PIN)          TOGGLE PIN output value
 // PIN_read(PIN)            Read PIN input value
@@ -48,6 +55,7 @@
 //
 // Notes:
 // ------
+// - (*) reset state
 // - Pins used for ADC must be set with PIN_input_AN beforehand. ADC input pins are:
 //   PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, PB0, PB1.
 //
@@ -205,19 +213,100 @@ enum{
 (0))))
 
 // ===================================================================================
+// Enable PULLUP resistor on PIN
+// ===================================================================================
+#define PIN_pullup(PIN) \
+  ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->PUPDR =  (GPIOA->PUPDR                        \
+                                            & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
+                                            |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
+  ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->PUPDR =  (GPIOB->PUPDR                        \
+                                            & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
+                                            |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
+  ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->PUPDR =  (GPIOF->PUPDR                        \
+                                            & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
+                                            |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
+(0))))
+
+// ===================================================================================
+// Enable PULLDOWN resistor on PIN
+// ===================================================================================
+#define PIN_pulldown(PIN) \
+  ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->PUPDR =  (GPIOA->PUPDR                        \
+                                            & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
+                                            |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
+  ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->PUPDR =  (GPIOB->PUPDR                        \
+                                            & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
+                                            |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
+  ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->PUPDR =  (GPIOF->PUPDR                        \
+                                            & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
+                                            |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
+(0))))
+
+// ===================================================================================
+// Disable PULLUP/PULLDOWN resistor on PIN
+// ===================================================================================
+#define PIN_pulloff(PIN) \
+  ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->PUPDR &= ~((uint32_t)0b11<<(((PIN)&15)<<1)) ) : \
+  ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->PUPDR &= ~((uint32_t)0b11<<(((PIN)&15)<<1)) ) : \
+  ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->PUPDR &= ~((uint32_t)0b11<<(((PIN)&15)<<1)) ) : \
+(0))))
+
+// ===================================================================================
+// Set PIN output type to push-pull
+// ===================================================================================
+#define PIN_pushpull(PIN) \
+  ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->OTYPER &= ~((uint32_t)1<<((PIN)&15)) ) : \
+  ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->OTYPER &= ~((uint32_t)1<<((PIN)&15)) ) : \
+  ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->OTYPER &= ~((uint32_t)1<<((PIN)&15)) ) : \
+(0))))
+
+// ===================================================================================
+// Set PIN output type to open-drain
+// ===================================================================================
+#define PIN_opendrain(PIN) \
+  ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->OTYPER |=  ((uint32_t)1<<((PIN)&15)) ) : \
+  ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->OTYPER |=  ((uint32_t)1<<((PIN)&15)) ) : \
+  ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->OTYPER |=  ((uint32_t)1<<((PIN)&15)) ) : \
+(0))))
+
+// ===================================================================================
 // Set PIN output SPEED (0: very low ... 3: very high)
 // ===================================================================================
 #define PIN_speed(PIN, s) \
   ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->OSPEEDR =  (GPIOA->OSPEEDR                         \
-                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))      \
+                                              & ~((uint32_t)   0b11<<(((PIN)&15)<<1)))   \
                                               |  ((uint32_t)((s)&3)<<(((PIN)&15)<<1))) : \
   ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->OSPEEDR =  (GPIOB->OSPEEDR                         \
-                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))      \
+                                              & ~((uint32_t)   0b11<<(((PIN)&15)<<1)))   \
                                               |  ((uint32_t)((s)&3)<<(((PIN)&15)<<1))) : \
   ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->OSPEEDR =  (GPIOF->OSPEEDR                         \
-                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))      \
+                                              & ~((uint32_t)   0b11<<(((PIN)&15)<<1)))   \
                                               |  ((uint32_t)((s)&3)<<(((PIN)&15)<<1))) : \
 (0))))
+
+// ===================================================================================
+// Set alternate function AF (0..15) for PIN
+// ===================================================================================
+#define PIN_alternate(PIN, AF) \
+  ((PIN>=PA0)&&(PIN<=PA7)  ? ( GPIOA->AFR[0] =  (GPIOA->AFR[0]                           \
+                                             & ~((uint32_t)   0b1111<<(((PIN)&7)<<2)))   \
+                                             |  ((uint32_t)((AF)&15)<<(((PIN)&7)<<2))) : \
+  ((PIN>=PA8)&&(PIN<=PA15) ? ( GPIOA->AFR[1] =  (GPIOA->AFR[1]                           \
+                                             & ~((uint32_t)   0b1111<<(((PIN)&7)<<2)))   \
+                                             |  ((uint32_t)((AF)&15)<<(((PIN)&7)<<2))) : \
+  ((PIN>=PB0)&&(PIN<=PB7)  ? ( GPIOB->AFR[0] =  (GPIOB->AFR[0]                           \
+                                             & ~((uint32_t)   0b1111<<(((PIN)&7)<<2)))   \
+                                             |  ((uint32_t)((AF)&15)<<(((PIN)&7)<<2))) : \
+  ((PIN>=PB8)&&(PIN<=PB15) ? ( GPIOB->AFR[1] =  (GPIOB->AFR[1]                           \
+                                             & ~((uint32_t)   0b1111<<(((PIN)&7)<<2)))   \
+                                             |  ((uint32_t)((AF)&15)<<(((PIN)&7)<<2))) : \
+  ((PIN>=PF0)&&(PIN<=PF7)  ? ( GPIOF->AFR[0] =  (GPIOF->AFR[0]                           \
+                                             & ~((uint32_t)   0b1111<<(((PIN)&7)<<2)))   \
+                                             |  ((uint32_t)((AF)&15)<<(((PIN)&7)<<2))) : \
+  ((PIN>=PF8)&&(PIN<=PF15) ? ( GPIOF->AFR[1] =  (GPIOF->AFR[1]                           \
+                                             & ~((uint32_t)   0b1111<<(((PIN)&7)<<2)))   \
+                                             |  ((uint32_t)((AF)&15)<<(((PIN)&7)<<2))) : \
+(0)))))))
 
 // ===================================================================================
 // Set PIN output value to LOW

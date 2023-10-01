@@ -47,8 +47,8 @@ from serial.tools.list_ports import comports
 
 # If the PID/VID of the USB-to-Serial converter is known, it can be defined here,
 # which can make the auto-detection a lot faster.
-#VID = '1A86'
-#PID = '7523'
+VID = '1A86'
+PID = '7523'
 
 # ===================================================================================
 # Main Function
