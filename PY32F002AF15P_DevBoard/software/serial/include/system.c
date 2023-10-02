@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v0.3 *
+// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v1.0 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -54,6 +54,7 @@ void CLK_init_HSI_PLL(void) {
 
 // Init external crystal (non PLL) as system clock source
 void CLK_init_HSE(void) {
+  RCC->ECSCR = (RCC->ECSCR & ~RCC_ECSCR_HSE_FREQ) | CLK_HSE_FREQ; // set frequency
   RCC->CR |= RCC_CR_HSEON;                                // Turn on HSE
   while(!(RCC->CR & RCC_CR_HSERDY));                      // wait till HSE is ready
   RCC->CFGR = 0b001;                                      // HSE as system clock source
@@ -62,6 +63,7 @@ void CLK_init_HSE(void) {
 
 // Init external crystal with PLL as system clock source
 void CLK_init_HSE_PLL(void) {
+  RCC->ECSCR = (RCC->ECSCR & ~RCC_ECSCR_HSE_FREQ) | CLK_HSE_FREQ; // set frequency
   RCC->CR |= RCC_CR_HSEON;                                // Turn on HSE
   while(!(RCC->CR & RCC_CR_HSERDY));                      // wait till HSE is ready
   RCC->PLLCFGR = RCC_PLLCFGR_PLLSRC_HSE;                  // set HSE as source for PLL
@@ -75,26 +77,50 @@ void CLK_init_HSE_PLL(void) {
 // Real-Time Clock (RTC) Functions
 // ===================================================================================
 
-// ===================================================================================
-// Low Power Timer (LPT) Functions
-// ===================================================================================
-
-// Init and enable low-power timer
-void LPT_init(void) {
+// Init RTC with LSI as clock source and 1s clock period
+void RTC_init(void) {
   LSI_enable();                         // enable internal low-speed clock (LSI)
-  RCC->APBENR1 |= RCC_APBENR1_LPTIMEN;  // enable LPT module clock
-  RCC->CCIPR   |= (uint32_t)0b01<<18;   // set LSI as LPT clock source
-  LPTIM->CFGR   = (uint32_t)0b101<<9;   // set prescaler to 32 (~1kHz)
-  LPTIM->CR     = LPTIM_CR_ENABLE;      // enable timer
-  LPTIM->IER    = LPTIM_IER_ARRMIE;     // set interrupt enable flag
-  NVIC_EnableIRQ(LPTIM1_IRQn);          // enable interrupt
+  RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN; // enable RTC module clock
+  RCC->BDCR     = RCC_BDCR_LSCOEN       // enable low-speed clock
+                | RCC_BDCR_RTCEN        // enable RTC
+                | (0b10<<8);            // set LSI as clock source
 }
 
-// Start low-power timer single shot with intervall in ms
-void LPT_start(uint16_t ms) {
-  DLY_ms(2);                            // wait two LPT clock cycles
-  LPTIM->ARR = ms;                      // set interval
-  LPTIM->CR |= LPTIM_CR_SNGSTRT;        // start timer in single mode
+// Init RTC with LSE as clock source and 1s clock period
+void RTC_init_LSE(void) {
+  RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN; // enable RTC module clock
+  RCC->BDCR     = RCC_BDCR_LSCOSEL      // set LSE as low speed clock
+                | RCC_BDCR_LSCOEN       // enable low-speed clock
+                | RCC_BDCR_RTCEN        // enable RTC
+                | (0b01<<8)             // set LSE as clock source
+                | RCC_BDCR_LSEON;       // turn on LSE
+}
+
+// Set RTC prescaler (default 32768)
+void RTC_setPrescaler(uint32_t val) {
+  while(!(RTC->CRL & RTC_CRL_RTOFF));   // wait for ready to write
+  RTC->CRL  = RTC_CRL_CNF;              // enter configuration mode
+  RTC->PRLH = val >> 16;                // set prescaler (high value)
+  RTC->PRLL = val & 0xffff;             // set prescaler (low value) for 1s
+  RTC->CRL  = 0;                        // exit configuration mode -> write changes
+}
+
+// Set RTC counter value
+void RTC_setCounter(uint32_t val) {
+  while(!(RTC->CRL & RTC_CRL_RTOFF));   // wait for ready to write
+  RTC->CRL  = RTC_CRL_CNF;              // enter configuration mode
+  RTC->CNTH = val >> 16;                // set prescaler (high value)
+  RTC->CNTL = val & 0xffff;             // set prescaler (low value) for 1s
+  RTC->CRL  = 0;                        // exit configuration mode -> write changes
+}
+
+// Set RTC alarm value (default 0xffffffff)
+void RTC_setAlarm(uint32_t val) {
+  while(!(RTC->CRL & RTC_CRL_RTOFF));   // wait for ready to write
+  RTC->CRL  = RTC_CRL_CNF;              // enter configuration mode
+  RTC->ALRH = val >> 16;                // set prescaler (high value)
+  RTC->ALRL = val & 0xffff;             // set prescaler (low value) for 1s
+  RTC->CRL  = 0;                        // exit configuration mode -> write changes
 }
 
 // ===================================================================================
@@ -135,6 +161,47 @@ void IWDG_reload(uint16_t ms) {
 }
 
 // ===================================================================================
+// Low Power Timer (LPT) Functions
+// ===================================================================================
+
+// Init and enable low-power timer
+void LPT_init(void) {
+  LSI_enable();                         // enable internal low-speed clock (LSI)
+  RCC->APBENR1 |= RCC_APBENR1_LPTIMEN;  // enable LPT module clock
+  RCC->CCIPR   |= (uint32_t)0b01<<18;   // set LSI as LPT clock source
+  LPTIM->CFGR   = (uint32_t)0b101<<9;   // set prescaler to 32 (~1kHz)
+  LPTIM->IER    = LPTIM_IER_ARRMIE;     // set interrupt enable flag
+  LPTIM->CR     = LPTIM_CR_ENABLE;      // enable timer
+}
+
+// Start low-power timer single shot with period in ms
+void LPT_start(uint16_t ms) {
+  DLY_ms(2);                            // wait two LPT clock cycles
+  LPTIM->ARR = ms;                      // set interval
+  LPTIM->CR |= LPTIM_CR_SNGSTRT;        // start timer in single mode
+}
+
+// Put device in to SLEEP and wake-up after LPT period in ms
+void LPT_sleep(uint16_t ms) {
+  LPT_start(ms);                        // start low-power timer (LPT)
+  SCB->SCR |=  SCB_SCR_SEVONPEND_Msk;   // enable wake-up on pending interrupt
+  SLEEP_WFE_now();                      // put device into stop, wake up by LPT event
+  SCB->SCR &= ~SCB_SCR_SEVONPEND_Msk;   // disable wake-up on pending interrupt
+  LPTIM->ICR = LPTIM_ICR_ARRMCF;        // clear LPT interrupt flag
+  NVIC_ClearPendingIRQ(LPTIM1_IRQn);    // clear NVIC pending interrupt flag
+}
+
+// Put device in to STOP (deep sleep) and wake-up after LPT period in ms
+void LPT_stop(uint16_t ms) {
+  LPT_start(ms);                        // start low-power timer (LPT)
+  SCB->SCR |= SCB_SCR_SEVONPEND_Msk;    // enable wake-up on pending interrupt
+  STOP_WFE_now();                       // put device into stop, wake up by LPT event
+  SCB->SCR &= ~SCB_SCR_SEVONPEND_Msk;   // disable wake-up on pending interrupt
+  LPTIM->ICR = LPTIM_ICR_ARRMCF;        // clear LPT interrupt flag
+  NVIC_ClearPendingIRQ(LPTIM1_IRQn);    // clear NVIC pending interrupt flag
+}
+
+// ===================================================================================
 // Sleep Functions
 // ===================================================================================
 
@@ -163,9 +230,11 @@ void STOP_WFE_now(void) {
   NVIC->ICPR[0U] = 0xffffffff;          // clear pending interrupts
   EXTI->PR = 0xffffffff;                // clear all EXTI pending flags
   RTC->CRL = 0;                         // clear RTC interrupt flags
-  SCB->SCR |=  SCB_SCR_SLEEPDEEP_Msk;   // set deep sleep mode
+  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk     // set deep sleep mode
+            | SCB_SCR_SEVONPEND_Msk;    // enable wake-up on pending interrupt
   __WFE();                              // wait for event
-  SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;   // unset deep sleep mode
+  SCB->SCR &= ~(SCB_SCR_SLEEPDEEP_Msk   // unset deep sleep mode
+              | SCB_SCR_SEVONPEND_Msk); // unset wake-up on pending interrupt
 }
 
 // Reduce power in stop mode

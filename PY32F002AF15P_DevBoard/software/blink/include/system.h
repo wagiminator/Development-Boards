@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v0.3 *
+// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v1.0 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -45,8 +45,13 @@
 // MCO_setPRE(n)          // set MCO prescaler to 2^n (set before enabling MCO)
 // MCO_stop()             // disable clock output (MCO)
 //
-// LPT_init()             // init and enable low-power timer (LPT) incl. interrupt
-// LPT_start(n)           // start LPT single shot with interval in ms
+// RTC_init()             // init RTC with LSI as clock source and 1s clock period
+// RTC_init_LSE()         // init RTC with LSE as clock source and 1s clock period
+// RTC_setPrescaler(p)    // set RTC prescaler (default: 32768)
+// RTC_setCounter(c)      // set RTC counter value
+// RTC_setAlarm(a)        // set RTC alarm value (default: 0xffffffff)
+// RTC_getCounter()       // get RTC counter value
+// RTC_getAlarm()         // get RTC alarm value
 //
 // STK_enable()           // enable SYSTICK at system frequency
 // STK_disable()          // disable SYSTICK
@@ -54,6 +59,21 @@
 // DLY_ticks(n)           // delay n clock cycles
 // DLY_us(n)              // delay n microseconds
 // DLY_ms(n)              // delay n milliseconds
+//
+// IWDG_start(n)          // start independent watchdog timer, n milliseconds, n<=8191
+// IWDG_reload(n)         // reload watchdog counter with n milliseconds, n<=8191
+// IWDG_feed()            // feed the dog (reload last time)
+//
+// LPT_init()             // init and enable low-power timer (LPT)
+// LPT_start(n)           // start LPT single shot with period in ms
+// LPT_sleep(n)           // put device in to SLEEP for period in ms
+// LPT_stop(n)            // put device in to STOP for period in ms
+//
+// SLEEP_WFI_now()        // put device into sleep, wake up by interrupt
+// SLEEP_WFE_now()        // put device into sleep, wake up by event
+// STOP_WFI_now()         // put device into stop (deep sleep), wake by interrupt
+// STOP_WFE_now()         // put device into stop (deep sleep), wake by event
+// STOP_lowPower()        // set reduced power in stop mode
 //
 // RST_now()              // conduct software reset
 // RST_clearFlags()       // clear all reset flags
@@ -63,16 +83,6 @@
 // RST_wasPower()         // check if last reset was caused by BOR/POR/PDR
 // RST_wasPin()           // check if last reset was caused by RST pin low
 // RST_wasOption()        // check if last reset was caused by OPTION byte loader
-//
-// IWDG_start(n)          // start independent watchdog timer, n milliseconds, n<=8191
-// IWDG_reload(n)         // reload watchdog counter with n milliseconds, n<=8191
-// IWDG_feed()            // feed the dog (reload last time)
-//
-// SLEEP_WFI_now()        // put device into sleep, wake up by interrupt
-// SLEEP_WFE_now()        // put device into sleep, wake up by event
-// STOP_WFI_now()         // put device into stop (deep sleep), wake by interrupt
-// STOP_WFE_now()         // put device into stop (deep sleep), wake by event
-// STOP_lowPower()        // set reduced power in stop mode
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -134,16 +144,29 @@ extern "C" {
      #undef  F_CPU
      #define F_CPU        8000000     
   #endif
-#endif
 
-#if SYS_USE_HSE > 0
-  #define CLK_init        CLK_init_HSE
-#else
   #if F_CPU > 24000000
     #define CLK_init      CLK_init_HSI_PLL
   #else
     #define CLK_init      CLK_init_HSI
   #endif
+
+  #define CLK_HSE_FREQ    (0b00<<2)
+
+#else
+  #if F_CPU   >= 16000000
+    #define CLK_HSE_FREQ  (0b11<<2)
+  #elif F_CPU >=  8000000
+    #define CLK_HSE_FREQ  (0b10<<2)
+  #elif F_CPU >=  4000000
+    #define CLK_HSE_FREQ  (0b01<<2)
+  #else
+    #error HSE must be at least 4MHz
+  #endif
+
+  #define CLK_init        CLK_init_HSE
+  #define CLK_MASK        ((0b001<<13) | *(uint32_t *)(0x1fff0f04))
+  #define CLK_DIV         (0b000<<11)
 #endif
 
 // ===================================================================================
@@ -197,14 +220,13 @@ void CLK_init_HSE_PLL(void);  // init external crystal with PLL as system clock 
 // ===================================================================================
 // Real-Time Clock (RTC) Functions
 // ===================================================================================
-
-// ===================================================================================
-// Low Power Timer (LPTIM) Functions
-// ===================================================================================
-void LPT_init(void);          // init and enable low-power timer
-void LPT_start(uint16_t ms);  // start LPT single shot with interval in ms
-#define LPT_interval(ms)  LPTIM->ARR = ms               // set intervall
-#define LPT_restart()     LPTIM->CR |= LPTIM_CR_SNGSTRT // restart timer
+void RTC_init(void);      // init RTC with LSI as clock source and 1s clock period
+void RTC_init_LSE(void);  // init RTC with LSE as clock source and 1s clock period
+void RTC_setPrescaler(uint32_t val);  // set RTC prescaler (default 32768)
+void RTC_setCounter(uint32_t val);    // set RTC counter value
+void RTC_setAlarm(uint32_t val);      // set RTC alarm value (default 0xffffffff)
+#define RTC_getCounter()  (((uint32_t)RTC->CNTH<<16)|RTC->CNTL)
+#define RTC_getAlarm()    (((uint32_t)RTC->ALRH<<16)|RTC->ALRL)
 
 // ===================================================================================
 // SYSTICK Functions
@@ -224,6 +246,32 @@ static inline void DLY_ms(uint32_t ms) {                // delay n milliseconds
 }
 
 // ===================================================================================
+// Independent Watchdog Timer (IWDG) Functions
+// ===================================================================================
+void IWDG_start(uint16_t ms);                           // start IWDG with time in ms
+void IWDG_reload(uint16_t ms);                          // reload IWDG with time in ms
+#define IWDG_feed()       IWDG->KR = 0xAAAA             // feed the dog (reload time)
+
+// ===================================================================================
+// Low Power Timer (LPTIM) Functions
+// ===================================================================================
+void LPT_init(void);          // init and enable low-power timer
+void LPT_start(uint16_t ms);  // start LPT single shot with period in ms
+void LPT_sleep(uint16_t ms);  // put device in to SLEEP for period in ms
+void LPT_stop(uint16_t ms);   // put device in to STOP for period in ms
+#define LPT_period(ms)    LPTIM->ARR = ms               // set period
+#define LPT_restart()     LPTIM->CR |= LPTIM_CR_SNGSTRT // restart timer
+
+// ===================================================================================
+// Sleep Functions
+// ===================================================================================
+void SLEEP_WFI_now(void);   // put device into sleep, wake up by interrupt
+void SLEEP_WFE_now(void);   // put device into sleep, wake up by event
+void STOP_WFI_now(void);    // put device into stop (deep sleep), wake up interrupt
+void STOP_WFE_now(void);    // put device into stop (deep sleep), wake up event
+void STOP_lowPower(void);   // set reduced power in stop mode
+
+// ===================================================================================
 // Reset Functions
 // ===================================================================================
 #define RST_now()         NVIC_SystemReset()
@@ -234,22 +282,6 @@ static inline void DLY_ms(uint32_t ms) {                // delay n milliseconds
 #define RST_wasPower()    (RCC->CSR & RCC_CSR_PWRRSTF)
 #define RST_wasPin()      (RCC->CSR & RCC_CSR_PINRSTF)
 #define RST_wasOption()   (RCC->CSR & RCC_CSR_OBLRSTF)
-
-// ===================================================================================
-// Independent Watchdog Timer (IWDG) Functions
-// ===================================================================================
-void IWDG_start(uint16_t ms);                           // start IWDG with time in ms
-void IWDG_reload(uint16_t ms);                          // reload IWDG with time in ms
-#define IWDG_feed()       IWDG->KR = 0xAAAA             // feed the dog (reload time)
-
-// ===================================================================================
-// Sleep Functions
-// ===================================================================================
-void SLEEP_WFI_now(void);   // put device into sleep, wake up by interrupt
-void SLEEP_WFE_now(void);   // put device into sleep, wake up by event
-void STOP_WFI_now(void);    // put device into stop (deep sleep), wake up interrupt
-void STOP_WFE_now(void);    // put device into stop (deep sleep), wake up event
-void STOP_lowPower(void);   // set reduced power in stop mode
 
 // ===================================================================================
 // Imported System Functions from cmsis_gcc.h and core_cm0plus.h

@@ -32,14 +32,6 @@
 #define PIN_LED   PB0             // define LED pin
 
 // ===================================================================================
-// LPT Interrupt Service Routine
-// ===================================================================================
-void LPTIM1_IRQHandler(void) __attribute__((interrupt));
-void LPTIM1_IRQHandler(void) {
-  LPTIM->ICR = LPTIM_ICR_ARRMCF;  // clear interrupt flag
-}
-
-// ===================================================================================
 // Main Function
 // ===================================================================================
 int main(void) {
@@ -50,7 +42,6 @@ int main(void) {
   // Loop
   while(1) {
     PIN_toggle(PIN_LED);          // toggle LED on/off
-    LPT_start(100);               // start low-power timer (LPT) with 100ms
-    STOP_WFI_now();               // put device into stop, wake up by LPT interrupt
+    LPT_stop(100);                // set device into STOP (deep sleep) for 100ms
   }
 }
