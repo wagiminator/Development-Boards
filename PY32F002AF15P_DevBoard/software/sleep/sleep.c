@@ -1,0 +1,56 @@
+// ===================================================================================
+// Project:   Example for PY32F0xx
+// Version:   v1.0
+// Year:      2023
+// Author:    Stefan Wagner
+// Github:    https://github.com/wagiminator
+// EasyEDA:   https://easyeda.com/wagiminator
+// License:   http://creativecommons.org/licenses/by-sa/3.0/
+// ===================================================================================
+//
+// Description:
+// ------------
+// Blink built-in LED using deep sleep with LPTIM as wake-up timer.
+//
+// Compilation Instructions:
+// -------------------------
+// - Make sure GCC toolchain (gcc-arm-none-eabi) and Python3 with PySerial is
+//   installed. If necessary, a driver for the USB-to-serial converter used must
+//   be installed.
+// - Connect the USB-to-serial converter to the MCU board.
+// - Set the MCU to boot mode by holding down the BOOT key and then pressing and 
+//   releasing the RESET key.
+// - Run 'make flash'.
+
+
+// ===================================================================================
+// Libraries, Definitions and Macros
+// ===================================================================================
+#include "system.h"               // system functions
+#include "gpio.h"                 // GPIO functions
+
+#define PIN_LED   PB0             // define LED pin
+
+// ===================================================================================
+// LPT Interrupt Service Routine
+// ===================================================================================
+void LPTIM1_IRQHandler(void) __attribute__((interrupt));
+void LPTIM1_IRQHandler(void) {
+  LPTIM->ICR = LPTIM_ICR_ARRMCF;  // clear interrupt flag
+}
+
+// ===================================================================================
+// Main Function
+// ===================================================================================
+int main(void) {
+  // Setup
+  PIN_output(PIN_LED);            // set LED pin as output
+  LPT_init();                     // init low-power timer
+
+  // Loop
+  while(1) {
+    PIN_toggle(PIN_LED);          // toggle LED on/off
+    LPT_start(100);               // start low-power timer (LPT) with 100ms
+    STOP_WFI_now();               // put device into stop, wake up by LPT interrupt
+  }
+}
