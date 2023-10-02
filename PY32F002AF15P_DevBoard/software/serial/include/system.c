@@ -230,11 +230,9 @@ void STOP_WFE_now(void) {
   NVIC->ICPR[0U] = 0xffffffff;          // clear pending interrupts
   EXTI->PR = 0xffffffff;                // clear all EXTI pending flags
   RTC->CRL = 0;                         // clear RTC interrupt flags
-  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk     // set deep sleep mode
-            | SCB_SCR_SEVONPEND_Msk;    // enable wake-up on pending interrupt
+  SCB->SCR |=  SCB_SCR_SLEEPDEEP_Msk;   // set deep sleep mode
   __WFE();                              // wait for event
-  SCB->SCR &= ~(SCB_SCR_SLEEPDEEP_Msk   // unset deep sleep mode
-              | SCB_SCR_SEVONPEND_Msk); // unset wake-up on pending interrupt
+  SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;   // unset deep sleep mode
 }
 
 // Reduce power in stop mode
