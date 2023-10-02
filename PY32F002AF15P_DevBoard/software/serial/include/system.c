@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v0.2 *
+// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v0.3 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -60,9 +60,42 @@ void CLK_init_HSE(void) {
   while((RCC->CFGR & RCC_CFGR_SWS_Msk) != RCC_CFGR_SWS_HSE); // Wait for HSE
 }
 
+// Init external crystal with PLL as system clock source
+void CLK_init_HSE_PLL(void) {
+  RCC->CR |= RCC_CR_HSEON;                                // Turn on HSE
+  while(!(RCC->CR & RCC_CR_HSERDY));                      // wait till HSE is ready
+  RCC->PLLCFGR = RCC_PLLCFGR_PLLSRC_HSE;                  // set HSE as source for PLL
+  RCC->CR |= RCC_CR_PLLON;                                // Enable PLL
+  while(!(RCC->CR & RCC_CR_PLLRDY));                      // Wait till PLL is ready      
+  RCC->CFGR = 0b010;                                      // PLL as system clock source
+  while((RCC->CFGR & RCC_CFGR_SWS_Msk) != RCC_CFGR_SWS_PLL); // Wait for PLL
+}
+
 // ===================================================================================
 // Real-Time Clock (RTC) Functions
 // ===================================================================================
+
+// ===================================================================================
+// Low Power Timer (LPT) Functions
+// ===================================================================================
+
+// Init and enable low-power timer
+void LPT_init(void) {
+  LSI_enable();                         // enable internal low-speed clock (LSI)
+  RCC->APBENR1 |= RCC_APBENR1_LPTIMEN;  // enable LPT module clock
+  RCC->CCIPR   |= (uint32_t)0b01<<18;   // set LSI as LPT clock source
+  LPTIM->CFGR   = (uint32_t)0b101<<9;   // set prescaler to 32 (~1kHz)
+  LPTIM->CR     = LPTIM_CR_ENABLE;      // enable timer
+  LPTIM->IER    = LPTIM_IER_ARRMIE;     // set interrupt enable flag
+  NVIC_EnableIRQ(LPTIM1_IRQn);          // enable interrupt
+}
+
+// Start low-power timer single shot with intervall in ms
+void LPT_start(uint16_t ms) {
+  DLY_ms(2);                            // wait two LPT clock cycles
+  LPTIM->ARR = ms;                      // set interval
+  LPTIM->CR |= LPTIM_CR_SNGSTRT;        // start timer in single mode
+}
 
 // ===================================================================================
 // Delay Functions
@@ -137,6 +170,7 @@ void STOP_WFE_now(void) {
 
 // Reduce power in stop mode
 void STOP_lowPower(void) {
+  RCC->APBENR1 |= RCC_APBENR1_PWREN;    // enable low power control block clock
   PWR->CR1 = PWR_CR1_LPR                // use low power regulator in stop mode
            | PWR_CR1_VOS                // use VDD = 1.0V in stop mode
            | (0b011 << 16);             // supply 0.9V to SRAM in stop mode

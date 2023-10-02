@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v0.2 *
+// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v0.3 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -10,7 +10,7 @@
 // CLK_init_HSI()         // init internal oscillator (non PLL) as system clock source
 // CLK_init_HSI_PLL()     // init internal oscillator with PLL as system clock source
 // CLK_init_HSE()         // init external crystal (non PLL) as system clock source
-// CLK_init_HSE_PLL()     // init external crystal (PLL) as system clock source
+// CLK_init_HSE_PLL()     // init external crystal with PLL as system clock source
 //
 // HSI_enable()           // enable internal 8MHz high-speed clock (HSI)
 // HSI_disable()          // disable HSI
@@ -44,6 +44,9 @@
 // MCO_setLSE()           // enable output external low-speed clock (LSE) on MCO
 // MCO_setPRE(n)          // set MCO prescaler to 2^n (set before enabling MCO)
 // MCO_stop()             // disable clock output (MCO)
+//
+// LPT_init()             // init and enable low-power timer (LPT) incl. interrupt
+// LPT_start(n)           // start LPT single shot with interval in ms
 //
 // STK_enable()           // enable SYSTICK at system frequency
 // STK_disable()          // disable SYSTICK
@@ -151,6 +154,7 @@ extern "C" {
 void CLK_init_HSI(void);      // init internal oscillator (non PLL) as system clock source
 void CLK_init_HSI_PLL(void);  // init internal oscillator with PLL as system clock source
 void CLK_init_HSE(void);      // init external crystal (non PLL) as system clock source
+void CLK_init_HSE_PLL(void);  // init external crystal with PLL as system clock source
 
 // Internal high-speed clock (HSI) functions
 #define HSI_enable()      RCC->CR |=  RCC_CR_HSION        // enable HSI
@@ -193,6 +197,14 @@ void CLK_init_HSE(void);      // init external crystal (non PLL) as system clock
 // ===================================================================================
 // Real-Time Clock (RTC) Functions
 // ===================================================================================
+
+// ===================================================================================
+// Low Power Timer (LPTIM) Functions
+// ===================================================================================
+void LPT_init(void);          // init and enable low-power timer
+void LPT_start(uint16_t ms);  // start LPT single shot with interval in ms
+#define LPT_interval(ms)  LPTIM->ARR = ms               // set intervall
+#define LPT_restart()     LPTIM->CR |= LPTIM_CR_SNGSTRT // restart timer
 
 // ===================================================================================
 // SYSTICK Functions
