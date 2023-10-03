@@ -177,12 +177,6 @@ class Programmer(Serial):
                 if not self.checkreply():
                     self.close()
                     continue
-                self.write([PY_SYNCH])
-                self.write([PY_SYNCH])
-                reply = self.read(1)
-                if len(reply) == 0 or reply[0] != PY_REPLY_NACK:
-                    self.close()
-                    continue
                 return
         raise Exception('No MCU in boot mode found')
 
