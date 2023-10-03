@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ===================================================================================
 # Project:   puyaisp - USB Programming Tool for PUYA PY32F0xx Microcontrollers
-# Version:   v1.1
+# Version:   v1.2
 # Year:      2023
 # Author:    Stefan Wagner
 # Github:    https://github.com/wagiminator
@@ -39,16 +39,20 @@
 #    your board has them).
 # Run "python3 puyaisp.py -f firmware.bin".
 
+# If the PID/VID of the USB-to-Serial converter is known, it can be defined here,
+# which can make the auto-detection a lot faster. If not, comment out or delete.
+PY_VID  = '1A86'
+PY_PID  = '7523'
+
+# Define BAUD rate here, range: 4800 - 1000000, default: 115200
+PY_BAUD = 115200
+
+# Libraries
 import sys
 import argparse
 import serial
 from serial import Serial
 from serial.tools.list_ports import comports
-
-# If the PID/VID of the USB-to-Serial converter is known, it can be defined here,
-# which can make the auto-detection a lot faster.
-VID = '1A86'
-PID = '7523'
 
 # ===================================================================================
 # Main Function
@@ -83,10 +87,11 @@ def _main():
     # Performing actions
     try:
         # Get chip info
-        print('Reading chip info ...')
+        print('Reading bootloader info ...')
         isp.readinfo()
         if isp.locked and not args.unlock:
             raise Exception('Chip is locked')
+        print('SUCCESS: Found bootloader v' + isp.version + ', PID: ' + isp.pid + '.')
 
         # Unlock chip
         if args.unlock:
@@ -150,27 +155,29 @@ def _main():
 
 class Programmer(Serial):
     def __init__(self):
-        super().__init__(baudrate = 115200, timeout = 1, stopbits = serial.STOPBITS_TWO)
+        # BAUD rate:  4800 - 1000000bps (default: 115200), will be auto-detected
+        # Data frame: 1 start bit, 8 data bit, 1 parity bit set to even, 1 stop bit
+        super().__init__(baudrate = PY_BAUD, parity = serial.PARITY_EVEN, timeout = 1)
         self.identify()
 
     # Identify port of programmer and enter programming mode
     def identify(self):
         for p in comports():
-            if (('VID' not in globals()) or (VID in p.hwid)) and (('PID' not in globals()) or (PID in p.hwid)):
+            if (('PY_VID' not in globals()) or (PY_VID in p.hwid)) and (('PY_PID' not in globals()) or (PY_PID in p.hwid)):
                 self.port = p.device
                 try:
                     self.open()
                 except:
                     continue
                 self.reset_input_buffer()
-                self.write([0x7f])
+                self.write([PY_SYNCH])
                 if not self.checkreply():
                     self.close()
                     continue
-                self.write([0x7f])
-                self.write([0x7f])
+                self.write([PY_SYNCH])
+                self.write([PY_SYNCH])
                 reply = self.read(1)
-                if len(reply) == 0 or reply[0] != 0x1f:
+                if len(reply) == 0 or reply[0] != PY_REPLY_NACK:
                     self.close()
                     continue
                 return
@@ -196,7 +203,7 @@ class Programmer(Serial):
     # Check if device acknowledged
     def checkreply(self):
         reply = self.read(1)
-        return (len(reply) == 1 and reply[0] == PY_REPLY_OK)
+        return (len(reply) == 1 and reply[0] == PY_REPLY_ACK)
 
     #--------------------------------------------------------------------------------
 
@@ -217,9 +224,9 @@ class Programmer(Serial):
 
     # Get chip info
     def readinfo(self):
-        # still need to find out meanings
-        self.info = self.readinfostream(0x00)
-        self.pid  = int.from_bytes(self.readinfostream(0x02), byteorder='big')
+        self.info = self.readinfostream(PY_CMD_GET)
+        self.pid  = '0x%04x' % int.from_bytes(self.readinfostream(PY_CMD_PID), byteorder='big')
+        self.version = '%x.%x' % (self.info[0] >> 4, self.info[0] & 7)
         self.locked = False
         try:
             self.readoption()
@@ -355,14 +362,21 @@ PY_OPTION_ADDR  = 0x1fff0e80
 PY_CONFIG_ADDR  = 0x1fff0f00
 
 # Command codes
+PY_CMD_GET      = 0x00
+PY_CMD_PID      = 0x02
 PY_CMD_READ     = 0x11
-PY_CMD_GO       = 0x21
 PY_CMD_WRITE    = 0x31
 PY_CMD_ERASE    = 0x44
+PY_CMD_GO       = 0x21
 PY_CMD_UNLOCK   = 0x92
 
 # Reply codes
-PY_REPLY_OK     = 0x79
+PY_REPLY_ACK    = 0x79
+PY_REPLY_NACK   = 0x1f
+PY_REPLY_BUSY   = 0xaa
+
+# Other codes
+PY_SYNCH        = 0x7f
 
 # Other stuff
 PY_OPTION_DEFAULT = b'\xaa\xbe\x55\x41\xff\x00\x00\xff\xff\xff\xff\xff\xff\xff\x00\x00'
