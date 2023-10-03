@@ -87,11 +87,9 @@ def _main():
     # Performing actions
     try:
         # Get chip info
-        print('Reading bootloader info ...')
+        print('Getting chip info ...')
         isp.readinfo()
-        if isp.locked and not args.unlock:
-            raise Exception('Chip is locked')
-        print('SUCCESS: Found bootloader v' + isp.version + ', PID: ' + isp.pid + '.')
+        print('SUCCESS: Found chip with ID', isp.pidstr, 'and bootloader v' + isp.version + '.')
 
         # Unlock chip
         if args.unlock:
@@ -102,6 +100,11 @@ def _main():
             isp.close()
             print('DONE.')
             sys.exit(0)
+
+        # Read option bytes and check, if chip is locked
+        print('Reading OPTION bytes ...')
+        isp.readoption()
+        print('SUCCESS:', isp.optionstr + '.')
 
         # Perform chip erase
         if (args.erase) or (args.flash is not None):
@@ -209,7 +212,7 @@ class Programmer(Serial):
 
     # Unlock (clear) chip and reset
     def unlock(self):
-        self.sendcommand(PY_CMD_UNLOCK)
+        self.sendcommand(PY_CMD_R_UNLOCK)
         if not self.checkreply():
             raise Exception('Failed to unlock chip')
 
@@ -224,14 +227,10 @@ class Programmer(Serial):
 
     # Get chip info
     def readinfo(self):
-        self.info = self.readinfostream(PY_CMD_GET)
-        self.pid  = '0x%04x' % int.from_bytes(self.readinfostream(PY_CMD_PID), byteorder='big')
+        self.info    = self.readinfostream(PY_CMD_GET)
+        self.pid     = int.from_bytes(self.readinfostream(PY_CMD_PID), byteorder='big')
+        self.pidstr  = '0x%04x' % self.pid
         self.version = '%x.%x' % (self.info[0] >> 4, self.info[0] & 7)
-        self.locked = False
-        try:
-            self.readoption()
-        except:
-            self.locked = True
 
     # Read UID
     def readuid(self):
@@ -239,7 +238,14 @@ class Programmer(Serial):
 
     # Read OPTION bytes
     def readoption(self):
-        self.option = list(self.readflash(PY_OPTION_ADDR, 16))
+        try:
+            self.option = list(self.readflash(PY_OPTION_ADDR, 16))
+        except:
+            raise Exception('Chip is locked')
+        self.optionstr = 'OPTR: 0x%04x, SDKR: 0x%04x, WRPR: 0x%04x' % \
+                         (( (self.option[ 0] << 8) + self.option[ 1], \
+                            (self.option[ 4] << 8) + self.option[ 5], \
+                            (self.option[12] << 8) + self.option[13] ))
 
     # Write OPTION bytes
     def writeoption(self):
@@ -363,12 +369,16 @@ PY_CONFIG_ADDR  = 0x1fff0f00
 
 # Command codes
 PY_CMD_GET      = 0x00
+PY_CMD_VER      = 0x01
 PY_CMD_PID      = 0x02
 PY_CMD_READ     = 0x11
 PY_CMD_WRITE    = 0x31
 PY_CMD_ERASE    = 0x44
 PY_CMD_GO       = 0x21
-PY_CMD_UNLOCK   = 0x92
+PY_CMD_W_LOCK   = 0x63
+PY_CMD_W_UNLOCK = 0x73
+PY_CMD_R_LOCK   = 0x82
+PY_CMD_R_UNLOCK = 0x92
 
 # Reply codes
 PY_REPLY_ACK    = 0x79
