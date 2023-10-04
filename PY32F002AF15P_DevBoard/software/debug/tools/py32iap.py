@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ===================================================================================
-# Project:   puyaisp - USB Programming Tool for PUYA PY32F0xx Microcontrollers
-# Version:   v1.2
+# Project:   py32iap - IAP Programming Tool for PUYA PY32F0xx Microcontrollers
+# Version:   v1.3
 # Year:      2023
 # Author:    Stefan Wagner
 # Github:    https://github.com/wagiminator
@@ -10,8 +10,8 @@
 #
 # Description:
 # ------------
-# Simple Python tool for flashing PUYA microcontrollers (PY32F0xx) via USB-to-serial
-# converter utilizing the factory built-in embedded boot loader.
+# Simple Python tool for flashing PY32F0xx (and maybe other PY32) microcontrollers
+# via USB-to-serial converter utilizing the factory built-in embedded boot loader.
 #
 # Dependencies:
 # -------------
@@ -19,7 +19,7 @@
 #
 # Operating Instructions:
 # -----------------------
-# You need to install PySerial to use puyaisp.
+# You need to install PySerial to use py32iap.
 # Install it via "python3 -m pip install pyserial".
 # You may need to install a driver for your USB-to-serial converter.
 #
@@ -29,15 +29,17 @@
 #        TXD ---> PA3 or PA10 or PA15
 #        VCC ---> VCC
 #        GND ---> GND
+#
 # Set your MCU to boot mode by using ONE of the following methods:
-# 1. Disconnect your USB-to-serial converter, pull BOOT0 pin (PF4) to VCC (or press
-#    and hold the BOOT button, if your board has one), then connect the converter to
-#    your USB port. BOOT0 pin (or BOOT button) can be released now.
-# 2. Connect your USB-to-serial converter to your USB port. Pull BOOT0 pin (PF4)
-#    to VCC, then pull nRST (PF2) shortly to GND (or press and hold the BOOT button,
-#    then press and release the RESET button and then release the BOOT button, if
-#    your board has them).
-# Run "python3 puyaisp.py -f firmware.bin".
+# - Disconnect your USB-to-serial converter, pull BOOT0 pin (PF4) to VCC (or press
+#   and hold the BOOT button, if your board has one), then connect the converter to
+#   your USB port. BOOT0 pin (or BOOT button) can be released now.
+# - Connect your USB-to-serial converter to your USB port. Pull BOOT0 pin (PF4)
+#   to VCC, then pull nRST (PF2) shortly to GND (or press and hold the BOOT button,
+#   then press and release the RESET button and then release the BOOT button, if
+#   your board has them).
+#
+# Run "python3 py32iap.py -f firmware.bin".
 
 # If the PID/VID of the USB-to-Serial converter is known, it can be defined here,
 # which can make the auto-detection a lot faster. If not, comment out or delete.
@@ -60,10 +62,10 @@ from serial.tools.list_ports import comports
 
 def _main():
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description='Minimal command line interface for PY32F0xx programming')
+    parser = argparse.ArgumentParser(description='Minimal command line interface for PY32 IAP')
     parser.add_argument('-u', '--unlock',   action='store_true', help='unlock chip (remove read protection)')
     parser.add_argument('-l', '--lock',     action='store_true', help='lock chip (set read protection)')
-    parser.add_argument('-e', '--erase',    action='store_true', help='perform a whole chip erase')
+    parser.add_argument('-e', '--erase',    action='store_true', help='perform chip erase (implied with -f)')
     parser.add_argument('-o', '--rstoption',action='store_true', help='reset option bytes')
     parser.add_argument('-G', '--nrstgpio', action='store_true', help='make nRST pin a GPIO pin')
     parser.add_argument('-R', '--nrstreset',action='store_true', help='make nRST pin a RESET pin')
@@ -89,7 +91,10 @@ def _main():
         # Get chip info
         print('Getting chip info ...')
         isp.readinfo()
-        print('SUCCESS: Found chip with ID', isp.pidstr, 'and bootloader v' + isp.version + '.')
+        if isp.pid == PY_CHIP_PID:
+            print('SUCCESS: Found PY32F0xx with bootloader v' + isp.verstr + '.')
+        else:
+            print('WARNING: Chip with PID 0x%04x is not a PY32F0xx!' % self.pid)
 
         # Unlock chip
         if args.unlock:
@@ -108,7 +113,7 @@ def _main():
 
         # Perform chip erase
         if (args.erase) or (args.flash is not None):
-            print('Performing whole chip erase ...')
+            print('Performing chip erase ...')
             isp.erase()
             print('SUCCESS: Chip is erased.')
 
@@ -122,27 +127,25 @@ def _main():
             print('SUCCESS:', len(data), 'bytes written and verified.')
 
         # Manipulate OPTION bytes
-        if any( (args.rstoption, args.nrstgpio, args.nrstreset, args.lock) ):
+        if isp.pid == PY_CHIP_PID and any( (args.rstoption, args.nrstgpio, args.nrstreset, args.lock) ):
             if args.rstoption:
                 print('Setting OPTION bytes to default values ...')
                 isp.resetoption()
             if args.nrstgpio:
-                print('Setting nRST pin as GPIO ...')
+                print('Setting nRST pin as GPIO in OPTION bytes ...')
                 isp.nrst2gpio()
             if args.nrstreset:
-                print('Setting nRST pin as RESET ...')
+                print('Setting nRST pin as RESET in OPTION bytes ...')
                 isp.nrst2reset()
             if args.lock:
-                print('Setting read protection ...')
+                print('Setting read protection in OPTION BYTES ...')
                 isp.lock()
             print('Writing OPTION bytes ...')
             isp.writeoption()
             print('SUCCESS: OPTION bytes written.')
-
-        # Exit programming and start firmware
-        if not any( (args.rstoption, args.nrstgpio, args.nrstreset, args.lock) ):
+            isp.close()
+        else:
             isp.run()
-        isp.close()
 
     except Exception as ex:
         sys.stderr.write('ERROR: ' + str(ex) + '!\n')
@@ -221,10 +224,9 @@ class Programmer(Serial):
 
     # Get chip info
     def readinfo(self):
-        self.info    = self.readinfostream(PY_CMD_GET)
-        self.pid     = int.from_bytes(self.readinfostream(PY_CMD_PID), byteorder='big')
-        self.pidstr  = '0x%04x' % self.pid
-        self.version = '%x.%x' % (self.info[0] >> 4, self.info[0] & 7)
+        self.ver    = self.readinfostream(PY_CMD_GET)[0]
+        self.verstr = '%x.%x' % (self.ver >> 4, self.ver & 7)
+        self.pid    = int.from_bytes(self.readinfostream(PY_CMD_PID), byteorder='big')
 
     # Read UID
     def readuid(self):
@@ -266,28 +268,12 @@ class Programmer(Serial):
 
     #--------------------------------------------------------------------------------
 
-    # Erase all
+    # Erase whole chip
     def erase(self):
         self.sendcommand(PY_CMD_ERASE)
         self.write(b'\xff\xff\x00')
         if not self.checkreply():
             raise Exception('Failed to erase chip')
-
-    # Erase necessary pages
-    def erasepages(self):
-        self.sendcommand(PY_CMD_ERASE)
-        self.write(b'\x10\x02\x00\x00\x00\x01\x00\x02\x11')
-        if not self.checkreply():
-            raise Exception('Failed to erase pages')
-
-    # Erase necessary sectors
-    def erasesectors(self):
-        self.sendcommand(PY_CMD_ERASE)
-        self.write(b'\x20\x00\x00\x00\x20')
-        if not self.checkreply():
-            raise Exception('Failed to erase sectors')
-
-    #--------------------------------------------------------------------------------
 
     # Read flash
     def readflash(self, addr, size):
@@ -351,8 +337,9 @@ class Programmer(Serial):
 # Device Constants
 # ===================================================================================
 
-# Memory constants
-PY_BLOCKSIZE    = 0x80
+# Device and Memory constants
+PY_CHIP_PID     = 0x440
+PY_BLOCKSIZE    = 128
 PY_FLASH_ADDR   = 0x08000000
 PY_CODE_ADDR    = 0x08000000
 PY_SRAM_ADDR    = 0x20000000
@@ -382,7 +369,7 @@ PY_REPLY_BUSY   = 0xaa
 # Other codes
 PY_SYNCH        = 0x7f
 
-# Other stuff
+# Default option bytes
 PY_OPTION_DEFAULT = b'\xaa\xbe\x55\x41\xff\x00\x00\xff\xff\xff\xff\xff\xff\xff\x00\x00'
 
 # ===================================================================================

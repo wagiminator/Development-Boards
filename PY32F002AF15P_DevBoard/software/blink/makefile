@@ -24,7 +24,7 @@ CC       = $(PREFIX)-gcc
 OBJCOPY  = $(PREFIX)-objcopy
 OBJDUMP  = $(PREFIX)-objdump
 OBJSIZE  = $(PREFIX)-size
-FLASHER  = python3 $(TOOLS)/puyaisp.py -f $(TARGET).bin
+ISPTOOL  = python3 $(TOOLS)/py32iap.py -f $(TARGET).bin
 CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 
 # Compiler Flags
@@ -80,7 +80,7 @@ asm:	$(TARGET).asm removetemp size removeelf
 
 flash:	$(TARGET).bin size removeelf
 	@echo "Uploading to MCU ..."
-	@$(FLASHER)
+	@$(ISPTOOL)
 
 clean:
 	@echo "Cleaning all up ..."
