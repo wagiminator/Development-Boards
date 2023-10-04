@@ -94,7 +94,7 @@ def _main():
         if isp.pid == PY_CHIP_PID:
             print('SUCCESS: Found PY32F0xx with bootloader v' + isp.verstr + '.')
         else:
-            print('WARNING: Chip with PID 0x%04x is not a PY32F0xx!' % self.pid)
+            print('WARNING: Chip with PID 0x%04x is not a PY32F0xx!' % isp.pid)
 
         # Unlock chip
         if args.unlock:
