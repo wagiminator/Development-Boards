@@ -27,6 +27,50 @@ extern "C" {
 #define LSI_VALUE        32768U     /*!< Value of LSI in Hz */
 #define LSE_VALUE        32768U     /*!< Value of LSE in Hz */
 
+// PY32F0xx Interrupt Number Definition
+typedef enum
+{
+  /******  Cortex-M0+ Processor Exceptions Numbers ***************************************************************/
+  NonMaskableInt_IRQn         = -14,    /*!< 2 Non Maskable Interrupt                                          */
+  HardFault_IRQn              = -13,    /*!< 3 Cortex-M Hard Fault Interrupt                                   */
+  SVC_IRQn                    = -5,     /*!< 11 Cortex-M SV Call Interrupt                                     */
+  PendSV_IRQn                 = -2,     /*!< 14 Cortex-M Pend SV Interrupt                                     */
+  SysTick_IRQn                = -1,     /*!< 15 Cortex-M System Tick Interrupt                                 */
+  /******  PY32F0 specific Interrupt Numbers *********************************************************************/
+  WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                                         */
+  PVD_IRQn                    = 1,      /*!< PVD through EXTI Line detection Interrupt(EXTI line 16)           */
+  RTC_IRQn                    = 2,      /*!< RTC interrupt through the EXTI line 19                            */
+  FLASH_IRQn                  = 3,      /*!< FLASH global Interrupt                                            */
+  RCC_IRQn                    = 4,      /*!< RCC global Interrupt                                              */
+  EXTI0_1_IRQn                = 5,      /*!< EXTI 0 and 1 Interrupts                                           */
+  EXTI2_3_IRQn                = 6,      /*!< EXTI Line 2 and 3 Interrupts                                      */
+  EXTI4_15_IRQn               = 7,      /*!< EXTI Line 4 to 15 Interrupts                                      */
+  LCD_IRQn                    = 8,      /*!< LCD global Interrupt                                              */
+  DMA1_Channel1_IRQn          = 9,      /*!< DMA1 Channel 1 Interrupt                                          */
+  DMA1_Channel2_3_IRQn        = 10,     /*!< DMA1 Channel 2 and Channel 3 Interrupts                           */
+  DMA1_Channel4_5_6_7_IRQn    = 11,     /*!< DMA1 Channel 4, 5, 6, 7 Interrupts                                */
+  ADC_COMP_IRQn               = 12,     /*!< ADC&COMP Interrupts                                               */
+  TIM1_BRK_UP_TRG_COM_IRQn    = 13,     /*!< TIM1 Break, Update, Trigger and Commutation Interrupts            */
+  TIM1_CC_IRQn                = 14,     /*!< TIM1 Capture Compare Interrupt                                    */
+  TIM2_IRQn                   = 15,     /*!< TIM2 global Interrupt                                             */
+  TIM3_IRQn                   = 16,     /*!< TIM3 global Interrupt                                             */
+  LPTIM1_IRQn                 = 17,     /*!< LPTIM1 global Interrupts                                          */
+  TIM7_IRQn                   = 18,     /*!< TIM7 global Interrupt                                             */
+  TIM14_IRQn                  = 19,     /*!< TIM14 global Interrupt                                            */
+  TIM15_IRQn                  = 20,     /*!< TIM15 global Interrupt                                            */
+  TIM16_IRQn                  = 21,     /*!< TIM16 global Interrupt                                            */
+  TIM17_IRQn                  = 22,     /*!< TIM17 global Interrupt                                            */
+  I2C1_IRQn                   = 23,     /*!< I2C1 Interrupt  (combined with EXTI 23)                           */
+  I2C2_IRQn                   = 24,     /*!< I2C2 global Interrupt                                             */
+  SPI1_IRQn                   = 25,     /*!< SPI1 Interrupt                                                    */
+  SPI2_IRQn                   = 26,     /*!< SPI2 Interrupt                                                    */
+  USART1_IRQn                 = 27,     /*!< USART1 Interrupt                                                  */
+  USART2_IRQn                 = 28,     /*!< USART2 Interrupt                                                  */
+  USART3_4_IRQn               = 29,     /*!< USART3, 4 global Interrupts                                       */
+  LED_IRQn                    = 30,     /*!< LED global Interrupt                                              */
+  USB_IRQn                    = 31,     /*!< USB global Interrupt                                              */
+} IRQn_Type;
+
 /**************************************************************************//**
  * @file     core_cm0plus.h
  * @brief    CMSIS Cortex-M0+ Core Peripheral Access Layer Header File
@@ -615,53 +659,6 @@ typedef struct
   *
   ******************************************************************************
   */
-
-/**
- * @brief PY32F0xx Interrupt Number Definition, according to the selected device
- *        in @ref Library_configuration_section
- */
-typedef enum
-{
-  /******  Cortex-M0+ Processor Exceptions Numbers ***************************************************************/
-  NonMaskableInt_IRQn         = -14,    /*!< 2 Non Maskable Interrupt                                          */
-  HardFault_IRQn              = -13,    /*!< 3 Cortex-M Hard Fault Interrupt                                   */
-  SVC_IRQn                    = -5,     /*!< 11 Cortex-M SV Call Interrupt                                     */
-  PendSV_IRQn                 = -2,     /*!< 14 Cortex-M Pend SV Interrupt                                     */
-  SysTick_IRQn                = -1,     /*!< 15 Cortex-M System Tick Interrupt                                 */
-  /******  PY32F0 specific Interrupt Numbers *********************************************************************/
-  WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                                         */
-  PVD_IRQn                    = 1,      /*!< PVD through EXTI Line detection Interrupt(EXTI line 16)           */
-  RTC_IRQn                    = 2,      /*!< RTC interrupt through the EXTI line 19                            */
-  FLASH_IRQn                  = 3,      /*!< FLASH global Interrupt                                            */
-  RCC_IRQn                    = 4,      /*!< RCC global Interrupt                                              */
-  EXTI0_1_IRQn                = 5,      /*!< EXTI 0 and 1 Interrupts                                           */
-  EXTI2_3_IRQn                = 6,      /*!< EXTI Line 2 and 3 Interrupts                                      */
-  EXTI4_15_IRQn               = 7,      /*!< EXTI Line 4 to 15 Interrupts                                      */
-  LCD_IRQn                    = 8,      /*!< LCD global Interrupt                                              */
-  DMA1_Channel1_IRQn          = 9,      /*!< DMA1 Channel 1 Interrupt                                          */
-  DMA1_Channel2_3_IRQn        = 10,     /*!< DMA1 Channel 2 and Channel 3 Interrupts                           */
-  DMA1_Channel4_5_6_7_IRQn    = 11,     /*!< DMA1 Channel 4, 5, 6, 7 Interrupts                                */
-  ADC_COMP_IRQn               = 12,     /*!< ADC&COMP Interrupts                                               */
-  TIM1_BRK_UP_TRG_COM_IRQn    = 13,     /*!< TIM1 Break, Update, Trigger and Commutation Interrupts            */
-  TIM1_CC_IRQn                = 14,     /*!< TIM1 Capture Compare Interrupt                                    */
-  TIM2_IRQn                   = 15,     /*!< TIM2 global Interrupt                                             */
-  TIM3_IRQn                   = 16,     /*!< TIM3 global Interrupt                                             */
-  LPTIM1_IRQn                 = 17,     /*!< LPTIM1 global Interrupts                                          */
-  TIM7_IRQn                   = 18,     /*!< TIM7 global Interrupt                                             */
-  TIM14_IRQn                  = 19,     /*!< TIM14 global Interrupt                                            */
-  TIM15_IRQn                  = 20,     /*!< TIM15 global Interrupt                                            */
-  TIM16_IRQn                  = 21,     /*!< TIM16 global Interrupt                                            */
-  TIM17_IRQn                  = 22,     /*!< TIM17 global Interrupt                                            */
-  I2C1_IRQn                   = 23,     /*!< I2C1 Interrupt  (combined with EXTI 23)                           */
-  I2C2_IRQn                   = 24,     /*!< I2C2 global Interrupt                                             */
-  SPI1_IRQn                   = 25,     /*!< SPI1 Interrupt                                                    */
-  SPI2_IRQn                   = 26,     /*!< SPI2 Interrupt                                                    */
-  USART1_IRQn                 = 27,     /*!< USART1 Interrupt                                                  */
-  USART2_IRQn                 = 28,     /*!< USART2 Interrupt                                                  */
-  USART3_4_IRQn               = 29,     /*!< USART3, 4 global Interrupts                                       */
-  LED_IRQn                    = 30,     /*!< LED global Interrupt                                              */
-  USB_IRQn                    = 31,     /*!< USB global Interrupt                                              */
-} IRQn_Type;
 
 /**
   * @brief Analog to Digital Converter
