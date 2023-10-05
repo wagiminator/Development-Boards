@@ -46,7 +46,7 @@
 PY_VID  = '1A86'
 PY_PID  = '7523'
 
-# Define BAUD rate here, range: 4800 - 1000000, default: 115200
+# Define BAUD rate here, range: 4800 - 1000000, default and recommended: 115200
 PY_BAUD = 115200
 
 # Libraries
@@ -126,7 +126,7 @@ def _main():
             isp.verifyflash(PY_CODE_ADDR, data)
             print('SUCCESS:', len(data), 'bytes written and verified.')
 
-        # Manipulate OPTION bytes
+        # Manipulate OPTION bytes (only for identified chips)
         if isp.pid == PY_CHIP_PID and any( (args.rstoption, args.nrstgpio, args.nrstreset, args.lock) ):
             if args.rstoption:
                 print('Setting OPTION bytes to default values ...')
@@ -207,12 +207,6 @@ class Programmer(Serial):
 
     #--------------------------------------------------------------------------------
 
-    # Unlock (clear) chip and reset
-    def unlock(self):
-        self.sendcommand(PY_CMD_R_UNLOCK)
-        if not self.checkreply():
-            raise Exception('Failed to unlock chip')
-
     # Read info stream
     def readinfostream(self, command):
         self.sendcommand(command)
@@ -266,6 +260,17 @@ class Programmer(Serial):
         self.option[1] &= 0xbf
         self.option[3] |= 0x40
 
+    # Unlock (clear) chip and reset
+    def unlock(self):
+        self.sendcommand(PY_CMD_R_UNLOCK)
+        if not self.checkreply():
+            raise Exception('Failed to unlock chip')
+
+    # Start firmware
+    def run(self):
+        self.sendcommand(PY_CMD_GO)
+        self.sendaddress(PY_CODE_ADDR)
+
     #--------------------------------------------------------------------------------
 
     # Erase whole chip
@@ -289,7 +294,7 @@ class Programmer(Serial):
             size -= blocksize
         return data
 
-    # Write to flash
+    # Write flash
     def writeflash(self, addr, data):
         size = len(data)
         while size > 0:
@@ -315,23 +320,6 @@ class Programmer(Serial):
         flash = self.readflash(addr, len(data))
         if set(flash) != set(data):
             raise Exception('Verification failed')
-
-    # Pad data
-    def paddata(self, data, pagesize):
-        if (len(data) % pagesize) > 0:
-            data += b'\xff' * (pagesize - (len(data) % pagesize))
-        return data
-
-    #--------------------------------------------------------------------------------
-
-    # Jump to address
-    def gotoaddress(self, addr):
-        self.sendcommand(PY_CMD_GO)
-        self.sendaddress(addr)
-
-    # Start firmware
-    def run(self):
-        self.gotoaddress(PY_CODE_ADDR)
 
 # ===================================================================================
 # Device Constants

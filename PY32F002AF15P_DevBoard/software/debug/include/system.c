@@ -101,7 +101,7 @@ void RTC_setPrescaler(uint32_t val) {
   while(!(RTC->CRL & RTC_CRL_RTOFF));   // wait for ready to write
   RTC->CRL  = RTC_CRL_CNF;              // enter configuration mode
   RTC->PRLH = val >> 16;                // set prescaler (high value)
-  RTC->PRLL = val & 0xffff;             // set prescaler (low value) for 1s
+  RTC->PRLL = val & 0xffff;             // set prescaler (low value)
   RTC->CRL  = 0;                        // exit configuration mode -> write changes
 }
 
@@ -110,7 +110,7 @@ void RTC_setCounter(uint32_t val) {
   while(!(RTC->CRL & RTC_CRL_RTOFF));   // wait for ready to write
   RTC->CRL  = RTC_CRL_CNF;              // enter configuration mode
   RTC->CNTH = val >> 16;                // set prescaler (high value)
-  RTC->CNTL = val & 0xffff;             // set prescaler (low value) for 1s
+  RTC->CNTL = val & 0xffff;             // set prescaler (low value)
   RTC->CRL  = 0;                        // exit configuration mode -> write changes
 }
 
@@ -119,7 +119,7 @@ void RTC_setAlarm(uint32_t val) {
   while(!(RTC->CRL & RTC_CRL_RTOFF));   // wait for ready to write
   RTC->CRL  = RTC_CRL_CNF;              // enter configuration mode
   RTC->ALRH = val >> 16;                // set prescaler (high value)
-  RTC->ALRL = val & 0xffff;             // set prescaler (low value) for 1s
+  RTC->ALRL = val & 0xffff;             // set prescaler (low value)
   RTC->CRL  = 0;                        // exit configuration mode -> write changes
 }
 

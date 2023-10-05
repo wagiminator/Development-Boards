@@ -1,6 +1,6 @@
 # Programming the MCU using the factory built-in serial bootloader
 ## Description
-With this tool, PUYA microcontrollers of the series PY32F0xx can be flashed via a simple USB-to-serial converter by utilizing the factory built-in embedded bootloader.
+With this tool, PUYA microcontrollers of the series PY32F0xx (and maybe other PY32) can be flashed via a simple USB-to-serial converter by utilizing the factory built-in embedded bootloader.
 
 ## Preparations
 In order for this tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [PySerial](https://github.com/pyserial/pyserial) must be installed. On Linux (Debian-based), all of this can be done with the following commands:

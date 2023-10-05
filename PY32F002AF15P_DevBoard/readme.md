@@ -75,6 +75,7 @@ The MCU can also be programmed via the SWD interface and corresponding software 
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 - [IOsetting PY32F0 Template](https://github.com/IOsetting/py32f0-template)
 - [Jay Carlson's Article](https://jaycarlson.net/2023/02/04/the-cheapest-flash-microcontroller-you-can-buy-is-actually-an-arm-cortex-m0/)
+- [EEVblog PY32F002A](https://www.eevblog.com/forum/microcontrollers/$0-11-py32f002a-m0-24mhz-320kb-actually-324kb-more-peripherals/)
 
 ![PY32F002AF15P_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/PY32F002AF15P_DevBoard/documentation/PY32F002AF15P_DevBoard_pic2.jpg)
 ![PY32F002AF15P_DevBoard_pic5.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/PY32F002AF15P_DevBoard/documentation/PY32F002AF15P_DevBoard_pic5.jpg)
