@@ -41,6 +41,7 @@ The PY32F002A obviously has the same core as its larger sibling, PY32F030. There
 - 3-channel DMA controller
 - 3x additional 16-bit general purpose timer
 - 1x window watchdog timer
+- 1x real-time clock (RTC)
 - 1x infrared interface
 - 1x additional USART, 1x additional SPI interface
 

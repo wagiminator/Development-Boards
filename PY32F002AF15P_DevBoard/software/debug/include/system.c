@@ -93,20 +93,21 @@ void CLK_reset(void) {
 // Init RTC with LSI as clock source and 1s clock period
 void RTC_init(void) {
   LSI_enable();                         // enable internal low-speed clock (LSI)
-  RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN; // enable RTC module clock
-  RCC->BDCR     = RCC_BDCR_LSCOEN       // enable low-speed clock
-                | RCC_BDCR_RTCEN        // enable RTC
-                | (0b10<<8);            // set LSI as clock source
+  RCC->APBENR1 |= RCC_APBENR1_PWREN     // enable low power control block clock
+                | RCC_APBENR1_RTCAPBEN; // enable RTC module clock
+  PWR->CR1     |= PWR_CR1_DBP;          // enable access to RTC domain
+  RCC->BDCR     = (0b10<<8)             // set LSI as clock source
+                | RCC_BDCR_RTCEN;       // enable RTC
 }
 
 // Init RTC with LSE as clock source and 1s clock period
 void RTC_init_LSE(void) {
-  RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN; // enable RTC module clock
-  RCC->BDCR     = RCC_BDCR_LSCOSEL      // set LSE as low speed clock
-                | RCC_BDCR_LSCOEN       // enable low-speed clock
-                | RCC_BDCR_RTCEN        // enable RTC
+  RCC->APBENR1 |= RCC_APBENR1_PWREN     // enable low power control block clock
+                | RCC_APBENR1_RTCAPBEN; // enable RTC module clock
+  PWR->CR1     |= PWR_CR1_DBP;          // enable access to RTC domain
+  RCC->BDCR     = RCC_BDCR_LSEON        // turn on LSE
                 | (0b01<<8)             // set LSE as clock source
-                | RCC_BDCR_LSEON;       // turn on LSE
+                | RCC_BDCR_RTCEN;       // enable RTC
 }
 
 // Set RTC prescaler (default 32768)
@@ -157,7 +158,7 @@ void DLY_ticks(uint32_t n) {
 void IWDG_start(uint16_t ms) {
   LSI_enable();                         // enable internal low-speed clock (LSI)
   IWDG->KR   = 0x5555;                  // allow register modification
-  while(IWDG->SR & IWDG_SR_PVU);        // wait for clock register to be ready
+  while(IWDG->SR & IWDG_SR_PVU);        // wait for prescaler register to be ready
   IWDG->PR   = 0b100;                   // set LSI clock prescaler 64 (~0.5kHz)
   while(IWDG->SR & IWDG_SR_RVU);        // wait for reload register to be ready
   IWDG->RLR  = ms >> 1;                 // set watchdog counter reload value
