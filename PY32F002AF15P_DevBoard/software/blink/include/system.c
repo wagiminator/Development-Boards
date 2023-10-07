@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v1.0 *
+// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v1.1 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -71,6 +71,19 @@ void CLK_init_HSE_PLL(void) {
   while(!(RCC->CR & RCC_CR_PLLRDY));                      // Wait till PLL is ready      
   RCC->CFGR = 0b010;                                      // PLL as system clock source
   while((RCC->CFGR & RCC_CFGR_SWS_Msk) != RCC_CFGR_SWS_PLL); // Wait for PLL
+}
+
+// Reset system clock to default state
+void CLK_reset(void) {
+  RCC->CR = RCC_CR_HSION;                                 // enable HSI, no divider
+  while(!(RCC->CR & RCC_CR_HSIRDY));                      // wait for HSI ready
+  RCC->CFGR = 0;                                          // HSI as system clock source
+  while(RCC->CFGR & RCC_CFGR_SWS_Msk);                    // Wait for HSI
+  RCC->ICSCR = 0x00ff10ff;                                // reset ICSCR register
+  RCC->PLLCFGR = 0;                                       // reset PLLCFGR register
+  RCC->CIER = 0;                                          // reset CIER register
+  RCC->CICR = 0xffffffff;                                 // clear all interrupt flags
+  FLASH->ACR = 0;                                         // reset flash latency
 }
 
 // ===================================================================================
@@ -217,7 +230,7 @@ void SLEEP_WFE_now(void) {
 
 // Put device into stop (deep sleep), wake up interrupt
 void STOP_WFI_now(void) {
-  NVIC->ICPR[0U] = 0xffffffff;          // clear pending interrupts
+  NVIC->ICPR[0] = 0xffffffff;           // clear pending interrupts
   EXTI->PR = 0xffffffff;                // clear all EXTI pending flags
   RTC->CRL = 0;                         // clear RTC interrupt flags
   SCB->SCR |=  SCB_SCR_SLEEPDEEP_Msk;   // set deep sleep mode
@@ -227,7 +240,7 @@ void STOP_WFI_now(void) {
 
 // Put device into stop (deep sleep), wake up event
 void STOP_WFE_now(void) {
-  NVIC->ICPR[0U] = 0xffffffff;          // clear pending interrupts
+  NVIC->ICPR[0] = 0xffffffff;           // clear pending interrupts
   EXTI->PR = 0xffffffff;                // clear all EXTI pending flags
   RTC->CRL = 0;                         // clear RTC interrupt flags
   SCB->SCR |=  SCB_SCR_SLEEPDEEP_Msk;   // set deep sleep mode
@@ -241,6 +254,23 @@ void STOP_lowPower(void) {
   PWR->CR1 = PWR_CR1_LPR                // use low power regulator in stop mode
            | PWR_CR1_VOS                // use VDD = 1.0V in stop mode
            | (0b011 << 16);             // supply 0.9V to SRAM in stop mode
+}
+
+// ===================================================================================
+// Bootloader Functions
+// ===================================================================================
+void BOOT_now(void) {
+  void (*SysMemBootJump)(void);
+  __disable_irq();                      // disable all interrupts
+  SysTick->CTRL = 0;                    // disable SysTick Timer
+  CLK_reset();                          // reset system clock settings
+  NVIC->ICER[0]=0xffffffff;             // clear interrupt enable register
+  NVIC->ICPR[0]=0xffffffff;             // clear interrupt pending register
+  __enable_irq();                       // re-enable all interrupts
+  SysMemBootJump = (void (*)(void)) (*((uint32_t *) ((BOOT_ADDR + 4))));
+  __set_MSP(*(uint32_t *)BOOT_ADDR);    // set main stack pointer for bootloader
+  SysMemBootJump();                     // jump to bootloader
+  while(1);                             // just be sure
 }
 
 // ===================================================================================

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v1.0 *
+// Basic System Functions for PY32F002, PY32F003, and PY32F030                * v1.1 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -11,6 +11,7 @@
 // CLK_init_HSI_PLL()     // init internal oscillator with PLL as system clock source
 // CLK_init_HSE()         // init external crystal (non PLL) as system clock source
 // CLK_init_HSE_PLL()     // init external crystal with PLL as system clock source
+// CLK_reset()            // reset system clock to default state
 //
 // HSI_enable()           // enable internal 8MHz high-speed clock (HSI)
 // HSI_disable()          // disable HSI
@@ -35,6 +36,12 @@
 // LSE_bypass_off()       // disable LSE clock bypass
 // LSE_CSS_on()           // enable LSE clock security system
 // LSE_CSS_off()          // disable LSE clock security system
+//
+// PLL_enable()           // enable PLL
+// PLL_disable()          // disable PLL
+// PLL_ready()            // check if PLL is stable
+// PLL_setHSI()           // set HSI as PLL input
+// PLL_setHSE()           // set HSE as PLL input
 //
 // MCO_setSYS()           // enable output system clock (SYS_CLK) on MCO
 // MCO_setHSI()           // enable output internal high-speed clock (HSI) on MCO
@@ -75,6 +82,7 @@
 // STOP_WFE_now()         // put device into stop (deep sleep), wake by event
 // STOP_lowPower()        // set reduced power in stop mode
 //
+// BOOT_now()             // jump to bootloader
 // RST_now()              // conduct software reset
 // RST_clearFlags()       // clear all reset flags
 // RST_wasWWDG()          // check if last reset was caused by window watchdog
@@ -83,6 +91,10 @@
 // RST_wasPower()         // check if last reset was caused by BOR/POR/PDR
 // RST_wasPin()           // check if last reset was caused by RST pin low
 // RST_wasOption()        // check if last reset was caused by OPTION byte loader
+//
+// CRC_write(w)           // add new 32-bit word for CRC calculation
+// CRC_read()             // read last CRC calculation
+// CRC_reset()            // reset CRC calculation
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -177,6 +189,7 @@ void CLK_init_HSI(void);      // init internal oscillator (non PLL) as system cl
 void CLK_init_HSI_PLL(void);  // init internal oscillator with PLL as system clock source
 void CLK_init_HSE(void);      // init external crystal (non PLL) as system clock source
 void CLK_init_HSE_PLL(void);  // init external crystal with PLL as system clock source
+void CLK_reset(void);         // reset system clock to default state
 
 // Internal high-speed clock (HSI) functions
 #define HSI_enable()      RCC->CR |=  RCC_CR_HSION        // enable HSI
@@ -206,6 +219,13 @@ void CLK_init_HSE_PLL(void);  // init external crystal with PLL as system clock 
 #define LSE_CSS_on()      RCC->BDCR |=  RCC_BDCR_LSECSSON // enable LSE clock security
 #define LSE_CSS_off()     RCC->BDCR &= ~RCC_BDCR_LSECSSON // enable LSE clock security
 
+// PLL functions
+#define PLL_enable()      RCC->CR |=  RCC_CR_PLLON        // enable PLL
+#define PLL_disable()     RCC->CR &= ~RCC_CR_PLLON        // disable PLL
+#define PLL_ready()       (RCC->CR & RCC_CR_PLLRDY)       // check if PLL is stable
+#define PLL_setHSI()      RCC->PLLCFGR = 0                // set HSI as PLL input
+#define PLL_setHSE()      RCC->PLLCFGR = 1                // set HSE as PLL input
+
 // Clock output functions
 #define MCO_setSYS()      RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_MCOSEL) | (0b001 << 24)
 #define MCO_setHSI()      RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_MCOSEL) | (0b011 << 24)
@@ -228,13 +248,13 @@ void RTC_setAlarm(uint32_t val);      // set RTC alarm value (default 0xffffffff
 #define RTC_getAlarm()    (((uint32_t)RTC->ALRH<<16)|RTC->ALRL)
 
 // ===================================================================================
-// SYSTICK Functions
+// SYSTICK Timer Functions
 // ===================================================================================
 #define STK_enable()      SysTick->CTRL = SysTick_CTRL_ENABLE | SysTick_CTRL_CLKSOURCE
 #define STK_disable()     SysTick->CTRL = 0
 
 // ===================================================================================
-// Delay Functions
+// Delay Functions (using SYSTICK)
 // ===================================================================================
 #define DLY_US_TIME       (F_CPU / 1000000)             // system ticks per us
 #define DLY_MS_TIME       (F_CPU / 1000)                // system ticks per ms
@@ -258,7 +278,7 @@ void LPT_init(void);          // init and enable low-power timer
 void LPT_start(uint16_t ms);  // start LPT single shot with period in ms
 void LPT_sleep(uint16_t ms);  // put device in to SLEEP for period in ms
 void LPT_stop(uint16_t ms);   // put device in to STOP for period in ms
-#define LPT_period(ms)    LPTIM->ARR = ms               // set period
+#define LPT_period(ms)    LPTIM->ARR = (ms)             // set period
 #define LPT_restart()     LPTIM->CR |= LPTIM_CR_SNGSTRT // restart timer
 
 // ===================================================================================
@@ -281,6 +301,19 @@ void STOP_lowPower(void);   // set reduced power in stop mode
 #define RST_wasPower()    (RCC->CSR & RCC_CSR_PWRRSTF)
 #define RST_wasPin()      (RCC->CSR & RCC_CSR_PINRSTF)
 #define RST_wasOption()   (RCC->CSR & RCC_CSR_OBLRSTF)
+
+// ===================================================================================
+// Bootloader Functions
+// ===================================================================================
+#define BOOT_ADDR         0x1fff0000
+void BOOT_now(void);      // jump to bootloader
+
+// ===================================================================================
+// Cyclic Redundancy Check (CRC) Functions
+// ===================================================================================
+#define CRC_write(w)      CRC->DR = (uint32_t)(w)   // add new word for calculation
+#define CRC_read()        (CRC->DR)                 // read last calculation
+#define CRC_reset()       CRC->CR = 1               // reset calculation
 
 // ===================================================================================
 // Imported System Functions from cmsis_gcc.h and core_cm0plus.h
