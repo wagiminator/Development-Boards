@@ -266,10 +266,11 @@ class Programmer(Serial):
         if not self.checkreply():
             raise Exception('Failed to unlock chip')
 
-    # Start firmware
+    # Start firmware and disconnect
     def run(self):
         self.sendcommand(PY_CMD_GO)
         self.sendaddress(PY_CODE_ADDR)
+        self.close()
 
     #--------------------------------------------------------------------------------
 
