@@ -38,6 +38,7 @@ The PY32F002A series microcontrollers are cost-effective MCUs with a high perfor
 ## Unofficial Additional Features
 The PY32F002A obviously has the same core as its larger sibling, PY32F030. Therefore, the following additional peripherals and capabilities are also available:
 - Maximum 48MHz system frequency via PLL
+- 4KB SRAM, 32KB flash
 - 3-channel DMA controller
 - 3x additional 16-bit general purpose timer
 - 1x window watchdog timer
