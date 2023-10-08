@@ -9,9 +9,7 @@
 
 // Init UART
 void DEBUG_init(void) {
-// Enable USART1 module
-RCC->APBENR2 |= RCC_APBENR2_USART1EN;
-
+// Setup GPIO pins
 #if DEBUG_TX == 0
   // Setup pin PA2 (TX)
   RCC->IOPENR    |= RCC_IOPENR_GPIOAEN;
@@ -98,6 +96,7 @@ RCC->APBENR2 |= RCC_APBENR2_USART1EN;
 #endif
 	
   // Setup and start UART (8N1, TX only, default BAUD rate)
+  RCC->APBENR2 |= RCC_APBENR2_USART1EN;
   USART1->BRR = ((2 * F_CPU / DEBUG_BAUD) + 1) / 2;
   USART1->CR1 = USART_CR1_TE | USART_CR1_UE;
 }

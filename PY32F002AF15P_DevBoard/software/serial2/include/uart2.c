@@ -7,9 +7,7 @@
 
 // Init UART
 void UART2_init(void) {
-// Enable USART1 module
-RCC->APBENR1 |= RCC_APBENR1_USART2EN;
-
+// Setup GPIO pins
 #if UART2_MAP == 0
   // Setup pin PA0 (TX) and pin PA1 (RX)
   RCC->IOPENR    |= RCC_IOPENR_GPIOAEN;
@@ -116,6 +114,7 @@ RCC->APBENR1 |= RCC_APBENR1_USART2EN;
 #endif
 	
   // Setup and start UART (8N1, RX/TX, default BAUD rate)
+  RCC->APBENR1 |= RCC_APBENR1_USART2EN;
   USART2->BRR = ((2 * F_CPU / UART2_BAUD) + 1) / 2;
   USART2->CR1 = USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
 }
