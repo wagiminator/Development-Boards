@@ -11,7 +11,7 @@
 // Description:
 // ------------
 // Find out the real size of chip's SRAM. Chip will hang if trying to write to invalid
-// SRAM address, so press reset to restart. I bet the PY32F002A actually has 4KB SRAM.
+// SRAM address. I bet the PY32F002A actually has 4KB SRAM.
 //
 // Compilation Instructions:
 // -------------------------
@@ -36,9 +36,10 @@
 int main (void) {
   // Setup
   uint32_t addr;                            // SRAM address
+  IWDG_start(1000);                         // start watchdog timer with 1000ms
   DEBUG_init();                             // init DEBUG (TX: PA2, BAUD: 115200, 8N1)
-  DEBUG_newline();                          // print newline
-  
+  DEBUG_println(" - failed");               // print failed after watchdog reset
+
   // Loop
   while(1) {
     for(uint8_t i=1; i<=32; i++) {          // i contains current KB in the test
@@ -48,7 +49,6 @@ int main (void) {
       *(uint8_t*)addr = 0x00;               // write to SRAM address, hangs if invalid
       DEBUG_print(" - passed ");            // ok, it hasn't failed yet
       DEBUG_printD(i); DEBUG_println("KB"); // print SRAM size tested
-      DLY_ms(1000);                         // wait a bit
     }
   }
 }
