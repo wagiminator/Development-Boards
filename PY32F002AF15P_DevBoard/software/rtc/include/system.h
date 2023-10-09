@@ -3,7 +3,7 @@
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
-// set up automatically on system start.
+// set up automatically on system start. Configure system options below.
 //
 // Functions available:
 // --------------------
@@ -112,44 +112,46 @@ extern "C" {
 #define SYS_CLK_INIT      1         // 1: init system clock on startup
 #define SYS_TICK_INIT     1         // 1: init and start SYSTICK on startup
 #define SYS_GPIO_EN       1         // 1: enable GPIO ports on startup
-#define SYS_USE_HSE       0         // 1: use external crystal
+#define SYS_CLEAR_BSS     1         // 1: clear uninitialized variables
+#define SYS_USE_VECTORS   1         // 1: create interrupt vector table
+#define SYS_USE_HSE       0         // 1: use external crystal for system clock
 
 // ===================================================================================
 // Sytem Clock Defines
 // ===================================================================================
 // Set system clock frequency
 #ifndef F_CPU
-  #define F_CPU           8000000   // 8Mhz if not otherwise defined
+  #define F_CPU           8000000   // 8 MHz if not otherwise defined
 #endif
 
 // Calculate system clock settings
 #if SYS_USE_HSE == 0
   #if F_CPU   == 48000000
-     #define CLK_MASK ((0b100<<13) | *(uint32_t *)(0x1fff0f10))
-     #define CLK_DIV  (0b000<<11)
+     #define CLK_MASK     ((0b100<<13) | *(uint32_t *)(0x1fff0f10))
+     #define CLK_DIV      (0b000<<11)
   #elif F_CPU == 32000000
-     #define CLK_MASK ((0b010<<13) | *(uint32_t *)(0x1fff0f08))
-     #define CLK_DIV  (0b000<<11)
+     #define CLK_MASK     ((0b010<<13) | *(uint32_t *)(0x1fff0f08))
+     #define CLK_DIV      (0b000<<11)
   #elif F_CPU == 24000000
-     #define CLK_MASK ((0b100<<13) | *(uint32_t *)(0x1fff0f10))
-     #define CLK_DIV  (0b000<<11)
+     #define CLK_MASK     ((0b100<<13) | *(uint32_t *)(0x1fff0f10))
+     #define CLK_DIV      (0b000<<11)
   #elif F_CPU == 16000000
-     #define CLK_MASK ((0b010<<13) | *(uint32_t *)(0x1fff0f08))
-     #define CLK_DIV  (0b000<<11)
+     #define CLK_MASK     ((0b010<<13) | *(uint32_t *)(0x1fff0f08))
+     #define CLK_DIV      (0b000<<11)
   #elif F_CPU ==  8000000
-     #define CLK_MASK ((0b001<<13) | *(uint32_t *)(0x1fff0f04))
-     #define CLK_DIV  (0b000<<11)
+     #define CLK_MASK     ((0b001<<13) | *(uint32_t *)(0x1fff0f04))
+     #define CLK_DIV      (0b000<<11)
   #elif F_CPU ==  4000000
-     #define CLK_MASK ((0b000<<13) | *(uint32_t *)(0x1fff0f00))
-     #define CLK_DIV  (0b000<<11)
+     #define CLK_MASK     ((0b000<<13) | *(uint32_t *)(0x1fff0f00))
+     #define CLK_DIV      (0b000<<11)
   #elif F_CPU ==  2000000
-     #define CLK_MASK ((0b000<<13) | *(uint32_t *)(0x1fff0f00))
-     #define CLK_DIV  (0b001<<11)
+     #define CLK_MASK     ((0b000<<13) | *(uint32_t *)(0x1fff0f00))
+     #define CLK_DIV      (0b001<<11)
   #elif F_CPU ==  1000000
-     #define CLK_MASK ((0b000<<13) | *(uint32_t *)(0x1fff0f00))
-     #define CLK_DIV  (0b010<<11)
+     #define CLK_MASK     ((0b000<<13) | *(uint32_t *)(0x1fff0f00))
+     #define CLK_DIV      (0b010<<11)
   #else
-     #warning Unsupported system clock frequency, using internal 8MHz
+     #warning Unsupported system clock frequency, using internal 8 MHz
      #define CLK_MASK ((0b001<<13) | *(uint32_t *)(0x1fff0f04))
      #define CLK_DIV  (0b000<<11)
      #undef  F_CPU

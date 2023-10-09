@@ -16,21 +16,11 @@
 // DEBUG_printH(n)          Send 16-bit hex half-word value as string
 // DEBUG_printB(n)          Send 8-bit hex byte value as string
 // DEBUG_newline()          Send newline
-// DEBUG_printf(args)       Use printf for debug
 //
 // UART TX pin mapping (set below in DEBUG parameters):
 // ----------------------------------------------------
-// DEBUG_TX    PIN
-//       0     PA2
-//       1     PA7
-//       2     PA9
-//       3     PA10
-//       4     PA14
-//       5     PB6
-//       6     PB8
-//       7     PF1
-//       8     PF3
-//       9     no pin map
+// DEBUG_TX    0     1     2     3     4     5     6     7     8     9
+// TX-pin     PA2   PA7   PA9   PA10  PA14  PB6   PB8   PF1   PF3   No mapping
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 

@@ -38,15 +38,9 @@
 //
 // USART1 pin mapping (set below in UART parameters):
 // --------------------------------------------------
-// UART_MAP   TX-pin  RX-pin
-//       0     PA2     PA3
-//       1     PA7     PA8
-//       2     PA9     PA10
-//       3     PA14    PA13
-//       4     PA14    PA15
-//       5     PB6     PB7
-//       6     PF1     PF0
-//       7     no pin mapping
+// UART_MAP   0     1     2     3     4     5     6     7
+// TX-pin    PA2   PA7   PA9   PA14  PA14  PB6   PF1   No mapping
+// RX-pin    PA3   PA8   PA10  PA13  PA15  PB7   PF0   No mapping
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -59,21 +53,21 @@ extern "C" {
 #include "py32f0xx.h"
 
 // UART parameters
-#define UART_BAUD         115200          // default UART baud rate
-#define UART_MAP          0               // UART pin mapping (see above)
-#define UART_PRINT        0               // 1 = include print functions (needs print.h)
+#define UART_BAUD             115200          // default UART baud rate
+#define UART_MAP              0               // UART pin mapping (see above)
+#define UART_PRINT            0               // 1 = include print functions (needs print.h)
 
 // UART macros
-#define UART_ready()      (USART1->SR & USART_SR_TXE)         // ready to write
-#define UART_available()  (USART1->SR & USART_SR_RXNE)        // ready to read
-#define UART_completed()  (USART1->SR & USART_SR_TC)          // transmission completed
+#define UART_ready()          (USART1->SR & USART_SR_TXE)     // ready to write
+#define UART_available()      (USART1->SR & USART_SR_RXNE)    // ready to read
+#define UART_completed()      (USART1->SR & USART_SR_TC)      // transmission completed
 
-#define UART_enable()     USART1->CR1 |= USART_CR1_UE         // enable USART
-#define UART_disable()    USART1->CR1 &= ~USART_CR1_UE        // disable USART
-#define UART_TX_enable()  USART1->CR1 |= USART_CR1_TE         // enable transmitter
-#define UART_TX_disable() USART1->CR1 &= ~USART_CR1_TE        // disable transmitter
-#define UART_RX_enable()  USART1->CR1 |= USART_CR1_RE         // enable receiver
-#define UART_RX_disable() USART1->CR1 &= ~USART_CR1_RE        // disable receiver
+#define UART_enable()         USART1->CR1 |= USART_CR1_UE     // enable USART
+#define UART_disable()        USART1->CR1 &= ~USART_CR1_UE    // disable USART
+#define UART_TX_enable()      USART1->CR1 |= USART_CR1_TE     // enable transmitter
+#define UART_TX_disable()     USART1->CR1 &= ~USART_CR1_TE    // disable transmitter
+#define UART_RX_enable()      USART1->CR1 |= USART_CR1_RE     // enable receiver
+#define UART_RX_disable()     USART1->CR1 &= ~USART_CR1_RE    // disable receiver
 
 #define UART_setBAUD(n)       USART1->BRR = ((2*F_CPU/(n))+1)/2   // set BAUD rate
 #define UART_setDataBits(n)   (n==9 ? (USART1->CR1 |= USART_CR1_M) : (USART1->CR1 &= ~USART_CR1_M))
@@ -94,7 +88,7 @@ void UART_write(const char c);                    // send character via UART
 #define UART_printW(n)    printW(n, UART_write)   // print word as string
 #define UART_printH(n)    printH(n, UART_write)   // print half-word as string
 #define UART_printB(n)    printB(n, UART_write)   // print byte as string
-#define UART_printS(s)    printS(n, UART_write)   // print string
+#define UART_printS(s)    printS(s, UART_write)   // print string
 #define UART_println(s)   println(s, UART_write)  // print string with newline
 #define UART_print        UART_printS             // alias
 #define UART_newline()    UART_write('\n')        // send newline

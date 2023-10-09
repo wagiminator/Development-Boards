@@ -306,8 +306,12 @@ extern void _eusrstack(void);
 // Prototypes
 int main(void)                __attribute__((section(".text.main"), used));
 void (*const vectors[])(void) __attribute__((section(".vectors"), used));
-void Default_Handler(void)    __attribute__((section(".text.irq_handler"), naked, used));
 void Reset_Handler(void)      __attribute__((section(".text.irq_handler"), naked, used));
+
+#if SYS_USE_VECTORS > 0
+// Unless a specific handler is overridden, it just spins forever
+void Default_Handler(void)    __attribute__((section(".text.irq_handler"), naked, used));
+void Default_Handler(void)    { while(1); }
 
 // All interrupt handlers are aliased to default_handler unless overridden individually
 #define DUMMY_HANDLER __attribute__((section(".text.irq_handler"), weak, alias("Default_Handler"), used))
@@ -348,6 +352,7 @@ DUMMY_HANDLER void USART2_IRQHandler(void);
 DUMMY_HANDLER void USART3_4_IRQHandler(void);
 DUMMY_HANDLER void LED_IRQHandler(void);
 DUMMY_HANDLER void USB_IRQHandler(void);
+#endif  // SYS_USE_VECTORS > 0
 
 // Interrupt vector table
 void (*const vectors[])(void) = {
@@ -355,6 +360,7 @@ void (*const vectors[])(void) = {
 
   // Cortex-M0+ handlers
   Reset_Handler,                 //  1 - Reset
+  #if SYS_USE_VECTORS > 0
   NMI_Handler,                   //  2 - NMI
   HardFault_Handler,             //  3 - Hard Fault
   0,                             //  4 - Reserved
@@ -403,10 +409,8 @@ void (*const vectors[])(void) = {
   USART3_4_IRQHandler,           // 29 - USART3, USART4
   LED_IRQHandler,                // 30 - LED
   USB_IRQHandler,                // 31 - USB
+  #endif  // SYS_USE_VECTORS > 0
 };
-
-// Unless a specific handler is overridden, it just spins forever
-void Default_Handler(void) { while(1); }
 
 // Reset handler
 void Reset_Handler(void) {
@@ -421,8 +425,10 @@ void Reset_Handler(void) {
   while(dst < &_edata) *dst++ = *src++;
 
   // Clear uninitialized variables
+  #if SYS_CLEAR_BSS > 0
   dst = &_sbss;
   while(dst < &_ebss) *dst++ = 0;
+  #endif
 
   // C++ Support
   #ifdef __cplusplus
