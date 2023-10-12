@@ -7,94 +7,96 @@
 //
 // Functions available:
 // --------------------
-// CLK_init_HSI()         // init internal oscillator (non PLL) as system clock source
-// CLK_init_HSI_PLL()     // init internal oscillator with PLL as system clock source
-// CLK_init_HSE()         // init external crystal (non PLL) as system clock source
-// CLK_init_HSE_PLL()     // init external crystal with PLL as system clock source
-// CLK_reset()            // reset system clock to default state
+// CLK_init_HSI()           init internal oscillator (non PLL) as system clock source
+// CLK_init_HSI_PLL()       init internal oscillator with PLL as system clock source
+// CLK_init_HSE()           init external crystal (non PLL) as system clock source
+// CLK_init_HSE_PLL()       init external crystal with PLL as system clock source
+// CLK_reset()              reset system clock to default state
 //
-// HSI_enable()           // enable internal 8MHz high-speed clock (HSI)
-// HSI_disable()          // disable HSI
-// HSI_ready()            // check if HSI is stable
+// HSI_enable()             enable internal 8MHz high-speed clock (HSI)
+// HSI_disable()            disable HSI
+// HSI_ready()              check if HSI is stable
 //
-// HSE_enable()           // enable external high-speed clock (HSE)
-// HSE_disable()          // disable HSE
-// HSE_ready()            // check if HSE is stable
-// HSE_bypass_on()        // enable HSE clock bypass
-// HSE_bypass_off()       // disable HSE clock bypass
-// HSE_CSS_on()           // enable HSE clock security system
-// HSE_CSS_off()          // disable HSE clock security system
+// HSE_enable()             enable external high-speed clock (HSE)
+// HSE_disable()            disable HSE
+// HSE_ready()              check if HSE is stable
+// HSE_bypass_on()          enable HSE clock bypass
+// HSE_bypass_off()         disable HSE clock bypass
+// HSE_CSS_on()             enable HSE clock security system
+// HSE_CSS_off()            disable HSE clock security system
 //
-// LSI_enable()           // enable internal 32.768kHz low-speed clock (LSI)
-// LSI_disable()          // disable LSI
-// LSI_ready()            // check if LSI is stable
+// LSI_enable()             enable internal 32.768kHz low-speed clock (LSI)
+// LSI_disable()            disable LSI
+// LSI_ready()              check if LSI is stable
 //
-// LSE_enable()           // enable external 32.768kHz low-speed clock (LSE)
-// LSE_disable()          // disable LSE
-// LSE_ready()            // check if LSE is stable
-// LSE_bypass_on()        // enable LSE clock bypass
-// LSE_bypass_off()       // disable LSE clock bypass
-// LSE_CSS_on()           // enable LSE clock security system
-// LSE_CSS_off()          // disable LSE clock security system
+// LSE_enable()             enable external 32.768kHz low-speed clock (LSE)
+// LSE_disable()            disable LSE
+// LSE_ready()              check if LSE is stable
+// LSE_bypass_on()          enable LSE clock bypass
+// LSE_bypass_off()         disable LSE clock bypass
+// LSE_CSS_on()             enable LSE clock security system
+// LSE_CSS_off()            disable LSE clock security system
 //
-// PLL_enable()           // enable PLL
-// PLL_disable()          // disable PLL
-// PLL_ready()            // check if PLL is stable
-// PLL_setHSI()           // set HSI as PLL input
-// PLL_setHSE()           // set HSE as PLL input
+// PLL_enable()             enable phase-locked loop (PLL)
+// PLL_disable()            disable PLL
+// PLL_ready()              check if PLL is stable
+// PLL_setHSI()             set HSI as PLL input
+// PLL_setHSE()             set HSE as PLL input
 //
-// MCO_setSYS()           // enable output system clock (SYS_CLK) on MCO
-// MCO_setHSI()           // enable output internal high-speed clock (HSI) on MCO
-// MCO_setHSE()           // enable output external high-speed clock (HSE) on MCO
-// MCO_setPLL()           // enable output PLL on MCO
-// MCO_setLSI()           // enable output internal low-speed clock (LSI) on MCO
-// MCO_setLSE()           // enable output external low-speed clock (LSE) on MCO
-// MCO_setPRE(n)          // set MCO prescaler to 2^n (set before enabling MCO)
-// MCO_stop()             // disable clock output (MCO)
+// MCO_setSYS()             enable output system clock (SYS_CLK) on MCO
+// MCO_setHSI()             enable output internal high-speed clock (HSI) on MCO
+// MCO_setHSE()             enable output external high-speed clock (HSE) on MCO
+// MCO_setPLL()             enable output PLL on MCO
+// MCO_setLSI()             enable output internal low-speed clock (LSI) on MCO
+// MCO_setLSE()             enable output external low-speed clock (LSE) on MCO
+// MCO_setPRE(n)            set MCO prescaler to 2^n (set before enabling MCO)
+// MCO_stop()               disable clock output (MCO)
 //
-// RTC_init()             // init RTC with LSI as clock source and 1s clock period
-// RTC_init_LSE()         // init RTC with LSE as clock source and 1s clock period
-// RTC_setPrescaler(p)    // set RTC prescaler (default: 32768)
-// RTC_setCounter(c)      // set RTC counter value
-// RTC_setAlarm(a)        // set RTC alarm value (default: 0xffffffff)
-// RTC_getCounter()       // get RTC counter value
-// RTC_getAlarm()         // get RTC alarm value
+// RTC_init()               init RTC with LSI as clock source and 1s clock period
+// RTC_init_LSE()           init RTC with LSE as clock source and 1s clock period
+// RTC_setPrescaler(p)      set RTC prescaler (default: 32768)
+// RTC_setCounter(c)        set RTC counter value
+// RTC_setAlarm(a)          set RTC alarm value (default: 0xffffffff)
+// RTC_getCounter()         get RTC counter value
+// RTC_getAlarm()           get RTC alarm value
 //
-// STK_enable()           // enable SYSTICK at system frequency
-// STK_disable()          // disable SYSTICK
+// STK_enable()             enable SYSTICK at system frequency
+// STK_disable()            disable SYSTICK
 //
-// DLY_ticks(n)           // delay n clock cycles
-// DLY_us(n)              // delay n microseconds
-// DLY_ms(n)              // delay n milliseconds
+// DLY_ticks(n)             delay n+1 clock cycles
+// DLY_us(n)                delay n microseconds
+// DLY_ms(n)                delay n milliseconds
 //
-// IWDG_start(n)          // start independent watchdog timer, n milliseconds, n<=8191
-// IWDG_reload(n)         // reload watchdog counter with n milliseconds, n<=8191
-// IWDG_feed()            // feed the dog (reload last time)
+// IWDG_start(n)            start independent watchdog timer, n milliseconds, n<=8191
+// IWDG_reload(n)           reload watchdog counter with n milliseconds, n<=8191
+// IWDG_feed()              feed the dog (reload last time)
 //
-// LPT_init()             // init and enable low-power timer (LPT)
-// LPT_start(n)           // start LPT single shot with period in ms
-// LPT_sleep(n)           // put device in to SLEEP for period in ms
-// LPT_stop(n)            // put device in to STOP for period in ms
+// LPT_init()               init and enable low-power timer (LPT)
+// LPT_start(n)             start LPT single shot with period in ms
+// LPT_sleep(n)             put device in to SLEEP for period in ms
+// LPT_stop(n)              put device in to STOP for period in ms
 //
-// SLEEP_WFI_now()        // put device into sleep, wake up by interrupt
-// SLEEP_WFE_now()        // put device into sleep, wake up by event
-// STOP_WFI_now()         // put device into stop (deep sleep), wake by interrupt
-// STOP_WFE_now()         // put device into stop (deep sleep), wake by event
-// STOP_lowPower()        // set reduced power in stop mode
+// SLEEP_WFI_now()          put device into sleep, wake up by interrupt
+// SLEEP_WFE_now()          put device into sleep, wake up by event
+// STOP_WFI_now()           put device into stop (deep sleep), wake by interrupt
+// STOP_WFE_now()           put device into stop (deep sleep), wake by event
+// STOP_lowPower()          set reduced power in stop mode
 //
-// BOOT_now()             // jump to bootloader
-// RST_now()              // conduct software reset
-// RST_clearFlags()       // clear all reset flags
-// RST_wasWWDG()          // check if last reset was caused by window watchdog
-// RST_wasIWDG()          // check if last reset was caused by independent watchdog
-// RST_wasSoftware()      // check if last reset was caused by software
-// RST_wasPower()         // check if last reset was caused by BOR/POR/PDR
-// RST_wasPin()           // check if last reset was caused by RST pin low
-// RST_wasOption()        // check if last reset was caused by OPTION byte loader
+// BOOT_now()               jump to bootloader
+// RST_now()                conduct software reset
+// RST_clearFlags()         clear all reset flags
+// RST_wasWWDG()            check if last reset was caused by window watchdog
+// RST_wasIWDG()            check if last reset was caused by independent watchdog
+// RST_wasSoftware()        check if last reset was caused by software
+// RST_wasPower()           check if last reset was caused by BOR/POR/PDR
+// RST_wasPin()             check if last reset was caused by RST pin low
+// RST_wasOption()          check if last reset was caused by OPTION byte loader
 //
-// CRC_write(w)           // add new 32-bit word for CRC calculation
-// CRC_read()             // read last CRC calculation
-// CRC_reset()            // reset CRC calculation
+// CRC_enable()             enable cyclic redundancy check (CRC) module
+// CRC_disable()            disable CRC module
+// CRC_write(w)             add new 32-bit word for CRC calculation
+// CRC_read()               read last 32-bit CRC calculation
+// CRC_reset()              reset CRC calculation
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -221,7 +223,7 @@ void CLK_reset(void);         // reset system clock to default state
 #define LSE_CSS_on()      RCC->BDCR |=  RCC_BDCR_LSECSSON // enable LSE clock security
 #define LSE_CSS_off()     RCC->BDCR &= ~RCC_BDCR_LSECSSON // enable LSE clock security
 
-// PLL functions
+// Phase-locked loop (PLL) functions
 #define PLL_enable()      RCC->CR |=  RCC_CR_PLLON        // enable PLL
 #define PLL_disable()     RCC->CR &= ~RCC_CR_PLLON        // disable PLL
 #define PLL_ready()       (RCC->CR & RCC_CR_PLLRDY)       // check if PLL is stable
@@ -313,6 +315,8 @@ void BOOT_now(void);      // jump to bootloader
 // ===================================================================================
 // Cyclic Redundancy Check (CRC) Functions
 // ===================================================================================
+#define CRC_enable()      RCC->AHBENR |=  RCC_AHBENR_CRCEN
+#define CRC_disable       RCC->AHBENR &= ~RCC_AHBENR_CRCEN
 #define CRC_write(w)      CRC->DR = (uint32_t)(w)   // add new word for calculation
 #define CRC_read()        (CRC->DR)                 // read last calculation
 #define CRC_reset()       CRC->CR = 1               // reset calculation
