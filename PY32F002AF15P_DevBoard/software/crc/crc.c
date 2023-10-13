@@ -18,7 +18,9 @@
 // - Make sure GCC toolchain (gcc-arm-none-eabi) and Python3 with PySerial is
 //   installed. If necessary, a driver for the USB-to-serial converter used must
 //   be installed.
-// - Connect the USB-to-serial converter to the MCU board.
+// - Connect your MCU board via USB to your PC.
+// - Set the MCU to boot mode by holding down the BOOT key and then pressing and 
+//   releasing the RESET key. Finally release the BOOT key.
 // - Run 'make flash'.
 
 
