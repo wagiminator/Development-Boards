@@ -316,7 +316,7 @@ void BOOT_now(void);      // jump to bootloader
 // Cyclic Redundancy Check (CRC) Functions
 // ===================================================================================
 #define CRC_enable()      RCC->AHBENR |=  RCC_AHBENR_CRCEN
-#define CRC_disable       RCC->AHBENR &= ~RCC_AHBENR_CRCEN
+#define CRC_disable()     RCC->AHBENR &= ~RCC_AHBENR_CRCEN
 #define CRC_write(w)      CRC->DR = (uint32_t)(w)   // add new word for calculation
 #define CRC_read()        (CRC->DR)                 // read last calculation
 #define CRC_reset()       CRC->CR = 1               // reset calculation
