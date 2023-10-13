@@ -11,7 +11,7 @@
 // Description:
 // ------------
 // Send a message through UART with a newline at the end, and the CRC of the message 
-// will be sent back. We're checking if the PY32F002A has a hidden CRC module.
+// will be sent back. We're checking if the CRC module works.
 //
 // Compilation Instructions:
 // -------------------------
