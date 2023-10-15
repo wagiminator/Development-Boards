@@ -72,7 +72,7 @@
 // IWDG_feed()              feed the dog (reload last time)
 //
 // LPT_init()               init and enable low-power timer (LPT)
-// LPT_start(n)             start LPT single shot with period in ms
+// LPT_shot(n)              start LPT single shot with period in ms
 // LPT_sleep(n)             put device in to SLEEP for period in ms
 // LPT_stop(n)              put device in to STOP for period in ms
 //
@@ -279,7 +279,7 @@ void IWDG_reload(uint16_t ms);                          // reload IWDG with time
 // Low Power Timer (LPTIM) Functions
 // ===================================================================================
 void LPT_init(void);          // init and enable low-power timer
-void LPT_start(uint16_t ms);  // start LPT single shot with period in ms
+void LPT_shot(uint16_t ms);   // start LPT single shot with period in ms
 void LPT_sleep(uint16_t ms);  // put device in to SLEEP for period in ms
 void LPT_stop(uint16_t ms);   // put device in to STOP for period in ms
 #define LPT_period(ms)    LPTIM->ARR = (ms)             // set period

@@ -189,7 +189,7 @@ void LPT_init(void) {
 }
 
 // Start low-power timer single shot with period in ms
-void LPT_start(uint16_t ms) {
+void LPT_shot(uint16_t ms) {
   DLY_ms(2);                            // wait two LPT clock cycles
   LPTIM->ARR = ms;                      // set interval
   LPTIM->CR |= LPTIM_CR_SNGSTRT;        // start timer in single mode
@@ -197,7 +197,7 @@ void LPT_start(uint16_t ms) {
 
 // Put device in to SLEEP and wake-up after LPT period in ms
 void LPT_sleep(uint16_t ms) {
-  LPT_start(ms);                        // start low-power timer (LPT)
+  LPT_shot(ms);                         // start low-power timer (LPT) single shot
   SCB->SCR |=  SCB_SCR_SEVONPEND_Msk;   // enable wake-up on pending interrupt
   SLEEP_WFE_now();                      // put device into stop, wake up by LPT event
   SCB->SCR &= ~SCB_SCR_SEVONPEND_Msk;   // disable wake-up on pending interrupt
@@ -207,7 +207,7 @@ void LPT_sleep(uint16_t ms) {
 
 // Put device in to STOP (deep sleep) and wake-up after LPT period in ms
 void LPT_stop(uint16_t ms) {
-  LPT_start(ms);                        // start low-power timer (LPT)
+  LPT_shot(ms);                         // start low-power timer (LPT) single shot
   SCB->SCR |= SCB_SCR_SEVONPEND_Msk;    // enable wake-up on pending interrupt
   STOP_WFE_now();                       // put device into stop, wake up by LPT event
   SCB->SCR &= ~SCB_SCR_SEVONPEND_Msk;   // disable wake-up on pending interrupt
