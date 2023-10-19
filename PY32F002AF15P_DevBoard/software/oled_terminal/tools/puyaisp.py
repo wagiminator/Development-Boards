@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ===================================================================================
-# Project:   py32iap - IAP Programming Tool for PUYA PY32F0xx Microcontrollers
+# Project:   puyaisp - Programming Tool for PUYA PY32F0xx Microcontrollers
 # Version:   v1.3
 # Year:      2023
 # Author:    Stefan Wagner
@@ -19,7 +19,7 @@
 #
 # Operating Instructions:
 # -----------------------
-# You need to install PySerial to use py32iap.
+# You need to install PySerial to use puyaisp.
 # Install it via "python3 -m pip install pyserial".
 # You may need to install a driver for your USB-to-serial converter.
 #
@@ -39,7 +39,7 @@
 #   then press and release the RESET button and then release the BOOT button, if
 #   your board has them).
 #
-# Run "python3 py32iap.py -f firmware.bin".
+# Run "python3 puyaisp.py -f firmware.bin".
 
 # If the PID/VID of the USB-to-Serial converter is known, it can be defined here,
 # which can make the auto-detection a lot faster. If not, comment out or delete.

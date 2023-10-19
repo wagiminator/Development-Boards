@@ -24,7 +24,7 @@ CC       = $(PREFIX)-gcc
 OBJCOPY  = $(PREFIX)-objcopy
 OBJDUMP  = $(PREFIX)-objdump
 OBJSIZE  = $(PREFIX)-size
-ISPTOOL  = python3 $(TOOLS)/py32iap.py -f $(TARGET).bin
+ISPTOOL  = python3 $(TOOLS)/puyaisp.py -f $(TARGET).bin
 CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 
 # Compiler Flags

@@ -32,7 +32,7 @@ Set your MCU to boot mode by using ONE of the following methods:
 
 ## Usage
 ```
-Usage: py32iap.py [-h] [-u] [-l] [-e] [-o] [-G] [-R] [-f FLASH]
+Usage: puyaisp.py [-h] [-u] [-l] [-e] [-o] [-G] [-R] [-f FLASH]
 
 Optional arguments:
   -h, --help                show this help message and exit
@@ -45,5 +45,5 @@ Optional arguments:
   -f FLASH, --flash FLASH   write BIN file to flash and verify
 
 Example:
-python3 py32iap.py -f firmware.bin
+python3 puyaisp.py -f firmware.bin
 ```
