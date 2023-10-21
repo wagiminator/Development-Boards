@@ -135,5 +135,5 @@ SECTIONS
 
   PROVIDE(_end = _ebss);
   PROVIDE(end = . );
-  PROVIDE(_eusrstack = ORIGIN(RAM) + LENGTH(RAM));	
+  PROVIDE(_estack = ORIGIN(RAM) + LENGTH(RAM));	
 }
