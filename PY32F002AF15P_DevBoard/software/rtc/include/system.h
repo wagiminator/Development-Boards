@@ -203,7 +203,7 @@ void CLK_reset(void);         // reset system clock to default state
 // External high-speed clock (HSE) functions
 #define HSE_enable()      RCC->CR |=  RCC_CR_HSEON        // enable HSE
 #define HSE_disable()     RCC->CR &= ~RCC_CR_HSEON        // disable HSE
-#define HSE_ready()       (RCC->CR & RCC_HSERDY)          // check if HSE is stable
+#define HSE_ready()       (RCC->CR & RCC_CR_HSERDY)       // check if HSE is stable
 #define HSE_bypass_on()   RCC->CR |=  RCC_CR_HSEBYP       // enable HSE clock bypass
 #define HSE_bypass_off()  RCC->CR &= ~RCC_CR_HSEBYP       // disable HSE clock bypass
 #define HSE_CSS_on()      RCC->CR |=  RCC_CR_CSSON        // enable HSE clock security
