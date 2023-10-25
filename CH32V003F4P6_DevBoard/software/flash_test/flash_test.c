@@ -23,8 +23,8 @@
 // ===================================================================================
 #include <system.h>                           // system functions
 #include <gpio.h>                             // GPIO functions
-#include <debug.h>                            // serial DEBUG functions
 #include <flash.h>                            // FLASH functions
+#include <debug_serial.h>                     // serial DEBUG functions
 
 #define PIN_LED   PC0                         // define LED pin
 #define PIN_RST   PD7                         // define RST pin
@@ -63,13 +63,13 @@ int main(void) {
     DEBUG_newline();
 
     DEBUG_print("OPTION BYTES DATA:  ");      // print option bytes user data
-    DEBUG_printW(FLASH_OB_DATA_read());
+    DEBUG_printH(FLASH_OB_DATA_read());
     DEBUG_newline();
 
     DEBUG_print("CODE FLASH END DATA: ");     // print "code flash end" data
-    DEBUG_printW(FLASH_END_read(0));
+    DEBUG_printH(FLASH_END_read(0));
     DEBUG_print(" ");
-    DEBUG_printW(FLASH_END_read(2));
+    DEBUG_printH(FLASH_END_read(2));
     DEBUG_newline();
 
     DEBUG_print("FLASH CAPACITY:      ");     // print flash capacity
@@ -77,9 +77,9 @@ int main(void) {
     DEBUG_println(" KB");
 
     DEBUG_print("UNIQUE DEVICE ID:    ");     // print unique device ID
-    DEBUG_printL(ESIG->ESIG_UNIID3);
-    DEBUG_printL(ESIG->ESIG_UNIID2);
-    DEBUG_printL(ESIG->ESIG_UNIID1);
+    DEBUG_printW(ESIG->ESIG_UNIID3);
+    DEBUG_printW(ESIG->ESIG_UNIID2);
+    DEBUG_printW(ESIG->ESIG_UNIID1);
     DEBUG_newline();
     
     DEBUG_println("---------------------------------------------------");

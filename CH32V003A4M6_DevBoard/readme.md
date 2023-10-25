@@ -8,7 +8,7 @@ Development board for the CH32V003A4M6 ultra-cheap 32-bit RISC-V microcontroller
 
 # The CH32V003 Family of 32-bit RISC-V Microcontrollers
 ## Overview
-The CH32V003 series is a collection of industrial-grade general-purpose microcontrollers that utilize the QingKe RISC-V2A core design supporting the RV32EC instruction set. These microcontrollers are equipped with various features such as a 48MHz system main frequency, wide voltage support, a single-wire serial debug interface, low power consumption, and an ultra-small package. Additionally, the CH32V003 series includes a built-in set of components including a DMA controller, a 10-bit ADC, op-amp comparators, multiple timers, and standard communication interfaces such as USART, I2C, and SPI.
+The CH32V003 series is a collection of industrial-grade general-purpose microcontrollers that utilize the QingKe RISC-V2A core design supporting the RV32EC instruction set. These microcontrollers are equipped with various features such as a 48MHz system main frequency, 16KB flash, 2KB SRAM, wide voltage support, a single-wire serial debug interface, low power consumption, and an ultra-small package. Additionally, the CH32V003 series includes a built-in set of components including a DMA controller, a 10-bit ADC, op-amp comparators, multiple timers, and standard communication interfaces such as USART, I2C, and SPI.
 
 ## Block Diagram
 ![CH32V003_block.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003_block.png)
@@ -70,14 +70,18 @@ As part of his [ch32v003fun](https://github.com/cnlohr/ch32v003fun) project, Cha
 ## MounRiver Studio IDE
 The Eclipse-based closed-source [MounRiver Studio IDE](http://www.mounriver.com/) is the official development environment provided by WCH. It supports Windows, Linux, and Mac. MounRiver Studio can be downloaded for free.
 
-## Open-Source GCC Toolchain
-You can download a complete toolchain (GCC and OpenOCD) for Linux and Mac from the MounRiver Studio website. However, the provided examples here are based on the [ch32v003fun](https://github.com/cnlohr/ch32v003fun) project by CNLohr. Follow the instructions on the Github page to install the toolchain.
+## Open-Source GCC-based Toolchain
+You can download a complete toolchain (GCC and OpenOCD) for Linux and Mac from the MounRiver Studio website. However, the provided examples here are based on the [MCU Templates](https://github.com/wagiminator/MCU-Templates) project.
 
-To install the GCC compiler on Linux, you can use the following commands:
+To install the toolchain on Linux, you can use the following commands:
 
 ```
 sudo apt install build-essential libnewlib-dev gcc-riscv64-unknown-elf
+sudo apt install python3 python3-pip
+python3 -m pip install pyusb
 ```
+
+You can also use the [ch32003fun SDK](https://github.com/cnlohr/ch32v003fun) by CNLohr. Follow the instructions on the Github page to install the toolchain.
 
 ## Arduino IDE and PlatformIO Support
 There are projects around to make the CH32V003 compatible with the Arduino IDE ([arduino_core_ch32](https://github.com/openwch/arduino_core_ch32) and [arduino-wch32v003](https://github.com/AlexanderMandera/arduino-wch32v003)) and PlatformIO ([platform-ch32v](https://github.com/Community-PIO-CH32V/platform-ch32v)).

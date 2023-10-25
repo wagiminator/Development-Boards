@@ -28,53 +28,27 @@
 #define HSE_STARTUP_TIMEOUT       ((uint16_t)  0x2000)  /* Time out for HSE start up */
 #define HSITRIM                   0x10                  /* HSI TRIM value */
 
+/* Standard Peripheral Library old definitions (maintained for legacy purpose) */
+#define HSI_Value                 HSI_VALUE
+#define HSE_Value                 HSE_VALUE
+#define HSEStartUp_TimeOut        HSE_STARTUP_TIMEOUT
+
 #ifndef __ASSEMBLER__             // Things before this can be used in assembly.
-
-/* IO definitions */
-#ifdef __cplusplus
-  #define   __I     volatile            /*!< defines 'read only' permissions    */
-#else
-  #define   __I     volatile const      /*!< defines 'read only' permissions    */
-#endif
-#define     __O     volatile            /*!< defines 'write only' permissions   */
-#define     __IO    volatile            /*!< defines 'read / write' permissions */
-
-/* define compiler specific symbols */
-#if defined(__CC_ARM)
-  #define __ASM       __asm     /*!< asm keyword for ARM Compiler          */
-  #define __INLINE    __inline  /*!< inline keyword for ARM Compiler       */
-
-#elif defined(__ICCARM__)
-  #define __ASM       __asm   /*!< asm keyword for IAR Compiler          */
-  #define __INLINE    inline  /*!< inline keyword for IAR Compiler. Only avaiable in High optimization mode! */
-
-#elif defined(__GNUC__)
-  #define __ASM       __asm   /*!< asm keyword for GNU Compiler          */
-  #define __INLINE    inline  /*!< inline keyword for GNU Compiler       */
-
-#elif defined(__TASKING__)
-  #define __ASM       __asm   /*!< asm keyword for TASKING Compiler      */
-  #define __INLINE    inline  /*!< inline keyword for TASKING Compiler   */
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef enum {NoREADY = 0, READY = !NoREADY} ErrorStatus;
-typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
-typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
+#include <stdint.h>
 
 /* Interrupt Number Definition, according to the selected device */
 typedef enum IRQn
 {
-    /******  RISC-V Processor Exceptions Numbers *******************************************************/
+    /******  RISC-V Processor Exceptions Numbers *************************************/
     NonMaskableInt_IRQn = 2, /* 2 Non Maskable Interrupt                             */
     EXC_IRQn = 3,            /* 3 Exception Interrupt                                */
     SysTicK_IRQn = 12,       /* 12 System timer Interrupt                            */
     Software_IRQn = 14,      /* 14 software Interrupt                                */
 
-    /******  RISC-V specific Interrupt Numbers *********************************************************/
+    /******  RISC-V specific Interrupt Numbers ***************************************/
     WWDG_IRQn = 16,          /* Window WatchDog Interrupt                            */
     PVD_IRQn = 17,           /* PVD through EXTI Line detection Interrupt            */
     FLASH_IRQn = 18,         /* FLASH global Interrupt                               */
@@ -100,17 +74,39 @@ typedef enum IRQn
     TIM2_IRQn = 38,          /* TIM2 global Interrupt                                */
 } IRQn_Type;
 
-#include <stdint.h>
+#define HardFault_IRQn        EXC_IRQn
+
+/* IO definitions */
+#ifdef __cplusplus
+  #define   __I     volatile            /*!< defines 'read only' permissions    */
+#else
+  #define   __I     volatile const      /*!< defines 'read only' permissions    */
+#endif
+#define     __O     volatile            /*!< defines 'write only' permissions   */
+#define     __IO    volatile            /*!< defines 'read / write' permissions */
+
+/* define compiler specific symbols */
+#if defined(__CC_ARM)
+  #define __ASM       __asm             /*!< asm keyword for ARM Compiler       */
+  #define __INLINE    __inline          /*!< inline keyword for ARM Compiler    */
+
+#elif defined(__ICCARM__)
+  #define __ASM       __asm             /*!< asm keyword for IAR Compiler       */
+  #define __INLINE    inline  /*!< inline keyword for IAR Compiler. Only avaiable in High optimization mode! */
+
+#elif defined(__GNUC__)
+  #define __ASM       __asm             /*!< asm keyword for GNU Compiler       */
+  #define __INLINE    inline            /*!< inline keyword for GNU Compiler    */
+
+#elif defined(__TASKING__)
+  #define __ASM       __asm             /*!< asm keyword for TASKING Compiler     */
+  #define __INLINE    inline            /*!< inline keyword for TASKING Compiler  */
 #endif
 
-#define HardFault_IRQn    EXC_IRQn
+typedef enum {NoREADY = 0, READY = !NoREADY} ErrorStatus;
+typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
+typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 
-/* Standard Peripheral Library old definitions (maintained for legacy purpose) */
-#define HSI_Value             HSI_VALUE
-#define HSE_Value             HSE_VALUE
-#define HSEStartUp_TimeOut    HSE_STARTUP_TIMEOUT
-
-#ifndef __ASSEMBLER__
 /* Analog to Digital Converter */
 typedef struct
 {

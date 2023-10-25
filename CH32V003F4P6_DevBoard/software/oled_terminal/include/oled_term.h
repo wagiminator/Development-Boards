@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 128x64 Pixels OLED Terminal Functions                              * v1.0 *
+// SSD1306 128x64 Pixels OLED Terminal Functions                              * v1.1 *
 // ===================================================================================
 //
 // Collection of the most necessary functions for controlling an SSD1306 128x64 pixels
@@ -10,14 +10,16 @@
 // OLED_init()              Init OLED display
 // OLED_clear()             Clear screen of OLED display
 // OLED_write(c)            Write a character or handle control characters
-// OLED_print(s)            Print string on OLED display
-// OLED_println(s)          Print string with newline
-// OLED_printS(s)           Print string on OLED display
+//
+// If print functions are activated (see below, print.h must be included):
 // OLED_printD(n)           Print decimal value
-// OLED_printL(n)           Print hex long value
-// OLED_printW(n)           Print hex word value
-// OLED_printB(n)           Print hex byte value
-// OLED_newline()           Print newline
+// OLED_printW(n)           Print 32-bit hex word value
+// OLED_printH(n)           Print 16-bit hex half-word value
+// OLED_printB(n)           Print  8-bit hex byte value
+// OLED_printS(s)           Print string
+// OLED_print(s)            Print string (alias)
+// OLED_println(s)          Print string with newline
+// OLED_newline()           Send newline
 //
 // References:
 // -----------
@@ -37,6 +39,9 @@ extern "C" {
 #endif
 
 #include "i2c_tx.h"
+
+// OLED parameters
+#define OLED_PRINT        1       // 1: include print functions (needs print.h)
 
 // OLED definitions
 #define OLED_ADDR         0x78    // OLED write address (0x3C << 1)
@@ -69,14 +74,19 @@ extern "C" {
 void OLED_init(void);             // OLED init function
 void OLED_clear(void);            // OLED clear screen
 void OLED_write(char c);          // OLED write a character or handle control characters
-void OLED_print(char* str);       // OLED print string
-void OLED_println(char* str);     // OLED print string with newline
-void OLED_printD(uint32_t value); // print decimal value
-void OLED_printL(uint32_t value); // print hex long value
-void OLED_printW(uint16_t value); // print hex word value
-void OLED_printB(uint8_t value);  // print hex byte value
-#define OLED_newline() OLED_write('\n')   // print newline
-#define OLED_printS OLED_print            // alias
+
+// Additional print functions (if activated, see above)
+#if OLED_PRINT == 1
+#include "print.h"
+#define OLED_printD(n)    printD(n, OLED_write)   // print decimal as string
+#define OLED_printW(n)    printW(n, OLED_write)   // print word as string
+#define OLED_printH(n)    printH(n, OLED_write)   // print half-word as string
+#define OLED_printB(n)    printB(n, OLED_write)   // print byte as string
+#define OLED_printS(s)    printS(s, OLED_write)   // print string
+#define OLED_println(s)   println(s, OLED_write)  // print string with newline
+#define OLED_print        OLED_printS             // alias
+#define OLED_newline()    OLED_write('\n')        // send newline
+#endif
 
 #ifdef __cplusplus
 };

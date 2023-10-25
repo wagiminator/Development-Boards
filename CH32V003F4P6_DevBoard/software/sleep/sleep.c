@@ -37,7 +37,6 @@ int main(void) {
   // Loop
   while(1) {
     PIN_toggle(PIN_LED);      // toggle LED on/off
-    AWU_set(100);             // set automatic wake-up timer to 100 milliseconds
-    STDBY_WFE_now();          // put device into standby (deep sleep), wake by event
+    AWU_stdby(100);           // put device into standby (deep sleep) for 100ms
   }
 }

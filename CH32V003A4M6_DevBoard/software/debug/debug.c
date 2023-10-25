@@ -23,7 +23,7 @@
 // ===================================================================================
 #include <system.h>         // system functions
 #include <gpio.h>           // GPIO functions
-#include <debug.h>          // serial debug functions
+#include <debug_serial.h>   // serial debug functions
 
 #define PIN_LED   PC0       // define LED pin
 

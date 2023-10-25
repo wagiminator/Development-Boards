@@ -35,8 +35,8 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH AT>FLASH
 
-  PROVIDE( _etext = . );
-  PROVIDE( _eitcm = . );  
+  PROVIDE(_etext = .);
+  PROVIDE(_eitcm = .);  
 
   .preinit_array :
   {
@@ -48,8 +48,8 @@ SECTIONS
   .init_array :
   {
     PROVIDE_HIDDEN(__init_array_start = .);
-    KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
-    KEEP(*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
+    KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*)SORT_BY_INIT_PRIORITY(.ctors.*)))
+    KEEP(*(.init_array EXCLUDE_FILE(*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o) .ctors))
     PROVIDE_HIDDEN(__init_array_end = .);
   } >FLASH AT>FLASH 
   
@@ -57,7 +57,7 @@ SECTIONS
   {
     PROVIDE_HIDDEN(__fini_array_start = .);
     KEEP(*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
-    KEEP(*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
+    KEEP(*(.fini_array EXCLUDE_FILE(*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o) .dtors))
     PROVIDE_HIDDEN(__fini_array_end = .);
   } >FLASH AT>FLASH 
   
@@ -65,7 +65,7 @@ SECTIONS
   {
     KEEP(*crtbegin.o(.ctors))
     KEEP(*crtbegin?.o(.ctors))
-    KEEP(*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
+    KEEP(*(EXCLUDE_FILE(*crtend.o *crtend?.o) .ctors))
     KEEP(*(SORT(.ctors.*)))
     KEEP(*(.ctors))
   } >FLASH AT>FLASH 
@@ -74,7 +74,7 @@ SECTIONS
   {
     KEEP(*crtbegin.o(.dtors))
     KEEP(*crtbegin?.o(.dtors))
-    KEEP(*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
+    KEEP(*(EXCLUDE_FILE(*crtend.o *crtend?.o) .dtors))
     KEEP(*(SORT(.dtors.*)))
     KEEP(*(.dtors))
   } >FLASH AT>FLASH 
@@ -98,7 +98,7 @@ SECTIONS
     *(.data .data.*)
     *(.gnu.linkonce.d.*)
     . = ALIGN(8);
-    PROVIDE( __global_pointer$ = . + 0x800 );
+    PROVIDE(__global_pointer$ = . + 0x800);
     *(.sdata .sdata.*)
     *(.sdata2*)
     *(.gnu.linkonce.s.*)
@@ -109,23 +109,23 @@ SECTIONS
     *(.srodata.cst2)
     *(.srodata .srodata.*)
     . = ALIGN(4);
-    PROVIDE( _edata = .);
+    PROVIDE(_edata = .);
   } >RAM AT>FLASH
 
   .bss :
   {
     . = ALIGN(4);
-    PROVIDE( _sbss = .);
+    PROVIDE(_sbss = .);
     *(.sbss*)
     *(.gnu.linkonce.sb.*)
     *(.bss*)
     *(.gnu.linkonce.b.*)    
     *(COMMON*)
     . = ALIGN(4);
-    PROVIDE( _ebss = .);
+    PROVIDE(_ebss = .);
   } >RAM AT>FLASH
 
-  PROVIDE( _end = _ebss);
-  PROVIDE( end = . );
-  PROVIDE( _eusrstack = ORIGIN(RAM) + LENGTH(RAM));	
+  PROVIDE(_end = _ebss);
+  PROVIDE(end = . );
+  PROVIDE(_eusrstack = ORIGIN(RAM) + LENGTH(RAM));	
 }

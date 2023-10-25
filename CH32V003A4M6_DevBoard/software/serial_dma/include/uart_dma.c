@@ -1,5 +1,5 @@
 // ===================================================================================
-// UART with DMA RX Buffer for CH32V003                                       * v1.0 *
+// UART with DMA RX Buffer for CH32V003                                       * v1.1 *
 // ===================================================================================
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -12,7 +12,7 @@ uint8_t UART_RX_tptr = 0;
 
 // Init UART
 void UART_init(void) {
-#if UART_REMAP == 0
+#if UART_MAP == 0
   // Enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
 
@@ -21,7 +21,7 @@ void UART_init(void) {
   GPIOD->CFGLR  = (GPIOD->CFGLR & ~(((uint32_t)0b1111<<(5<<2)) | ((uint32_t)0b1111<<(6<<2))))
                                 |  (((uint32_t)0b1001<<(5<<2)) | ((uint32_t)0b1000<<(6<<2)));
   GPIOD->OUTDR |= 1<<6;
-#elif UART_REMAP == 1
+#elif UART_MAP == 1
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
   AFIO->PCFR1    |= 1<<2;
@@ -31,7 +31,7 @@ void UART_init(void) {
   GPIOD->CFGLR  = (GPIOD->CFGLR & ~(((uint32_t)0b1111<<(0<<2)) | ((uint32_t)0b1111<<(1<<2))))
                                 |  (((uint32_t)0b1001<<(0<<2)) | ((uint32_t)0b1000<<(1<<2)));
   GPIOD->OUTDR |= 1<<1;
-#elif UART_REMAP == 2
+#elif UART_MAP == 2
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
   AFIO->PCFR1    |= 1<<21;
@@ -41,7 +41,7 @@ void UART_init(void) {
   GPIOD->CFGLR  = (GPIOD->CFGLR & ~(((uint32_t)0b1111<<(6<<2)) | ((uint32_t)0b1111<<(5<<2))))
                                 |  (((uint32_t)0b1001<<(6<<2)) | ((uint32_t)0b1000<<(5<<2)));
   GPIOD->OUTDR |= 1<<5;
-#elif UART_REMAP == 3
+#elif UART_MAP == 3
   // Remap UART pins, enable GPIO port C and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPCEN | RCC_USART1EN;
   AFIO->PCFR1    |= (1<<21) | (1<<2);
@@ -88,59 +88,4 @@ char UART_read(void) {
 void UART_write(const char c) {
   while(!UART_ready());
   USART1->DATAR = c;
-}
-
-// Send string via UART
-void UART_print(const char* str) {
-  while(*str) UART_write(*str++);
-}
-
-// Send string via UART with newline
-void UART_println(const char* str) {
-  UART_print(str);
-  UART_write('\n');
-}
-
-// For BCD conversion
-const uint32_t DIVIDER[] = {1, 10, 100, 1000, 10000, 100000, 1000000,
-                            10000000, 100000000, 1000000000};
-
-// Print decimal value (BCD conversion by substraction method)
-void UART_printD(uint32_t value) {
-  uint8_t digits   = 10;                          // print 10 digits
-  uint8_t leadflag = 0;                           // flag for leading spaces
-  while(digits--) {                               // for all digits
-    uint8_t digitval = 0;                         // start with digit value 0
-    uint32_t divider = DIVIDER[digits];           // read current divider
-    while(value >= divider) {                     // if current divider fits into the value
-      leadflag = 1;                               // end of leading spaces
-      digitval++;                                 // increase digit value
-      value -= divider;                           // decrease value by divider
-    }
-    if(!digits)  leadflag++;                      // least digit has to be printed
-    if(leadflag) UART_write(digitval + '0');      // print the digit
-  }
-}
-
-// Convert byte nibble into hex character and print it via UART
-void UART_printN(uint8_t nibble) {
-  UART_write((nibble <= 9) ? ('0' + nibble) : ('A' - 10 + nibble));
-}
-
-// Convert byte into hex characters and print it via UART
-void UART_printB(uint8_t value) {
-  UART_printN(value >> 4);
-  UART_printN(value & 0x0f);
-}
-
-// Convert word into hex characters and print it via UART
-void UART_printW(uint16_t value) {
-  UART_printB(value >> 8);
-  UART_printB(value);
-}
-
-// Convert long into hex characters and print it via UART
-void UART_printL(uint32_t value) {
-  UART_printW(value >> 16);
-  UART_printW(value);
 }

@@ -1,9 +1,9 @@
 // ===================================================================================
-// Basic Serial Debug Functions for CH32V003                                  * v1.1 *
+// Basic Serial Debug Functions for CH32V003                                  * v1.2 *
 // ===================================================================================
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
-#include "debug.h"
+#include "debug_serial.h"
 
 #if DEBUG_ENABLE > 0
 
@@ -18,14 +18,8 @@ void DEBUG_init(void) {
 
 // Send byte via UART
 void DEBUG_write(const char c) {
-  while(!(USART1->STATR & USART_STATR_TXE));
+  while(!(USART1->STATR & USART_STATR_TC));
   USART1->DATAR = c;
-}
-
-// Send string via UART (for printf)
-int puts(const char* str) {
-  while(*str) DEBUG_write(*str++);
-  return 1;
 }
 
 // Send string via UART
@@ -60,27 +54,27 @@ void DEBUG_printD(uint32_t value) {
   }
 }
 
-// Convert byte nibble into hex character and print it via UART
+// Convert 4-bit byte nibble into hex character and print it via UART
 void DEBUG_printN(uint8_t nibble) {
   DEBUG_write((nibble <= 9) ? ('0' + nibble) : ('A' - 10 + nibble));
 }
 
-// Convert byte into hex characters and print it via UART
+// Convert 8-bit byte into hex characters and print it via UART
 void DEBUG_printB(uint8_t value) {
   DEBUG_printN(value >> 4);
   DEBUG_printN(value & 0x0f);
 }
 
-// Convert word into hex characters and print it via UART
-void DEBUG_printW(uint16_t value) {
+// Convert 16-bit half-word into hex characters and print it via UART
+void DEBUG_printH(uint16_t value) {
   DEBUG_printB(value >> 8);
   DEBUG_printB(value);
 }
 
-// Convert long into hex characters and print it via UART
-void DEBUG_printL(uint32_t value) {
-  DEBUG_printW(value >> 16);
-  DEBUG_printW(value);
+// Convert 32-bit word into hex characters and print it via UART
+void DEBUG_printW(uint32_t value) {
+  DEBUG_printH(value >> 16);
+  DEBUG_printH(value);
 }
 
 #endif

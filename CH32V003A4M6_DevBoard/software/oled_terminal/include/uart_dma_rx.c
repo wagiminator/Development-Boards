@@ -1,5 +1,5 @@
 // ===================================================================================
-// UART with DMA (RX only) for CH32V003                                       * v1.0 *
+// UART with DMA (RX only) for CH32V003                                       * v1.1 *
 // ===================================================================================
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -12,7 +12,7 @@ uint8_t UART_RX_tptr = 0;
 
 // Init UART
 void UART_init(void) {
-  #if UART_REMAP == 0
+  #if UART_MAP == 0
   // Enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
 
@@ -20,7 +20,7 @@ void UART_init(void) {
   GPIOD->CFGLR  = (GPIOD->CFGLR & ~((uint32_t)0b1111<<(6<<2))) | ((uint32_t)0b1000<<(6<<2));
   GPIOD->OUTDR |= 1<<6;
   
-  #elif UART_REMAP == 1
+  #elif UART_MAP == 1
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
   AFIO->PCFR1    |= 1<<2;
@@ -29,7 +29,7 @@ void UART_init(void) {
   GPIOD->CFGLR  = (GPIOD->CFGLR & ~((uint32_t)0b1111<<(1<<2))) | ((uint32_t)0b1000<<(1<<2));
   GPIOD->OUTDR |= 1<<1;
   
-  #elif UART_REMAP == 2
+  #elif UART_MAP == 2
   // Remap UART pins, enable GPIO port D and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN | RCC_USART1EN;
   AFIO->PCFR1    |= 1<<21;
@@ -38,7 +38,7 @@ void UART_init(void) {
   GPIOD->CFGLR  = (GPIOD->CFGLR & ~((uint32_t)0b1111<<(5<<2))) | ((uint32_t)0b1000<<(5<<2));
   GPIOD->OUTDR |= 1<<5;
   
-  #elif UART_REMAP == 3
+  #elif UART_MAP == 3
   // Remap UART pins, enable GPIO port C and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPCEN | RCC_USART1EN;
   AFIO->PCFR1    |= (1<<21) | (1<<2);

@@ -22,7 +22,6 @@
 // Libraries, Definitions and Macros
 // ===================================================================================
 #include <system.h>           // system functions
-#include <gpio.h>             // GPIO functions
 #include <uart.h>             // UART functions
 
 // ===================================================================================

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for CH32V003                                        * v1.3 *
+// Basic System Functions for CH32V003                                        * v1.4 *
 // ===================================================================================
 //
 // This file must be included!!!!
@@ -19,7 +19,10 @@
 void SYS_init(void) {
   // Init system clock
   #if SYS_CLK_INIT > 0
-  CLK_init();
+  #if F_CPU > 24000000
+  FLASH->ACTLR = FLASH_ACTLR_LATENCY_1;                     // 1 cycle latency
+  #endif
+  CLK_init();                                               // init system clock
   #endif
 
   // Init SYSTICK
@@ -39,20 +42,14 @@ void SYS_init(void) {
 
 // Init internal oscillator (non PLL) as system clock source
 void CLK_init_HSI(void) {
-  FLASH->ACTLR  = FLASH_ACTLR_LATENCY_0;                        // 0 cycle latency
-  RCC->INTR     = 0x009F0000;                                   // clear ready flags
-  RCC->CFGR0    = CLK_DIV;                                      // set clock divider
-  RCC->CTLR     = RCC_HSION | ((HSITRIM) << 3);                 // use HSI, Only
+  RCC->CFGR0 = CLK_DIV;                                         // set clock divider
 }
 
 // Init internal oscillator with PLL as system clock source
 void CLK_init_HSI_PLL(void) {
-  FLASH->ACTLR  = FLASH_ACTLR_LATENCY_1;                        // 1 cycle latency
-  RCC->INTR     = 0x009F0000;                                   // clear ready flags
-  RCC->CFGR0    = CLK_DIV | RCC_PLLSRC_HSI_Mul2;                // set PLL and clock divider
-  RCC->CTLR     = RCC_HSION | RCC_PLLON | ((HSITRIM) << 3);     // use HSI, but enable PLL
+  RCC->CTLR  = RCC_HSION | RCC_PLLON | ((HSITRIM) << 3);        // enable PLL, keep HSI on
   while(!(RCC->CTLR & RCC_PLLRDY));                             // wait till PLL is ready
-  RCC->CFGR0 = (RCC->CFGR0 & ~(RCC_SW)) | RCC_SW_PLL;           // select PLL as system clock source
+  RCC->CFGR0 = CLK_DIV | RCC_SW_PLL;                            // select PLL as system clock source
   while((RCC->CFGR0 & RCC_SWS) != RCC_SWS_PLL);                 // wait till PLL is used as system clock source
 }
 
@@ -60,28 +57,34 @@ void CLK_init_HSI_PLL(void) {
 void CLK_init_HSE(void) {
   RCC->APB2PCENR |= RCC_AFIOEN;                                 // enable auxiliary clock module
   AFIO->PCFR1    |= AFIO_PCFR1_PA12_REMAP;                      // pins PA1-PA2 for external crystal
-  FLASH->ACTLR    = FLASH_ACTLR_LATENCY_0;                      // 0 cycle latency
-  RCC->CTLR       = RCC_HSION | RCC_HSEON | RCC_PLLON;          // enable HSE and keep HSI+PLL on
+  RCC->CTLR       = RCC_HSION | RCC_HSEON | ((HSITRIM) << 3);   // enable HSE and keep HSI on
   while(!(RCC->CTLR & RCC_HSERDY));                             // wait till HSE is ready
-  RCC->CFGR0      = RCC_HPRE_DIV1 | RCC_SW_HSE;                 // HCLK = SYSCLK = APB1 and use HSE for system clock
+  RCC->CFGR0      = CLK_DIV | RCC_SW_HSE;                       // set clock divider, use HSE for system clock
   while((RCC->CFGR0 & RCC_SWS) != RCC_SWS_HSE);                 // wait till HSE is used as system clock source
-  RCC->CTLR       = RCC_HSEON;                                  // turn off HSI + PLL.
 }
 
 // Init external crystal (PLL) as system clock source
 void CLK_init_HSE_PLL(void) {
   RCC->APB2PCENR |= RCC_AFIOEN;                                 // enable auxiliary clock module
   AFIO->PCFR1    |= AFIO_PCFR1_PA12_REMAP;                      // pins PA1-PA2 for external crystal
-  RCC->CTLR       = RCC_HSION | RCC_HSEON | RCC_PLLON;          // enable HSE and keep HSI+PLL on
+  RCC->CTLR       = RCC_HSION | RCC_HSEON | ((HSITRIM) << 3);   // enable HSE and keep HSI on
   while(!(RCC->CTLR & RCC_HSERDY));                             // wait till HSE is ready
-  RCC->CFGR0      = RCC_SW_HSE | RCC_HPRE_DIV1;                 // HCLK = SYSCLK = APB1 and use HSE for system clock
-  FLASH->ACTLR    = FLASH_ACTLR_LATENCY_1;                      // 1 cycle latency
-  RCC->CTLR       = RCC_HSEON;                                  // turn off PLL and HSI
-  RCC->CFGR0      = RCC_SW_HSE | RCC_HPRE_DIV1 | RCC_PLLSRC_HSE_Mul2; // use PLL with HSE
-  RCC->CTLR       = RCC_HSEON | RCC_PLLON;                      // turn PLL back on..
+  RCC->CFGR0      = RCC_PLLSRC | CLK_DIV;                       // set clock divider, use HSE as PLL source
+  RCC->CTLR       = RCC_PLLON | RCC_HSION | RCC_HSEON | ((HSITRIM) << 3);   // enable PLL
   while(!(RCC->CTLR & RCC_PLLRDY));                             // wait till PLL is ready
-  RCC->CFGR0 = RCC_SW_PLL | RCC_HPRE_DIV1 | RCC_PLLSRC_HSE_Mul2;// select PLL as system clock source
+  RCC->CFGR0      = RCC_PLLSRC | CLK_DIV | RCC_SW_PLL;          // select PLL as system clock source
   while((RCC->CFGR0 & RCC_SWS) != RCC_SWS_PLL);                 // wait till PLL is used as system clock source
+}
+
+// Reset system clock to default state
+void CLK_reset(void) {
+  RCC->CTLR |= RCC_HSION;                                       // enable HSI
+  while(!(RCC->CTLR & RCC_HSIRDY));                             // wait until HSI is ready
+  RCC->CFGR0 = 0x00000000;                                      // select HSI as system clock source
+  while(RCC->CFGR0 & RCC_SWS);                                  // wait until HSI is selected
+  RCC->CTLR  = RCC_HSION | ((HSITRIM) << 3);                    // use HSI only
+  RCC->INTR  = 0x009F0000;                                      // disable interrupts and clear flags
+  FLASH->ACTLR = FLASH_ACTLR_LATENCY_0;                         // no flash wait states
 }
 
 // Setup pin PC4 for MCO (output, push-pull, 50MHz, auxiliary)
@@ -200,9 +203,15 @@ extern uint32_t _edata;
 // Prototypes
 int main(void)                __attribute__((section(".text.main"), used));
 void jump_reset(void)         __attribute__((section(".init.jump"), naked, used));
-void (*const vectors[])(void) __attribute__((section(".init.vectors"), used));
-void default_handler(void)    __attribute__((section(".text.vector_handler"), naked, used));
 void reset_handler(void)      __attribute__((section(".text.reset_handler"), naked, used));
+
+// FLASH starts with a jump to the reset handler
+void jump_reset(void)         { asm volatile("j reset_handler"); }
+
+#if SYS_USE_VECTORS > 0
+// Unless a specific handler is overridden, it just spins forever
+void default_handler(void)    __attribute__((section(".text.vector_handler"), naked, used));
+void default_handler(void)    { while(1); }
 
 // All interrupt handlers are aliased to default_handler unless overridden individually
 #define DUMMY_HANDLER __attribute__((section(".text.vector_handler"), weak, alias("default_handler"), used))
@@ -234,11 +243,9 @@ DUMMY_HANDLER void TIM1_TRG_COM_IRQHandler(void);
 DUMMY_HANDLER void TIM1_CC_IRQHandler(void);
 DUMMY_HANDLER void TIM2_IRQHandler(void);
 
-// FLASH starts with a jump to the reset handler
-void jump_reset(void) { asm volatile("j reset_handler"); }
-
-// Afterwards there comes the interrupt vector table
-void (* const vectors[])(void) = {
+// Interrupt vector table
+void (*const vectors[])(void) __attribute__((section(".init.vectors"), used));
+void (*const vectors[])(void) = {
   // RISC-V handlers
   0,                                //  1 - Reserved
   NMI_Handler,                      //  2 - NMI Handler
@@ -281,9 +288,7 @@ void (* const vectors[])(void) = {
   TIM1_CC_IRQHandler,               // 37 - TIM1 Capture Compare
   TIM2_IRQHandler,                  // 38 - TIM2
 };
-
-// Unless a specific handler is overridden, it just spins forever
-void default_handler(void) { while(1); }
+#endif  // SYS_USE_VECTORS > 0
 
 // Reset handler
 void reset_handler(void) {
@@ -310,8 +315,10 @@ void reset_handler(void) {
   while(dst < &_edata) *dst++ = *src++;
 
   // Clear uninitialized variables
+  #if SYS_CLEAR_BSS > 0
   dst = &_sbss;
   while(dst < &_ebss) *dst++ = 0;
+  #endif
 
   // C++ Support
   #ifdef __cplusplus

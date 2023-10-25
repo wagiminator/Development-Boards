@@ -1,5 +1,5 @@
 # ===================================================================================
-# Project:  CH32V003 UART Serial Demo
+# Project:  CH32V003 Example
 # Author:   Stefan Wagner
 # Year:     2023
 # URL:      https://github.com/wagiminator    
@@ -7,14 +7,16 @@
 # Type "make help" in the command line.
 # ===================================================================================
 
-# Input and Output File Names
-SKETCH   = serial.c
+# Files and Folders
+MAINFILE = serial.c
 TARGET   = serial
 INCLUDE  = include
-LINKER   = linker
+TOOLS    = tools
 
 # Microcontroller Settings
-F_CPU    = 48000000
+F_CPU    = 24000000
+LDSCRIPT = linker/ch32v003.ld
+CPUARCH  = -march=rv32ec -mabi=ilp32e
 
 # Toolchain
 PREFIX   = riscv64-unknown-elf
@@ -22,15 +24,15 @@ CC       = $(PREFIX)-gcc
 OBJCOPY  = $(PREFIX)-objcopy
 OBJDUMP  = $(PREFIX)-objdump
 OBJSIZE  = $(PREFIX)-size
-FLASHER  = python3 ./tools/rvprog.py -f $(TARGET).bin
+NEWLIB   = /usr/include/newlib
+ISPTOOL  = python3 $(TOOLS)/rvprog.py -f $(TARGET).bin
 CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 
 # Compiler Flags
-CFLAGS   = -g -Os -flto -ffunction-sections -fno-builtin -static-libgcc -nostdlib
-CFLAGS  += -march=rv32ec -mabi=ilp32e -DF_CPU=$(F_CPU)
-CFLAGS  += -I/usr/include/newlib -I$(INCLUDE) -I. -Wall
-LDFLAGS  = -T$(LINKER)/ch32v003.ld -Wl,--gc-sections -L$(LINKER) -lgcc
-CFILES   = $(SKETCH) $(wildcard $(INCLUDE)/*.c) $(wildcard $(INCLUDE)/*.s)
+CFLAGS   = $(CPUARCH) -DF_CPU=$(F_CPU) -I$(NEWLIB) -I$(INCLUDE) -I. -L$(INCLUDE)
+CFLAGS  += -g -Os -flto -ffunction-sections -fno-builtin -Wall
+LDFLAGS  = -T$(LDSCRIPT) -nostdlib -lgcc -static-libgcc -Wl,--gc-sections
+CFILES   = $(MAINFILE) $(wildcard $(INCLUDE)/*.c) $(wildcard $(INCLUDE)/*.S)
 
 # Symbolic Targets
 help:
@@ -78,7 +80,7 @@ asm:	$(TARGET).asm removetemp size removeelf
 
 flash:	$(TARGET).bin size removeelf
 	@echo "Uploading to MCU ..."
-	@$(FLASHER)
+	@$(ISPTOOL)
 
 clean:
 	@echo "Cleaning all up ..."

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic I2C Master Functions (write only) for CH32V003                       * v1.0 *
+// Basic I2C Master Functions (write only) for CH32V003                       * v1.1 *
 // ===================================================================================
 //
 // Functions available:
@@ -9,12 +9,11 @@
 // I2C_write(b)             I2C transmit one data byte via I2C
 // I2C_stop()               I2C stop transmission
 //
-// I2C remap settings (set below in I2C parameters):
-// -------------------------------------------------
-// I2C_REMAP   SDA-pin  SCL-pin
-//        0      PC1      PC2
-//        1      PD0      PD1
-//        2      PC6      PC5
+// I2C pin mapping (set below in I2C parameters):
+// ----------------------------------------------
+// I2C_MAP    0     1     2
+// SDA-pin   PC1   PD0   PC6
+// SCL-pin   PC2   PD1   PC5
 //
 // External pull-up resistors (4k7 - 10k) are mandatory!
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
@@ -29,9 +28,7 @@ extern "C" {
 
 // I2C Parameters
 #define I2C_CLKRATE   400000    // I2C bus clock rate (Hz)
-#define I2C_PRERATE   4000000   // I2C logic clock rate
-#define I2C_DUTY      1         // I2C duty cycle - 0: 33%, 1: 36%
-#define I2C_REMAP     0         // I2C pin remapping (see above)
+#define I2C_MAP       0         // I2C pin mapping (see above)
 
 // I2C Functions
 void I2C_init(void);            // I2C init function
