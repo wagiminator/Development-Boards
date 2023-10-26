@@ -18,6 +18,13 @@
 // -----------
 // - CNLohr ch32v003fun: https://github.com/cnlohr/ch32v003fun
 // - WCH Nanjing Qinheng Microelectronics: http://wch.cn
+//
+// Compilation Instructions:
+// -------------------------
+// - Make sure GCC toolchain (gcc-riscv64-unknown-elf, newlib) and Python3 with PyUSB
+//   is installed. In addition, Linux requires access rights to WCH-LinkE programmer.
+// - Connect the WCH-LinkE programmer to the MCU board.
+// - Run 'make flash'.
 
 
 // ===================================================================================
