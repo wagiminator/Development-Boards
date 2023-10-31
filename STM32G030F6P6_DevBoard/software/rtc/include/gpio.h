@@ -112,23 +112,23 @@ enum{
 // ===================================================================================
 #define PIN_input_PU(PIN) \
   ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOA->PUPDR  =  (GPIOA->CFGLR                        \
+                               GPIOA->PUPDR  =  (GPIOA->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
   ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOB->PUPDR  =  (GPIOB->CFGLR                        \
+                               GPIOB->PUPDR  =  (GPIOB->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
   ((PIN>=PC0)&&(PIN<=PC15) ? ( GPIOC->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOC->PUPDR  =  (GPIOC->CFGLR                        \
+                               GPIOC->PUPDR  =  (GPIOC->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
   ((PIN>=PD0)&&(PIN<=PD15) ? ( GPIOD->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOD->PUPDR  =  (GPIOD->CFGLR                        \
+                               GPIOD->PUPDR  =  (GPIOD->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
   ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOF->PUPDR  =  (GPIOF->CFGLR                        \
+                               GPIOF->PUPDR  =  (GPIOF->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b01<<(((PIN)&15)<<1))) : \
 (0))))))
@@ -138,23 +138,23 @@ enum{
 // ===================================================================================
 #define PIN_input_PD(PIN) \
   ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOA->PUPDR  =  (GPIOA->CFGLR                        \
+                               GPIOA->PUPDR  =  (GPIOA->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
   ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOB->PUPDR  =  (GPIOB->CFGLR                        \
+                               GPIOB->PUPDR  =  (GPIOB->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
   ((PIN>=PC0)&&(PIN<=PC15) ? ( GPIOC->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOC->PUPDR  =  (GPIOC->CFGLR                        \
+                               GPIOC->PUPDR  =  (GPIOC->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
   ((PIN>=PD0)&&(PIN<=PD15) ? ( GPIOD->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOD->PUPDR  =  (GPIOD->CFGLR                        \
+                               GPIOD->PUPDR  =  (GPIOD->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
   ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->MODER &= ~((uint32_t)0b11<<(((PIN)&15)<<1)),   \
-                               GPIOF->PUPDR  =  (GPIOF->CFGLR                        \
+                               GPIOF->PUPDR  =  (GPIOF->PUPDR                        \
                                              & ~((uint32_t)0b11<<(((PIN)&15)<<1)))   \
                                              |  ((uint32_t)0b10<<(((PIN)&15)<<1))) : \
 (0))))))
@@ -247,35 +247,35 @@ enum{
   ((PIN>=PA0)&&(PIN<=PA15) ? ( GPIOA->MODER  =   (GPIOA->MODER                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
-                               GPIOA->PUPDR  =   (GPIOA->CFGLR                       \
+                               GPIOA->PUPDR  =   (GPIOA->PUPDR                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
                                GPIOA->OTYPER |=  ((uint32_t)1<<((PIN)&15)))        : \
   ((PIN>=PB0)&&(PIN<=PB15) ? ( GPIOB->MODER  =   (GPIOB->MODER                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
-                               GPIOB->PUPDR  =   (GPIOB->CFGLR                       \
+                               GPIOB->PUPDR  =   (GPIOB->PUPDR                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
                                GPIOB->OTYPER |=  ((uint32_t)1<<((PIN)&15)))        : \
   ((PIN>=PC0)&&(PIN<=PC15) ? ( GPIOC->MODER  =   (GPIOC->MODER                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
-                               GPIOC->PUPDR  =   (GPIOC->CFGLR                       \
+                               GPIOC->PUPDR  =   (GPIOC->PUPDR                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
                                GPIOC->OTYPER |=  ((uint32_t)1<<((PIN)&15)))        : \
   ((PIN>=PD0)&&(PIN<=PD15) ? ( GPIOD->MODER  =   (GPIOD->MODER                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
-                               GPIOD->PUPDR  =   (GPIOD->CFGLR                       \
+                               GPIOD->PUPDR  =   (GPIOD->PUPDR                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
                                GPIOD->OTYPER |=  ((uint32_t)1<<((PIN)&15)))        : \
   ((PIN>=PF0)&&(PIN<=PF15) ? ( GPIOF->MODER  =   (GPIOF->MODER                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
-                               GPIOF->PUPDR  =   (GPIOF->CFGLR                       \
+                               GPIOF->PUPDR  =   (GPIOF->PUPDR                       \
                                              &  ~((uint32_t)0b11<<(((PIN)&15)<<1)))  \
                                              |   ((uint32_t)0b01<<(((PIN)&15)<<1)),  \
                                GPIOF->OTYPER |=  ((uint32_t)1<<((PIN)&15)))        : \
