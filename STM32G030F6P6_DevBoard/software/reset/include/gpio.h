@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO Functions for STM32G030, STM32G031, and STM32G041               * v0.1 *
+// Basic GPIO Functions for STM32G030, STM32G031, and STM32G041               * v1.0 *
 // ===================================================================================
 //
 // Pins must be defined as PA0, PA1, .., PF14, PF15 - e.g.:
@@ -505,9 +505,9 @@ enum{
 // ===================================================================================
 
 // ADC calibration registers
-#define ADC_TSCAL1          (*(uint32_t*)(0x1FFF75A8))
-#define ADC_TSCAL2          (*(uint32_t*)(0x1FFF75CA))
-#define ADC_VREFCAL         (*(uint32_t*)(0x1FFF75AA))
+#define ADC_TSCAL1          (*(__I uint16_t*)(0x1FFF75A8))
+#define ADC_TSCAL2          (*(__I uint16_t*)(0x1FFF75CA))
+#define ADC_VREFCAL         (*(__I uint16_t*)(0x1FFF75AA))
 
 // Set ADC sampling rate
 #define ADC_fast()          ADC1->SMPR &= ~ADC_SMPR_SMP2
@@ -582,15 +582,16 @@ static inline uint16_t ADC_read(void) {
   return ADC1->DR;                              // return result
 }
 
+// Sample and read supply voltage (VDD) in millivolts (mV)
 static inline uint16_t ADC_read_VDD(void) {
   ADC_input_VREF();                             // set VREF as ADC input
-  return((uint32_t)ADC_VREFCAL*2916/ADC_read());// return VDD in mV
+  return((uint32_t)3000*ADC_VREFCAL/ADC_read());// return VDD in mV
 }
 
+// Sample and read temperature sensor in °C
 static inline int8_t ADC_read_TEMP(void) {
   ADC_input_TEMP();                             // set temp sensor as ADC input
-  // return temp in °C
-  return(((int32_t)ADC_read()-ADC_TSCAL1)*(55/(ADC_TSCAL2-ADC_TSCAL1))+30);
+  return((ADC_TSCAL1-ADC_read())*85/(ADC_TSCAL2-ADC_TSCAL1)-30); // return temp in °C
 }
 
 #ifdef __cplusplus
