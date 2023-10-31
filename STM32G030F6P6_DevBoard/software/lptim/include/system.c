@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for STM32G030, STM32G031, and STM32G041             * v0.1 *
+// Basic System Functions for STM32G030, STM32G031, and STM32G041             * v1.0 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 

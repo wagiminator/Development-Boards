@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for STM32G030, STM32G031, and STM32G041             * v0.1 *
+// Basic System Functions for STM32G030, STM32G031, and STM32G041             * v1.0 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -149,7 +149,13 @@
 // CRC_enable()             enable cyclic redundancy check (CRC) module
 // CRC_disable()            disable CRC module
 // CRC_write(w)             add new 32-bit word for CRC calculation
-// CRC_read()               read last CRC calculation
+// CRC_write32(w)           add new 32-bit word for CRC calculation (alias)
+// CRC_write16(h)           add new 16-bit half-word for CRC calculation
+// CRC_write8(b)            add new  8-bit byte for CRC calculation
+// CRC_read()               read last 32-bit CRC calculation
+// CRC_read32()             read last 32-bit CRC calculation (alias)
+// CRC_read16()             read last 16-bit CRC calculation
+// CRC_read8()              read last  8-bit CRC calculation
 // CRC_reset()              reset CRC calculation
 // CRC_setInit(n)           set initial CRC value (default: 0xffffffff)
 // CRC_setPoly(n)           set polynomial (default: 0x04c11db7)
@@ -415,6 +421,15 @@ uint32_t RNG_read(void);
 #define CRC_reset()         CRC->CR |= 1              // reset calculation
 #define CRC_setInit(n)      CRC->INIT = (n)           // set initial CRC value
 #define CRC_setPoly(n)      CRC->POL = (n)            // set polynomial
+#define CRC_data32          (*(__IO uint32_t*)CRC_BASE)
+#define CRC_data16          (*(__IO uint16_t*)CRC_BASE)
+#define CRC_data8           (*(__IO uint8_t*)CRC_BASE)
+#define CRC_write32(w)      CRC_data32 = (uint32_t)(w)
+#define CRC_write16(h)      CRC_data16 = (uint16_t)(h)
+#define CRC_write8(b)       CRC_data8  = (uint8_t)(b)
+#define CRC_read32()        CRC_data32
+#define CRC_read16()        CRC_data16
+#define CRC_read8()         CRC_data8
 
 // ===================================================================================
 // Imported System Functions from cmsis_gcc.h and core_cm0plus.h

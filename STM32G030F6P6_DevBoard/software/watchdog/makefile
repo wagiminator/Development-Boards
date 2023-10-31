@@ -14,7 +14,7 @@ INCLUDE  = include
 TOOLS    = tools
 
 # Microcontroller Settings
-F_CPU    = 64000000
+F_CPU    = 16000000
 LDSCRIPT = linker/stm32g030x6.ld
 CPUARCH  = -mcpu=cortex-m0plus -mthumb
 
@@ -30,8 +30,8 @@ CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 # Compiler Flags
 CFLAGS   = $(CPUARCH) -DF_CPU=$(F_CPU) -I$(INCLUDE) -I.
 CFLAGS  += -g -Os -flto -fdata-sections -ffunction-sections -Wall
+CFLAGS  += -fno-diagnostics-show-caret -funsigned-char -funsigned-bitfields
 LDFLAGS  = -T$(LDSCRIPT) -lc -lm -lnosys -specs=nano.specs -Wl,--gc-sections
-LDFLAGS += -nostdlib -lgcc -static-libgcc
 CFILES   = $(MAINFILE) $(wildcard $(INCLUDE)/*.c) $(wildcard $(INCLUDE)/*.S)
 
 # Symbolic Targets
