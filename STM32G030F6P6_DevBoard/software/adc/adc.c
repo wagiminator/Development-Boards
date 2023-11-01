@@ -45,24 +45,18 @@ int main (void) {
   while(1) {
     // Read and print PIN
     ADC_input(PIN_ADC);
-    DEBUG_printS("PIN:  ");
-    DEBUG_printD(ADC_read());
-    DEBUG_newline();
+    DEBUG_printf("PIN:  %d \n", ADC_read());
 
     // Read and print VDD
-    DEBUG_printS("VDD:  ");
-    DEBUG_printD(ADC_read_VDD());
-    DEBUG_printS("mV\n");
+    DEBUG_printf("VDD:  %d \n", ADC_read_VDD());
 
     // Read and print chip temperature
-    DEBUG_printS("TEMP: ");
-    DEBUG_printD(ADC_read_TEMP());
-    DEBUG_printS("C\n");
+    DEBUG_printf("TEMP: %d \n", ADC_read_TEMP());
     
     // Read and print calibration values
-    DEBUG_printS("TSCAL1:  "); DEBUG_printD(ADC_TSCAL1);  DEBUG_newline();
-    DEBUG_printS("TSCAL2:  "); DEBUG_printD(ADC_TSCAL2);  DEBUG_newline();
-    DEBUG_printS("VREFCAL: "); DEBUG_printD(ADC_VREFCAL); DEBUG_newline();
+    DEBUG_printf("TSCAL1:  %d \n", ADC_TSCAL1);
+    DEBUG_printf("TSCAL2:  %d \n", ADC_TSCAL2);
+    DEBUG_printf("VREFCAL: %d \n", ADC_VREFCAL);
 
     DLY_ms(1000);                   // delay one second
   }

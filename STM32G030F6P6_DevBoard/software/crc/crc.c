@@ -46,6 +46,7 @@ int main (void) {
       UART2_print("CRC: ");         //   
       UART2_printB(CRC_read8());    //   read CRC calculation and send it via UART
       UART2_newline();              //   print newline
+      UART2_printf("CRC: %02x \n", CRC_read8());
       CRC_reset();                  //   reset CRC calculation
     }
   }

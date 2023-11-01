@@ -31,6 +31,7 @@
 // LPUART_FIFO_disable()    Disable FIFO mode
 //
 // If print functions are activated (see below, print.h must be included):
+// LPUART_printf(f, ...)    printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // LPUART_printD(n)         Print decimal value
 // LPUART_printW(n)         Print 32-bit hex word value
 // LPUART_printH(n)         Print 16-bit hex half-word value
@@ -102,14 +103,15 @@ void LPUART_write(const char c);                      // send character via UART
 // Additional print functions (if activated, see above)
 #if LPUART_PRINT == 1
 #include "print.h"
-#define LPUART_printD(n)    printD(n, LPUART_write)   // print decimal as string
-#define LPUART_printW(n)    printW(n, LPUART_write)   // print word as string
-#define LPUART_printH(n)    printH(n, LPUART_write)   // print half-word as string
-#define LPUART_printB(n)    printB(n, LPUART_write)   // print byte as string
-#define LPUART_printS(s)    printS(s, LPUART_write)   // print string
-#define LPUART_println(s)   println(s, LPUART_write)  // print string with newline
-#define LPUART_print        LPUART_printS             // alias
-#define LPUART_newline()    LPUART_write('\n')        // send newline
+#define LPUART_printD(n)        printD(LPUART_write, n)   // print decimal as string
+#define LPUART_printW(n)        printW(LPUART_write, n)   // print word as string
+#define LPUART_printH(n)        printH(LPUART_write, n)   // print half-word as string
+#define LPUART_printB(n)        printB(LPUART_write, n)   // print byte as string
+#define LPUART_printS(s)        printS(LPUART_write, s)   // print string
+#define LPUART_println(s)       println(LPUART_write, s)  // print string with newline
+#define LPUART_print            LPUART_printS             // alias
+#define LPUART_newline()        LPUART_write('\n')        // send newline
+#define LPUART_printf(f, ...)   printF(LPUART_write, f, ##__VA_ARGS__)
 #endif
 
 #ifdef __cplusplus

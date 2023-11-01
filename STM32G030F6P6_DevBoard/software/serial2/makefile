@@ -29,8 +29,9 @@ CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 
 # Compiler Flags
 CFLAGS   = $(CPUARCH) -DF_CPU=$(F_CPU) -I$(INCLUDE) -I.
-CFLAGS  += -g -Os -flto -fdata-sections -ffunction-sections -Wall
-LDFLAGS  = -T$(LDSCRIPT) -specs=nano.specs -Wl,--gc-sections
+CFLAGS  += -g -Os -flto -fdata-sections -ffunction-sections -fno-builtin -Wall
+LDFLAGS  = -T$(LDSCRIPT) -Wl,--gc-sections
+LDFLAGS += --specs=nano.specs --specs=nosys.specs -static -lc -lm
 CFILES   = $(MAINFILE) $(wildcard $(INCLUDE)/*.c) $(wildcard $(INCLUDE)/*.S)
 
 # Symbolic Targets

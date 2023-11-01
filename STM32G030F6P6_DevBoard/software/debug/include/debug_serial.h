@@ -1,10 +1,10 @@
 // ===================================================================================
-// Basic Serial Debug Functions for STM32G0xx                                 * v1.0 *
+// Basic Serial Debug Functions for STM32G0xx                                 * v1.1 *
 // ===================================================================================
 //
 // Functions available:
 // --------------------
-// DEBUG_init()             Init serial DEBUG with default BAUD rate (115200)
+// DEBUG_init()             Init serial DEBUG (8N1, BAUD: 115200)
 // DEBUG_setBaud(n)         Set BAUD rate
 //
 // DEBUG_write(c)           Send character
@@ -16,6 +16,7 @@
 // DEBUG_printH(n)          Send 16-bit hex half-word value as string
 // DEBUG_printB(n)          Send 8-bit hex byte value as string
 // DEBUG_newline()          Send newline
+// DEBUG_printf(s, ...)     Uses printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 //
 // UART TX pin mapping (set below in DEBUG parameters):
 // ----------------------------------------------------
@@ -47,6 +48,7 @@ extern "C" {
   void DEBUG_printW(uint32_t value);      // send 32-bit hex word value as string
   void DEBUG_printH(uint16_t value);      // send 16-bit hex half-word value as string
   void DEBUG_printB(uint8_t value);       // send 8-bit hex byte value as string
+  void DEBUG_printf(const char *format, ...); // use printf (requires more memory)
 #else
   #define DEBUG_init()
   #define DEBUG_write(x)
@@ -56,6 +58,7 @@ extern "C" {
   #define DEBUG_printW(x)
   #define DEBUG_printH(x)
   #define DEBUG_printB(x)
+  #define DEBUG_printf(f, ...)
 #endif
 
 #define DEBUG_setBAUD(n)  USART2->BRR = ((2*F_CPU/(n))+1)/2;  // set BAUD rate
