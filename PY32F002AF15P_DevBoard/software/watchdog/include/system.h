@@ -95,7 +95,13 @@
 // CRC_enable()             enable cyclic redundancy check (CRC) module
 // CRC_disable()            disable CRC module
 // CRC_write(w)             add new 32-bit word for CRC calculation
+// CRC_write32(w)           add new 32-bit word for CRC calculation (alias)
+// CRC_write16(h)           add new 16-bit half-word for CRC calculation
+// CRC_write8(b)            add new  8-bit byte for CRC calculation
 // CRC_read()               read last 32-bit CRC calculation
+// CRC_read32()             read last 32-bit CRC calculation (alias)
+// CRC_read16()             read last 16-bit CRC calculation
+// CRC_read8()              read last  8-bit CRC calculation
 // CRC_reset()              reset CRC calculation
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
@@ -320,6 +326,15 @@ void BOOT_now(void);      // jump to bootloader
 #define CRC_write(w)      CRC->DR = (uint32_t)(w)   // add new word for calculation
 #define CRC_read()        (CRC->DR)                 // read last calculation
 #define CRC_reset()       CRC->CR = 1               // reset calculation
+#define CRC_data32        (*(__IO uint32_t*)CRC_BASE)
+#define CRC_data16        (*(__IO uint16_t*)CRC_BASE)
+#define CRC_data8         (*(__IO uint8_t*)CRC_BASE)
+#define CRC_write32(w)    CRC_data32 = (uint32_t)(w)
+#define CRC_write16(h)    CRC_data16 = (uint16_t)(h)
+#define CRC_write8(b)     CRC_data8  = (uint8_t)(b)
+#define CRC_read32()      CRC_data32
+#define CRC_read16()      CRC_data16
+#define CRC_read8()       CRC_data8
 
 // ===================================================================================
 // Imported System Functions from cmsis_gcc.h and core_cm0plus.h

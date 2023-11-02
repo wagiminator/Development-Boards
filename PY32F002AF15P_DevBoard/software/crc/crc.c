@@ -41,9 +41,10 @@ int main (void) {
   // Loop
   while(1) {
     char c = UART_read();           // read character from UART
-    if(c != '\n') CRC_write(c);     // not newline -> add to CRC calculation
+    if(c != '\n') CRC_write8(c);    // not newline -> add 8-bit to CRC calculation
     else {                          // newline ->
-      UART_printW(CRC_read());      //   read CRC calculation and send it via UART
+      UART_print("CRC: ");          //   
+      UART_printB(CRC_read8());     //   read CRC calculation and send it via UART
       UART_newline();               //   print newline
       CRC_reset();                  //   reset CRC calculation
     }

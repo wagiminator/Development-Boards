@@ -27,6 +27,8 @@
 // UART_RX_disable()        Disable receiver
 //
 // If print functions are activated (see below, print.h must be included):
+// -----------------------------------------------------------------------
+// UART_printf(f, ...)      printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // UART_printD(n)           Print decimal value
 // UART_printW(n)           Print 32-bit hex word value
 // UART_printH(n)           Print 16-bit hex half-word value
@@ -53,9 +55,9 @@ extern "C" {
 #include "py32f0xx.h"
 
 // UART parameters
-#define UART_BAUD             115200          // default UART baud rate
-#define UART_MAP              0               // UART pin mapping (see above)
-#define UART_PRINT            1               // 1 = include print functions (needs print.h)
+#define UART_BAUD             115200    // default UART baud rate
+#define UART_MAP              0         // UART pin mapping (see above)
+#define UART_PRINT            1         // 1: include print functions (needs print.h)
 
 // UART macros
 #define UART_ready()          (USART1->SR & USART_SR_TXE)     // ready to write
@@ -77,21 +79,22 @@ extern "C" {
 #define UART_setNoParity()    USART1->CR1 &= ~USART_CR1_PCE
 
 // UART functions
-void UART_init(void);                             // init UART with default BAUD rate
-char UART_read(void);                             // read character via UART
-void UART_write(const char c);                    // send character via UART
+void UART_init(void);                   // init UART with default BAUD rate
+char UART_read(void);                   // read character via UART
+void UART_write(const char c);          // send character via UART
 
 // Additional print functions (if activated, see above)
 #if UART_PRINT == 1
 #include "print.h"
-#define UART_printD(n)    printD(n, UART_write)   // print decimal as string
-#define UART_printW(n)    printW(n, UART_write)   // print word as string
-#define UART_printH(n)    printH(n, UART_write)   // print half-word as string
-#define UART_printB(n)    printB(n, UART_write)   // print byte as string
-#define UART_printS(s)    printS(s, UART_write)   // print string
-#define UART_println(s)   println(s, UART_write)  // print string with newline
-#define UART_print        UART_printS             // alias
-#define UART_newline()    UART_write('\n')        // send newline
+#define UART_printD(n)        printD(UART_write, n)   // print decimal as string
+#define UART_printW(n)        printW(UART_write, n)   // print word as string
+#define UART_printH(n)        printH(UART_write, n)   // print half-word as string
+#define UART_printB(n)        printB(UART_write, n)   // print byte as string
+#define UART_printS(s)        printS(UART_write, s)   // print string
+#define UART_println(s)       println(UART_write, s)  // print string with newline
+#define UART_print            UART_printS             // alias
+#define UART_newline()        UART_write('\n')        // send newline
+#define UART_printf(f, ...)   printF(UART_write, f, ##__VA_ARGS__)
 #endif
 
 #ifdef __cplusplus

@@ -12,6 +12,8 @@
 // OLED_write(c)            Write a character or handle control characters
 //
 // If print functions are activated (see below, print.h must be included):
+// -----------------------------------------------------------------------
+// OLED_printf(f, ...)      printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // OLED_printD(n)           Print decimal value
 // OLED_printW(n)           Print 32-bit hex word value
 // OLED_printH(n)           Print 16-bit hex half-word value
@@ -23,14 +25,14 @@
 //
 // References:
 // -----------
-// - Neven Boyanov: https://github.com/tinusaur/ssd1306xled
-// - Stephen Denne: https://github.com/datacute/Tiny4kOLED
-// - David Johnson-Davies: http://www.technoblogy.com/show?TV4
-// - TinyOLEDdemo: https://github.com/wagiminator/attiny13-tinyoleddemo
-// - TinyTerminal: https://github.com/wagiminator/ATtiny85-TinyTerminal
-// - USB2OLED: https://github.com/wagiminator/CH552-USB-OLED
+// - Neven Boyanov:         https://github.com/tinusaur/ssd1306xled
+// - Stephen Denne:         https://github.com/datacute/Tiny4kOLED
+// - David Johnson-Davies:  http://www.technoblogy.com/show?TV4
+// - TinyOLEDdemo:          https://github.com/wagiminator/attiny13-tinyoleddemo
+// - TinyTerminal:          https://github.com/wagiminator/ATtiny85-TinyTerminal
+// - OLED Font Editor:      http://sourpuss.net/projects/fontedit/
 //
-// 2022 by Stefan Wagner: https://github.com/wagiminator
+// 2022 by Stefan Wagner:   https://github.com/wagiminator
 
 #pragma once
 
@@ -78,14 +80,15 @@ void OLED_write(char c);          // OLED write a character or handle control ch
 // Additional print functions (if activated, see above)
 #if OLED_PRINT == 1
 #include "print.h"
-#define OLED_printD(n)    printD(n, OLED_write)   // print decimal as string
-#define OLED_printW(n)    printW(n, OLED_write)   // print word as string
-#define OLED_printH(n)    printH(n, OLED_write)   // print half-word as string
-#define OLED_printB(n)    printB(n, OLED_write)   // print byte as string
-#define OLED_printS(s)    printS(s, OLED_write)   // print string
-#define OLED_println(s)   println(s, OLED_write)  // print string with newline
+#define OLED_printD(n)    printD(OLED_write, n)   // print decimal as string
+#define OLED_printW(n)    printW(OLED_write, n)   // print word as string
+#define OLED_printH(n)    printH(OLED_write, n)   // print half-word as string
+#define OLED_printB(n)    printB(OLED_write, n)   // print byte as string
+#define OLED_printS(s)    printS(OLED_write, s)   // print string
+#define OLED_println(s)   println(OLED_write, s)  // print string with newline
 #define OLED_print        OLED_printS             // alias
 #define OLED_newline()    OLED_write('\n')        // send newline
+#define OLED_printf(f, ...)   printF(OLED_write, f, ##__VA_ARGS__)
 #endif
 
 #ifdef __cplusplus

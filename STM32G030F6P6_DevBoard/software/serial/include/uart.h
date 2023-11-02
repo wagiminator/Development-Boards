@@ -31,6 +31,7 @@
 // UART_FIFO_disable()      Disable FIFO mode
 //
 // If print functions are activated (see below, print.h must be included):
+// -----------------------------------------------------------------------
 // UART_printf(f, ...)      printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // UART_printD(n)           Print decimal value
 // UART_printW(n)           Print 32-bit hex word value
@@ -89,9 +90,9 @@ extern "C" {
 #define UART_setNoParity()    USART1->CR1 &= ~USART_CR1_PCE
 
 // UART functions
-void UART_init(void);                             // init UART with default BAUD rate
-char UART_read(void);                             // read character via UART
-void UART_write(const char c);                    // send character via UART
+void UART_init(void);                     // init UART with default BAUD rate
+char UART_read(void);                     // read character via UART
+void UART_write(const char c);            // send character via UART
 
 // Additional print functions (if activated, see above)
 #if UART_PRINT == 1

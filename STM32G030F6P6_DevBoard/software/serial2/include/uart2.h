@@ -27,6 +27,7 @@
 // UART2_RX_disable()       Disable receiver
 //
 // If print functions are activated (see below, print.h must be included):
+// -----------------------------------------------------------------------
 // UART2_printf(f, ...)     printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // UART2_printD(n)          Print decimal value
 // UART2_printW(n)          Print 32-bit hex word value

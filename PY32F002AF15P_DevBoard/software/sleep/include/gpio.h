@@ -42,13 +42,13 @@
 // PORTS_disable()          Disable all GPIO PORTS
 //
 // ADC_init()               Init, enable and calibrate ADC (must be called first)
-// ADC_enable()             enable ADC (power-up)
-// ADC_disable()            disable ADC (power-down)
-// ADC_calibrate()          calibrate ADC (ADC must be disabled)
+// ADC_enable()             Enable ADC (power-up)
+// ADC_disable()            Disable ADC (power-down)
+// ADC_calibrate()          Calibrate ADC (ADC must be disabled)
 //
-// ADC_fast()               set fast mode   (  3.5 ADC clock cycles, least accurate) (*)
-// ADC_medium()             set medium mode ( 71.5 ADC clock cycles, medium accurate)
-// ADC_slow()               set slow mode   (239.5 ADC clock cycles, most accurate)
+// ADC_fast()               Set fast mode   (  3.5 ADC clock cycles, least accurate) (*)
+// ADC_medium()             Set medium mode ( 71.5 ADC clock cycles, medium accurate)
+// ADC_slow()               Set slow mode   (239.5 ADC clock cycles, most accurate)
 //
 // ADC_input(PIN)           Set PIN as ADC input
 // ADC_input_VREF()         Set internal voltage referece (Vref) as ADC input

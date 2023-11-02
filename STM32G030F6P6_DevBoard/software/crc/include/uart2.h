@@ -27,6 +27,7 @@
 // UART2_RX_disable()       Disable receiver
 //
 // If print functions are activated (see below, print.h must be included):
+// -----------------------------------------------------------------------
 // UART2_printf(f, ...)     printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // UART2_printD(n)          Print decimal value
 // UART2_printW(n)          Print 32-bit hex word value
@@ -56,7 +57,7 @@ extern "C" {
 // UART parameters
 #define UART2_BAUD            115200      // default UART baud rate
 #define UART2_MAP             0           // UART pin mapping (see above)
-#define UART2_PRINT           1           // 1 = include print functions (needs print.h)
+#define UART2_PRINT           1           // 1: include print functions (needs print.h)
 
 // UART macros
 #define UART2_ready()         (USART2->ISR & USART_ISR_TXE_TXFNF)   // ready to write

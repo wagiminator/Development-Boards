@@ -28,7 +28,7 @@
 // Libraries, Definitions and Macros
 // ===================================================================================
 #include "system.h"                         // system functions
-#include "debug.h"                          // serial debug functions
+#include "debug_serial.h"                   // serial debug functions
 
 // ===================================================================================
 // Main Function

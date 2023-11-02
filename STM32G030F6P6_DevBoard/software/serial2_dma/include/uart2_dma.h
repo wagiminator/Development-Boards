@@ -27,6 +27,7 @@
 // UART2_RX_disable()       Disable receiver
 //
 // If print functions are activated (see below, print.h must be included):
+// -----------------------------------------------------------------------
 // UART2_printf(f, ...)     printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // UART2_printD(n)          Print decimal value
 // UART2_printW(n)          Print 32-bit hex word value
@@ -71,7 +72,7 @@ extern "C" {
 #define UART2_RX_enable()     USART2->CR1 |= USART_CR1_RE         // enable receiver
 #define UART2_RX_disable()    USART2->CR1 &= ~USART_CR1_RE        // disable receiver
 
-#define UART2_setBAUD(n)      USART2->BRR = ((2*F_CPU/(n))+1)/2 // set BAUD rate
+#define UART2_setBAUD(n)      USART2->BRR = ((2*F_CPU/(n))+1)/2   // set BAUD rate
 #define UART2_setDataBits(n)  {USART2->CR1 &= ~(USART_CR1_M1 | USART_CR1_M0); \
                               (n==9 ? (USART2->CR1 |= USART_CR1_M0) : \
                               (n==7 ? (USART2->CR1 |= USART_CR1_M1) : (0)));}
@@ -81,10 +82,10 @@ extern "C" {
 #define UART2_setNoParity()   USART2->CR1 &= ~USART_CR1_PCE
 
 // UART functions
-void UART2_init(void);                              // init UART with default BAUD rate
-char UART2_read(void);                              // read character via UART
-void UART2_write(const char c);                     // send character via UART
-uint8_t UART2_available(void);                      // check if there is something to read
+void UART2_init(void);                    // init UART with default BAUD rate
+char UART2_read(void);                    // read character via UART
+void UART2_write(const char c);           // send character via UART
+uint8_t UART2_available(void);            // check if there is something to read
 
 // Additional print functions (if activated, see above)
 #if UART2_PRINT == 1

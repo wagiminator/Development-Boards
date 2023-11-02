@@ -31,6 +31,7 @@
 // LPUART_FIFO_disable()    Disable FIFO mode
 //
 // If print functions are activated (see below, print.h must be included):
+// -----------------------------------------------------------------------
 // LPUART_printf(f, ...)    printf (supports %s, %c, %d, %u, %x, %b, %02d, %%)
 // LPUART_printD(n)         Print decimal value
 // LPUART_printW(n)         Print 32-bit hex word value
@@ -58,11 +59,11 @@ extern "C" {
 #include "stm32g0xx.h"
 
 // UART parameters
-#define LPUART_BAUD             115200      // default UART baud rate
-#define LPUART_MAP              0           // UART pin mapping (see above)
-#define LPUART_FIFO             1           // 1: use 8-byte FIFO
-#define LPUART_LSE              0           // 1: use external 32.768kHz clock (max 9600 BAUD)
-#define LPUART_PRINT            0           // 1: include print functions (needs print.h)
+#define LPUART_BAUD             115200    // default UART baud rate
+#define LPUART_MAP              0         // UART pin mapping (see above)
+#define LPUART_FIFO             1         // 1: use 8-byte FIFO
+#define LPUART_LSE              0         // 1: use external 32.768kHz clock (max 9600 BAUD)
+#define LPUART_PRINT            0         // 1: include print functions (needs print.h)
 
 // UART macros
 #define LPUART_ready()          (LPUART1->ISR & USART_ISR_TXE_TXFNF)  // ready to write
@@ -96,9 +97,9 @@ extern "C" {
 #endif
 
 // UART functions
-void LPUART_init(void);                               // init UART with default BAUD rate
-char LPUART_read(void);                               // read character via UART
-void LPUART_write(const char c);                      // send character via UART
+void LPUART_init(void);                   // init UART with default BAUD rate
+char LPUART_read(void);                   // read character via UART
+void LPUART_write(const char c);          // send character via UART
 
 // Additional print functions (if activated, see above)
 #if LPUART_PRINT == 1
