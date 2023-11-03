@@ -45,13 +45,13 @@ int main (void) {
   while(1) {
     // Read and print PIN
     ADC_input(PIN_ADC);
-    DEBUG_printf("PIN:  %d \n", ADC_read());
+    DEBUG_printf("PIN:  %d\n", ADC_read());
 
     // Read and print VDD
-    DEBUG_printf("VDD:  %d \n", ADC_read_VDD());
+    DEBUG_printf("VDD:  %d mV\n", ADC_read_VDD());
 
     // Read and print chip temperature
-    DEBUG_printf("TEMP: %d \n", ADC_read_TEMP());
+    DEBUG_printf("TEMP: %d C\n", ADC_read_TEMP());
     
     // Read and print calibration values
     DEBUG_printf("TSCAL1:  %d \n", ADC_TSCAL1);
