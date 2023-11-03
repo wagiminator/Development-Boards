@@ -510,9 +510,9 @@ enum{
 #define ADC_VREFCAL         (*(__I uint16_t*)(0x1FFF75AA))
 
 // Set ADC sampling rate
-#define ADC_fast()          ADC1->SMPR &= ~ADC_SMPR_SMP2
-#define ADC_medium()        ADC1->SMPR  = (ADC->SMPR & ~ADC_SMPR_SMP2) | 0b110
-#define ADC_slow()          ADC1->SMPR |=  ADC_SMPR_SMP2
+#define ADC_fast()          ADC1->SMPR &= ~ADC_SMPR_SMP1
+#define ADC_medium()        ADC1->SMPR  = (ADC->SMPR & ~ADC_SMPR_SMP1) | 0b110
+#define ADC_slow()          ADC1->SMPR |=  ADC_SMPR_SMP1
 
 // Set GPIO pin as ADC input
 #define ADC_input(PIN) {                \
