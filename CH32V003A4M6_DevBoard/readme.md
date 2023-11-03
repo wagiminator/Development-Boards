@@ -8,7 +8,7 @@ Development board for the CH32V003A4M6 ultra-cheap 32-bit RISC-V microcontroller
 
 # The CH32V003 Family of 32-bit RISC-V Microcontrollers
 ## Overview
-The CH32V003 series is a collection of industrial-grade general-purpose microcontrollers that utilize the QingKe RISC-V2A core design supporting the RV32EC instruction set. These microcontrollers are equipped with various features such as a 48MHz system main frequency, 16KB flash, 2KB SRAM, wide voltage support, a single-wire serial debug interface, low power consumption, and an ultra-small package. Additionally, the CH32V003 series includes a built-in set of components including a DMA controller, a 10-bit ADC, op-amp comparators, multiple timers, and standard communication interfaces such as USART, I2C, and SPI.
+The CH32V003 series is a collection of industrial-grade general-purpose microcontrollers that utilize the QingKe RISC-V2A core design supporting the RV32EC instruction set. These microcontrollers are equipped with various features such as a 48MHz system main frequency, 16KB flash, 2KB SRAM, wide voltage support (2.7V - 5.5V), a single-wire serial debug interface, low power consumption, and an ultra-small package. Additionally, the CH32V003 series includes a built-in set of components including a DMA controller, a 10-bit ADC, op-amp comparators, multiple timers, and standard communication interfaces such as USART, I2C, and SPI.
 
 ## Block Diagram
 ![CH32V003_block.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003_block.png)
@@ -17,15 +17,17 @@ The CH32V003 series is a collection of industrial-grade general-purpose microcon
 - QingKe 32-bit RISC-V2A processor, supporting 2 levels of interrupt nesting
 - Maximum 48MHz system main frequency
 - 2KB SRAM, 16KB Flash
-- Power supply voltage: 3.3/5V
+- Operating voltage: 2.7V - 5.5V
 - Multiple low-power modes: Sleep, Standby
 - Power on/off reset, programmable voltage detector
-- 1 group of 1-channel general-purpose DMA controller
-- 1 group of op-amp comparator
-- 1 group of 10-bit ADC
-- 1×16-bit advanced-control timer, 1×16-bit general-purpose timer
-- 2 WDOG, 1×32-bit SysTick
-- 1 USART interface, 1 group of I2C interface, 1 group of SPI interface
+- 1x 7-channel DMA controller
+- 1x op-amp comparator
+- 1x 10-bit 10-channel ADC
+- 1× 16-bit advanced-control timer
+- 1× 16-bit general-purpose timer
+- 2x watchdog timer (IWDT, WWDT)
+- 1× 32-bit SysTick timer
+- 1x USART interface, 1x I2C interface, 1x SPI interface
 - 18 I/O ports, mapping an external interrupt
 - 64-bit chip unique ID
 - Single-wire serial debug interface (SDI)
