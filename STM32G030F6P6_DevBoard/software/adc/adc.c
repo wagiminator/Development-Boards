@@ -39,25 +39,25 @@ int main (void) {
   // Setup
   DEBUG_init();                     // init DEBUG (TX: PA2, BAUD: 115200, 8N1)
   ADC_init();                       // init ADC
-  ADC_slow();                       // set slow sample rate
+  ADC_slow();                       // slow sample rate -> more accurate
   
   // Loop
   while(1) {
     // Read and print PIN
-    ADC_input(PIN_ADC);
-    DEBUG_printf("PIN:  %d\n", ADC_read());
+    ADC_input(PIN_ADC);                             // set ADC input pin
+    DEBUG_printf("PIN:  %d\n", ADC_read());         // read value and send via UART
 
-    // Read and print VDD
-    DEBUG_printf("VDD:  %d mV\n", ADC_read_VDD());
+    // Read and print VDD in mV
+    DEBUG_printf("VDD:  %d mV\n", ADC_read_VDD());  // read supply voltage and send via UART
 
-    // Read and print chip temperature
-    DEBUG_printf("TEMP: %d C\n", ADC_read_TEMP());
+    // Read and print chip temperature in °C
+    DEBUG_printf("TEMP: %d C\n", ADC_read_TEMP());  // read temperature and send via UART
     
     // Read and print calibration values
-    DEBUG_printf("TSCAL1:  %d \n", ADC_TSCAL1);
-    DEBUG_printf("TSCAL2:  %d \n", ADC_TSCAL2);
-    DEBUG_printf("VREFCAL: %d \n", ADC_VREFCAL);
+    DEBUG_printf("TSCAL1:  %d\n", ADC_TSCAL1);
+    DEBUG_printf("TSCAL2:  %d\n", ADC_TSCAL2);
+    DEBUG_printf("VREFCAL: %d\n", ADC_VREFCAL);
 
-    DLY_ms(1000);                   // delay one second
+    DLY_ms(1000);                                   // delay one second
   }
 }
