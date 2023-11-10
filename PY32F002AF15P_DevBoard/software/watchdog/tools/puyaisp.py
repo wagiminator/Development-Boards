@@ -226,7 +226,7 @@ class Programmer(Serial):
         self.rts = True
         time.sleep(0.01)
         self.rts = False
-        self.close
+        self.close()
         
     # Start firmware and disconnect
     def run(self):
