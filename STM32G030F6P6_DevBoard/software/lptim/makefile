@@ -28,11 +28,10 @@ ISPTOOL  = python3 $(TOOLS)/stm32isp.py -f $(TARGET).bin
 CLEAN    = rm -f *.lst *.obj *.cof *.list *.map *.eep.hex *.o *.d
 
 # Compiler Flags
-CFLAGS   = $(CPUARCH) -DF_CPU=$(F_CPU) -I$(INCLUDE) -I.
-CFLAGS  += -g -Os -flto -fdata-sections -ffunction-sections -Wall
-LDFLAGS  = -T$(LDSCRIPT) -Wl,--gc-sections -fno-builtin
-LDFLAGS += --specs=nano.specs --specs=nosys.specs -static -lc -lm
-LDFLAGS += -nostdlib -lgcc -static-libgcc
+CFLAGS   = -g -Os -flto -Wall $(CPUARCH) -DF_CPU=$(F_CPU) -I$(INCLUDE) -I.
+CFLAGS  += -fdata-sections -ffunction-sections -fno-builtin -fno-common
+LDFLAGS  = -T$(LDSCRIPT) -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs
+LDFLAGS += -static -lc -lm -lgcc -nostartfiles -nostdlib
 CFILES   = $(MAINFILE) $(wildcard $(INCLUDE)/*.c) $(wildcard $(INCLUDE)/*.S)
 
 # Symbolic Targets

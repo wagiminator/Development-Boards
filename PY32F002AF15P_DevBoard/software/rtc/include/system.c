@@ -297,17 +297,13 @@ void __libc_init_array(void) {
 // ===================================================================================
 // C version of PY32F030 Startup .s file
 // ===================================================================================
-extern uint32_t _sbss;
-extern uint32_t _ebss;
-extern uint32_t _data_lma;
-extern uint32_t _data_vma;
-extern uint32_t _edata;
+extern uint32_t _sbss, _ebss, _sdata, _edata, _sidata;
 extern void _estack(void);
 
 // Prototypes
 int main(void)                __attribute__((section(".text.main"), used));
-void (*const vectors[])(void) __attribute__((section(".vectors"), used));
-void Reset_Handler(void)      __attribute__((section(".text.irq_handler"), naked, used));
+void (*const vectors[])(void) __attribute__((section(".isr_vector"), used));
+void Reset_Handler(void)      __attribute__((section(".text.irq_handler"), naked, used, noreturn));
 
 #if SYS_USE_VECTORS > 0
 // Unless a specific handler is overridden, it just spins forever
@@ -428,8 +424,8 @@ void Reset_Handler(void) {
   SCB->VTOR = (uint32_t)vectors;
 
   // Copy data from FLASH to RAM
-  src = &_data_lma;
-  dst = &_data_vma;
+  src = &_sidata;
+  dst = &_sdata;
   while(dst < &_edata) *dst++ = *src++;
 
   // Clear uninitialized variables

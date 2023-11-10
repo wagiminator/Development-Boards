@@ -30,6 +30,8 @@ Set your MCU to boot mode by using ONE of the following methods:
 - Disconnect your USB-to-serial converter, pull BOOT0 pin (PF4) to VCC (or press and hold the BOOT button, if your board has one), then connect the converter to your USB port. BOOT0 pin (or BOOT button) can be released now.
 - Connect your USB-to-serial converter to your USB port. Pull BOOT0 pin (PF4) to VCC, then pull nRST (PF2) shortly to GND (or press and hold the BOOT button, then press and release the RESET button and then release the BOOT button, if your board has them).
 
+These steps are not necessary when using a CH340X USB-to-serial converter with control lines for nRST and BOOT0. In this case, the software automatically puts the MCU into bootloader mode.
+
 ## Usage
 ```
 Usage: puyaisp.py [-h] [-u] [-l] [-e] [-o] [-G] [-R] [-f FLASH]

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ===================================================================================
 # Project:   puyaisp - Programming Tool for PUYA PY32F0xx Microcontrollers
-# Version:   v1.3
+# Version:   v1.4
 # Year:      2023
 # Author:    Stefan Wagner
 # Github:    https://github.com/wagiminator
@@ -30,7 +30,7 @@
 #        VCC ---> VCC
 #        GND ---> GND
 #
-# Set your MCU to boot mode by using ONE of the following methods:
+# Set your MCU to bootloader mode by using ONE of the following methods:
 # - Disconnect your USB-to-serial converter, pull BOOT0 pin (PF4) to VCC (or press
 #   and hold the BOOT button, if your board has one), then connect the converter to
 #   your USB port. BOOT0 pin (or BOOT button) can be released now.
@@ -38,6 +38,9 @@
 #   to VCC, then pull nRST (PF2) shortly to GND (or press and hold the BOOT button,
 #   then press and release the RESET button and then release the BOOT button, if
 #   your board has them).
+# These steps are not necessary when using a CH340X USB-to-serial converter with 
+# control lines for nRST and BOOT0. In this case, the software automatically puts 
+# the MCU into bootloader mode.
 #
 # Run "python3 puyaisp.py -f firmware.bin".
 
@@ -51,6 +54,7 @@ PY_BAUD = 115200
 
 # Libraries
 import sys
+import time
 import argparse
 import serial
 from serial import Serial
@@ -102,7 +106,7 @@ def _main():
             isp.unlock()
             print('SUCCESS: Chip is unlocked.')
             print('INFO: Other options are ignored!')
-            isp.close()
+            isp.reset()
             print('DONE.')
             sys.exit(0)
 
@@ -143,7 +147,7 @@ def _main():
             print('Writing OPTION bytes ...')
             isp.writeoption()
             print('SUCCESS: OPTION bytes written.')
-            isp.close()
+            isp.reset()
         else:
             isp.run()
 
@@ -176,6 +180,7 @@ class Programmer(Serial):
                 except:
                     continue
                 self.reset_input_buffer()
+                self.boot()
                 self.write([PY_SYNCH])
                 if not self.checkreply():
                     self.close()
@@ -204,6 +209,31 @@ class Programmer(Serial):
     def checkreply(self):
         reply = self.read(1)
         return (len(reply) == 1 and reply[0] == PY_REPLY_ACK)
+
+    #--------------------------------------------------------------------------------
+
+    # Start bootloader
+    def boot(self):
+        self.dtr = False
+        self.rts = True
+        time.sleep(0.01)
+        self.rts = False
+        time.sleep(0.02)
+
+    # Reset and disconnect
+    def reset(self):
+        self.dtr = True
+        self.rts = True
+        time.sleep(0.01)
+        self.rts = False
+        self.close
+        
+    # Start firmware and disconnect
+    def run(self):
+        self.sendcommand(PY_CMD_GO)
+        self.sendaddress(PY_CODE_ADDR)
+        self.dtr = True
+        self.close()
 
     #--------------------------------------------------------------------------------
 
@@ -265,12 +295,6 @@ class Programmer(Serial):
         self.sendcommand(PY_CMD_R_UNLOCK)
         if not self.checkreply():
             raise Exception('Failed to unlock chip')
-
-    # Start firmware and disconnect
-    def run(self):
-        self.sendcommand(PY_CMD_GO)
-        self.sendaddress(PY_CODE_ADDR)
-        self.close()
 
     #--------------------------------------------------------------------------------
 

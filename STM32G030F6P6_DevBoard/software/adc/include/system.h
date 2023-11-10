@@ -432,6 +432,14 @@ uint32_t RNG_read(void);
 #define CRC_read8()         CRC_data8
 
 // ===================================================================================
+// Device Electronic Signature (ESIG)
+// ===================================================================================
+#define ESIG_FLASHSIZE      (*(__I uint16_t*)(0x1FFF75E0))
+#define ESIG_UID1           (*(__I uint32_t*)(0x1FFF7590))
+#define ESIG_UID2           (*(__I uint32_t*)(0x1FFF7594))
+#define ESIG_UID3           (*(__I uint32_t*)(0x1FFF7598))
+
+// ===================================================================================
 // Imported System Functions from cmsis_gcc.h and core_cm0plus.h
 // ===================================================================================
 #define NVIC_USER_IRQ_OFFSET       16

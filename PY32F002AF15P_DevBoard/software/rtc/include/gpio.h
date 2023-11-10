@@ -389,8 +389,12 @@ enum{
 // ===================================================================================
 
 // ADC calibration registers
-#define ADC_TSCAL1          (*(__I uint16_t*)(0x1FFF0F14))
-#define ADC_TSCAL2          (*(__I uint16_t*)(0x1FFF0F18))
+#define ADC_TSCAL1          (*(__I uint16_t*)(0x1FFF0F14))    // at 30°C
+#define ADC_TSCAL2          (*(__I uint16_t*)(0x1FFF0F18))    // at 85°C
+
+// ADC calibration values
+#define ADC_CTEMP1          30    // calibration temperature of TSCAL1
+#define ADC_CTEMP2          85    // calibration temperature of TSCAL2
 
 // Set ADC sampling rate
 #define ADC_fast()          ADC1->SMPR = 0b000
@@ -454,7 +458,7 @@ static inline uint16_t ADC_read_VDD(void) {
 // Sample and read temperature sensor in °C
 static inline int8_t ADC_read_TEMP(void) {
   ADC_input_TEMP();                             // set temp sensor as ADC input
-  return((ADC_TSCAL1-ADC_read())*55/(ADC_TSCAL2-ADC_TSCAL1)-30); // return temp in °C
+  return((ADC_read()-ADC_TSCAL1)*(ADC_CTEMP2-ADC_CTEMP1)/(ADC_TSCAL2-ADC_TSCAL1)+ADC_CTEMP1);
 }
 
 #ifdef __cplusplus
