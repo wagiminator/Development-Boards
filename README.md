@@ -41,6 +41,11 @@ Development board for the PY32F002AF15P ultra-cheap 32-bit ARM Cortex microcontr
 
 ![PY32F002AF15P_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/PY32F002AF15P_DevBoard/documentation/PY32F002AF15P_DevBoard_pic1.jpg)
 
+## [STM32F030 F4P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/STM32F030F4P6_DevBoard)
+Development board for the STM32F030F4P6 cost-effective 32-bit ARM Cortex M0 microcontroller with integrated USB-to-serial adapter which can also be used to upload firmware utilizing the factory built-in serial bootloader. Due to the comparable pinouts, this board can also be used with other microcontrollers from the STM32F0 and STM32L0 series that come in the same TSSOP20 package.
+
+![STM32F030F4P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STM32F030F4P6_DevBoard/documentation/STM32F030F4P6_DevBoard_pic1.jpg)
+
 ## [STM32G030 F6P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/STM32G030F6P6_DevBoard)
 Development board for the STM32G030F6P6 cost-effective 32-bit ARM Cortex M0+ microcontroller with integrated USB-to-serial adapter which can also be used to upload firmware utilizing the factory built-in serial bootloader.
 
