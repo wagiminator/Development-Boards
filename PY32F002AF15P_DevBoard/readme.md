@@ -70,11 +70,15 @@ To upload firmware via the USB port, the MCU must first be put into boot mode us
 ## Serial Wire Debug Interface (SWD)
 The MCU can also be programmed via the SWD interface and corresponding software (OpenOCD, PyOCD, J-Link), if necessary with modifications. Further information on this can be found [here](https://github.com/IOsetting/py32f0-template), among others.
 
+## Arduino IDE Support
+An Arduino core for the PY32F0 series can be found [here](https://github.com/py32duino/Arduino-PY32).
+
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
 - [PUYA Product Page](https://www.puyasemi.com/cpzx3/info_267_aid_242_kid_235.html)
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
+- [Arduino Support](https://github.com/py32duino/Arduino-PY32)
 - [IOsetting PY32F0 Template](https://github.com/IOsetting/py32f0-template)
 - [Jay Carlson's Article](https://jaycarlson.net/2023/02/04/the-cheapest-flash-microcontroller-you-can-buy-is-actually-an-arm-cortex-m0/)
 - [EEVblog PY32F002A](https://www.eevblog.com/forum/microcontrollers/$0-11-py32f002a-m0-24mhz-320kb-actually-324kb-more-peripherals/)
