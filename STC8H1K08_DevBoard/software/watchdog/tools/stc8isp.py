@@ -42,8 +42,8 @@
 # If the PID/VID of the USB-to-Serial converter is known, it can be defined here.
 # The specified COM port is then ignored, and all ports are automatically searched 
 # for the device. Comment the lines to ignore PID/VID.
-#STC_VID = '1A86'
-#STC_PID = '7523'
+STC_VID = '1A86'
+STC_PID = '7523'
 
 # Define the default COM port here. This will be used if no VID/PID is defined and
 # no COM port is specified within the command line arguments.
@@ -52,7 +52,7 @@ STC_PORT = '/dev/ttyUSB0'
 # Define the default BAUD rates here. The minimum BAUD rate is used to calibrate the 
 # oscillator and should be low to achieve higher accuracy. The maximum BAUD rate is 
 # used to transfer the firmware and should be high to achieve higher speed.
-STC_BAUD_MIN = 2400
+STC_BAUD_MIN =   2400
 STC_BAUD_MAX = 115200
 
 # Define time to wait for power cycle in seconds, default: 10
