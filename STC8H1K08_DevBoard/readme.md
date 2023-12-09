@@ -46,12 +46,16 @@ sudo apt install build-essential sdcc
 ```
 
 ## Factory built-in UART Bootlader
-The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial adapter integrated into the board. The Python tool [stc8isp.py](https://github.com/wagiminator/MCU-Flash-Tools) included with the example software can be used for this purpose. In order for this tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [PySerial](https://github.com/pyserial/pyserial) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
+The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial adapter integrated into the board.
+
+The Python tool [stc8isp.py](https://github.com/wagiminator/MCU-Flash-Tools) included with the example software can be used for this purpose. In order for this ISP tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [PySerial](https://github.com/pyserial/pyserial) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
 sudo apt install python3 python3-pip
 python3 -m pip install pyserial
 ```
+
+You can also utilize the manufacturer's proprietary programming tool, [STC ISP](https://www.stcmicro.com/rjxz.html), for programming the MCU.
 
 To upload firmware through the USB port, press and release the DOWNLOAD button when prompted by the ISP software to perform a power cycle. This button interrupts the power supply to the MCU, forcing it to enter bootloader mode.
 
@@ -61,6 +65,7 @@ An Arduino core for the STC8H series can be found [here](https://github.com/ma62
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
 - [STC Product Page](https://stcmicro.com/stc/stc8h1k08.html)
+- [STC ISP Software](https://www.stcmicro.com/rjxz.html)
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 - [Arduino Support](https://github.com/ma6254/Arduino_Core_STC)
