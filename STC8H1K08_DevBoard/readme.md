@@ -23,6 +23,7 @@ The STC8H1K08 series is a cost-effective family of 8-bit microcontrollers with a
 - Internal high-precision RC clock (IRC), adjustable to a max of 36MHz, error ±0.3%
 - Internal 32KHz low-speed oscillator (LSI) with a large error
 - External 4MHz - 33MHz oscillator or external clock (HSE)
+- Enhanced dual 16-bit data pointer with auto-increment/auto-decrement and auto-switch
 - Power-on reset, programmable low-voltage detector
 - 17 interrupt sources and 4 interrupt priority levels
 - Multiple low-power modes: Idle, Stop
