@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO, PWM and ADC Functions for STC8H Microcontrollers               * v1.0 *
+// Basic GPIO, PWM and ADC Functions for STC8H1K08 Series Microcontrollers    * v1.0 *
 // ===================================================================================
 //
 // Pins must be defined as P10, P11, P12, etc. - e.g.:
@@ -44,8 +44,8 @@
 // ADC_disable()            disable ADC
 // ADC_fast()               set ADC fast mode (less accurate) (*)
 // ADC_slow()               set ADC slow mode (more accurate)
-// ADC_input(PIN)           set ADC input pin (P10 - P17, P30 - P36 only)
-// ADC_read()               sample and read ADC value (0 - 1023 or 0 - 4095)
+// ADC_input(PIN)           set ADC input pin (P10 - P11, P30 - P36 only)
+// ADC_read()               sample and read ADC value (0 - 1023)
 // ADC_read_VDD()           sample and read VREF, calculate and return VDD in mV
 //
 // CMP_enable()             enable comparator
@@ -67,7 +67,6 @@
 // Not all PWM pins work independently of each other. Refer to the datasheet for more info.
 // Pins used for ADC or CMP input must have been set as INPUT (high impedance) beforehand.
 // If ADC input pins are used for the CMP, ADC and CMP must be enabled.
-// Some functions may only work with the STC8H1K08 family.
 // Access to extended registers must be granted (P_SW2 |= 0x80;).
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator

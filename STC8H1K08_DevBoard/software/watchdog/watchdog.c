@@ -29,7 +29,7 @@
 #include "system.h"                     // system functions
 
 // Pin definitions
-#define PIN_LED   P33                   // define LED pin
+#define PIN_LED   P34                   // define LED pin
 
 // Set watchdog timer clock divider WDTDIV (0-7)
 // Watchdog timer period = 12 * 32768 * (2 << WDTDIV) / F_CPU [s]

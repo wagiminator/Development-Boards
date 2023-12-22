@@ -40,7 +40,7 @@ void main() {
   // Setup
   P_SW2 |= 0x80;                        // enable access to extended registers (MUST!)
   UART1_init();                         // init UART (RX: P30, TX: P31, 8N1, BAUD: 9600)
-  OLED_init();                          // init OLED (SDA: P14, SCL: P15)
+  OLED_init();                          // init OLED (SCL: P32, SDA: P33)
 
   // Print start message
   OLED_print("UART TO OLED TERMINAL");

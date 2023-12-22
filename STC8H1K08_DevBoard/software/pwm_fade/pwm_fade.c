@@ -28,7 +28,7 @@
 #include "delay.h"                      // delay functions
 
 // Pin definitions
-#define PIN_LED   P33                   // define LED pin
+#define PIN_LED   P34                   // define LED pin
 
 // ===================================================================================
 // Main Function

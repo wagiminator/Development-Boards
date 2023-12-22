@@ -34,7 +34,7 @@
 // I2C Parameters
 // ===================================================================================
 #define I2C_RX_ENABLE     0             // 0: transmit only, 1: transmit and receive
-#define I2C_MAP           0             // I2C port pin map (0 - 3)
+#define I2C_MAP           3             // I2C port pin map (0 - 3)
 #define I2C_CLKRATE       400000        // I2C bus speed in Hz
 
 // ===================================================================================
