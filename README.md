@@ -46,6 +46,11 @@ Development board for the STC8H1K08 ultra-cheap 8-bit 8051 core microcontroller 
 
 ![STC8H1K08_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STC8H1K08_DevBoard/documentation/STC8H1K08_DevBoard_pic1.jpg)
 
+## [STC8H8K64U Development Board](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard)
+Development board for the STC8H8K64U low-cost 8-bit 8051 core microcontroller with native full-speed USB 2.0 and factory built-in USB bootloader.
+
+![STC8H8K64U_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STC8H8K64U_DevBoard/documentation/STC8H8K64U_DevBoard_pic1.jpg)
+
 ## [STM32F030 F4P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/STM32F030F4P6_DevBoard)
 Development board for the STM32F030F4P6 cost-effective 32-bit ARM Cortex M0 microcontroller with integrated USB-to-serial adapter which can also be used to upload firmware utilizing the factory built-in serial bootloader. Due to the comparable pinouts, this board can also be used with other microcontrollers from the STM32F0 and STM32L0 series that come in the same TSSOP20 package.
 
