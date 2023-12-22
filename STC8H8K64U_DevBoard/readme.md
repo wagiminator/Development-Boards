@@ -26,8 +26,8 @@ The STC8H8K64U series is a cost-effective family of 8-bit microcontrollers with 
 - Internal 32KHz low-speed oscillator (LSI) with a large error
 - External 4MHz - 33MHz oscillator or external clock (HSE)
 - Hardware 16-bit multiplier and divider (MDU16)
-- Direct memory access (DMA) controller, supports MEM-to-MEM, UART, SPI, ADC, LCM
 - Enhanced dual 16-bit data pointer with auto-increment/auto-decrement and auto-switch
+- Direct memory access (DMA) controller, supports MEM-to-MEM, UART, SPI, ADC, LCM
 - Power-on reset, programmable low-voltage detector
 - 22 interrupt sources and 4 interrupt priority levels
 - Multiple low-power modes: Idle, Stop
