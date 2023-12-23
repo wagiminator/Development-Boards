@@ -143,9 +143,18 @@ enum{ P00, P01, P02, P03, P04, P05, P06, P07, P10, P11, P12, P13, P14, P15, P16,
 
 #define PORT_h_l(PORT)      P##PORT = 0x00            // port low
 #define PORT_h_h(PORT)      P##PORT = 0xff            // port high
-#define PORT_h_t(PORT)      P##PORT = -(P##PORT)      // port toggle
+#define PORT_h_t(PORT)      P##PORT##_toggle()        // port toggle
 #define PORT_h_r(PORT)      (P##PORT)                 // read port
 #define PORT_h_w(PORT,val)  P##PORT = val             // write port
+
+inline void P0_toggle(void) {__asm__("xrl _P0, #0xff");}
+inline void P1_toggle(void) {__asm__("xrl _P1, #0xff");}
+inline void P2_toggle(void) {__asm__("xrl _P2, #0xff");}
+inline void P3_toggle(void) {__asm__("xrl _P3, #0xff");}
+inline void P4_toggle(void) {__asm__("xrl _P4, #0xff");}
+inline void P5_toggle(void) {__asm__("xrl _P5, #0xff");}
+inline void P6_toggle(void) {__asm__("xrl _P6, #0xff");}
+inline void P7_toggle(void) {__asm__("xrl _P7, #0xff");}
 
 // ===================================================================================
 // Set pin as INPUT (high impedance, no pullup)
