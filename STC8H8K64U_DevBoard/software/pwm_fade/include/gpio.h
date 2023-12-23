@@ -1,12 +1,12 @@
 // ===================================================================================
-// Basic GPIO, PWM and ADC Functions for STC8H8KxxU Microcontrollers          * v1.0 *
+// Basic GPIO, PWM and ADC Functions for STC8H8K64U Series Microcontrollers   * v1.0 *
 // ===================================================================================
 //
 // Pins must be defined as P10, P11, P12, etc. - e.g.:
-// #define PIN_LED P33      // LED on pin P3.3
+// #define PIN_LED P34      // LED on pin P3.4
 //
-// Functions available:
-// --------------------
+// PIN functions available:
+// ------------------------
 // PIN_input(PIN)           set PIN as INPUT (high impedance, no pullup) (*)
 // PIN_input_PU(PIN)        set PIN as INPUT with internal PULLUP
 // PIN_output(PIN)          set PIN as OUTPUT (push-pull)
@@ -34,11 +34,43 @@
 // PIN_asm(PIN)             convert PIN for inline assembly: setb PIN_asm(PIN_LED)
 // PIN_set(PIN)             convert PIN for direct manipulation: PIN_set(PIN_LED) = 1;
 //
+// PIN_all_bidirect()       set all pins as quasi-bidirectional I/O
+// PIN_all_enable()         enable digital input on all pins
+// PIN_all_disable()        disable digital input on all pins
+//
+// PORT functions available:
+// -------------------------
+// PORT_input(PORT)         set PORT as INPUT
+// PORT_output(PORT)        set PORT as OUTPUT (push-pull)
+// PORT_output_OD(PORT)     set PORT as OUTPUT (open-drain)
+// PORT_bidirect(PORT)      set PORT as quasi-bidirectional I/O
+//
+// PORT_pullup(PORT)        enable internal 4k1 PULLUP on PORT
+// PORT_pulloff(PORT)       disable internal 4k1 PULLUP on PORT (*)
+// PORT_fast(PORT)          set fast level shifting on PORT
+// PORT_slow(PORT)          set slow level shifting on PORT (*)
+// PORT_enable(PORT)        enable digital input on PORT (*)
+// PORT_disable(PORT)       disable digital input on PORT
+// PORT_strong(PORT)        set enhanced drive current ability on PORT
+// PORT_weak(PORT)          set general drive current ability on PORT (*)
+// PORT_ST_enable(PORT)     enable schmitt trigger function on PORT (*)
+// PORT_ST_disable(PORT)    disable schmitt trigger function on PORT
+//
+// PORT_low(PORT)           set PORT output value to LOW
+// PORT_high(PORT)          set PORT output value to HIGH (*)
+// PORT_toggle(PORT)        TOGGLE PORT output value
+// PORT_read(PORT)          read PORT input value
+// PORT_write(PORT, val)    write PORT output value
+//
+// PWM functions available:
+// ------------------------
 // PWM_init()               init PWMA timer
 // PWM_start(PIN)           start PWM output on PIN (P10 - P27, P33, P34 only)
 // PWM_stop(PIN)            stop PWM output on PIN
 // PWM_write(PIN, val)      set PWM output active level duty cycle on PIN (0 - 255)
 //
+// ADC functions available:
+// ------------------------
 // ADC_init()               init and enable ADC
 // ADC_enable()             enable ADC
 // ADC_disable()            disable ADC
@@ -48,6 +80,8 @@
 // ADC_read()               sample and read ADC value (0 - 4095)
 // ADC_read_VDD()           sample and read VREF, calculate and return VDD in mV
 //
+// Comparator functions available:
+// -------------------------------
 // CMP_enable()             enable comparator
 // CMP_disable()            disable comparator
 // CMP_pos_pin(PIN)         set CMP non-inverting input pin (P37 and ADC input pins only)
@@ -92,27 +126,27 @@ enum{ P00, P01, P02, P03, P04, P05, P06, P07, P10, P11, P12, P13, P14, P15, P16,
 #define PIN_h_a(PIN) _P##PIN
 #define PIN_h_s(PIN) P##PIN
 
-#define PORT_h_bi(PORT, PIN)      (P##PORT##M1 &= ~(1<<PIN), P##PORT##M0 &= ~(1<<PIN))
-#define PORT_h_pp(PORT, PIN)      (P##PORT##M1 &= ~(1<<PIN), P##PORT##M0 |=  (1<<PIN))
-#define PORT_h_in(PORT, PIN)      (P##PORT##M1 |=  (1<<PIN), P##PORT##M0 &= ~(1<<PIN))
-#define PORT_h_od(PORT, PIN)      (P##PORT##M1 |=  (1<<PIN), P##PORT##M0 |=  (1<<PIN))
+#define PORT_h_in(PORT)     (P##PORT##M1 = 0xff, P##PORT##M0 = 0x00)  // input
+#define PORT_h_pp(PORT)     (P##PORT##M1 = 0x00, P##PORT##M0 = 0xff)  // output push-pull
+#define PORT_h_od(PORT)     (P##PORT##M1 = 0xff, P##PORT##M0 = 0xff)  // output open-drain
+#define PORT_h_bi(PORT)     (P##PORT##M1 = 0x00, P##PORT##M0 = 0x00)  // bidirectional
 
-#define PORT_h_pe(PORT, PIN)      (P##PORT##PU  |=  (1<<<PIN))    // pullup enable
-#define PORT_h_pd(PORT, PIN)      (P##PORT##PU  &= ~(1<<<PIN))    // pullup disable
-#define PORT_h_sd(PORT, PIN)      (P##PORT##NCS |=  (1<<<PIN))    // schmitt trigger disable
-#define PORT_h_se(PORT, PIN)      (P##PORT##NCS &= ~(1<<<PIN))    // schmitt trigger enable
-#define PORT_h_ss(PORT, PIN)      (P##PORT##SR  |=  (1<<<PIN))    // slow speed
-#define PORT_h_sf(PORT, PIN)      (P##PORT##SR  &= ~(1<<<PIN))    // fast speed
-#define PORT_h_dg(PORT, PIN)      (P##PORT##DR  |=  (1<<<PIN))    // general drive current
-#define PORT_h_de(PORT, PIN)      (P##PORT##DR  &= ~(1<<<PIN))    // enhanced drive current
-#define PORT_h_ie(PORT, PIN)      (P##PORT##IE  |=  (1<<<PIN))    // digital input enable
-#define PORT_h_id(PORT, PIN)      (P##PORT##IE  &= ~(1<<<PIN))    // digital input disable
+#define PORT_h_pe(PORT)     (P##PORT##PU  = 0xff)     // pullup enable
+#define PORT_h_pd(PORT)     (P##PORT##PU  = 0x00)     // pullup disable
+#define PORT_h_sd(PORT)     (P##PORT##NCS = 0xff)     // schmitt trigger disable
+#define PORT_h_se(PORT)     (P##PORT##NCS = 0x00)     // schmitt trigger enable
+#define PORT_h_ss(PORT)     (P##PORT##SR  = 0xff)     // slow speed
+#define PORT_h_sf(PORT)     (P##PORT##SR  = 0x00)     // fast speed
+#define PORT_h_dg(PORT)     (P##PORT##DR  = 0xff)     // general drive current
+#define PORT_h_de(PORT)     (P##PORT##DR  = 0x00)     // enhanced drive current
+#define PORT_h_ie(PORT)     (P##PORT##IE  = 0xff)     // digital input enable
+#define PORT_h_id(PORT)     (P##PORT##IE  = 0x00)     // digital input disable
 
-#define PORT_h_l(PORT, PIN)       PP##PORT##PIN = 0
-#define PORT_h_h(PORT, PIN)       PP##PORT##PIN = 1
-#define PORT_h_t(PORT, PIN)       PP##PORT##PIN = !PP##PORT##PIN
-#define PORT_h_r(PORT, PIN)       (PP##PORT##PIN)
-#define PORT_h_w(PORT,PIN,val)    PP##PORT##PIN = val
+#define PORT_h_l(PORT)      P##PORT = 0x00            // port low
+#define PORT_h_h(PORT)      P##PORT = 0xff            // port high
+#define PORT_h_t(PORT)      P##PORT = -(P##PORT)      // port toggle
+#define PORT_h_r(PORT)      (P##PORT)                 // read port
+#define PORT_h_w(PORT,val)  P##PORT = val             // write port
 
 // ===================================================================================
 // Set pin as INPUT (high impedance, no pullup)
@@ -345,7 +379,19 @@ enum{ P00, P01, P02, P03, P04, P05, P06, P07, P10, P11, P12, P13, P14, P15, P16,
 (0)))))))))
 
 // ===================================================================================
-// Pin manipulation macros
+// Combined PIN settings
+// ===================================================================================
+#define PIN_all_bidirect()  { P0M1 = 0x00; P0M0 = 0x00; P1M1 = 0x00; P1M0 = 0x00; \
+                              P2M1 = 0x00; P2M0 = 0x00; P3M1 = 0x00; P3M0 = 0x00; \
+                              P4M1 = 0x00; P4M0 = 0x00; P5M1 = 0x00; P5M0 = 0x00; \
+                              P6M1 = 0x00; P6M0 = 0x00; P7M1 = 0x00; P7M0 = 0x00; }
+#define PIN_all_enable()    { P0IE = 0xff; P1IE = 0xff; P2IE = 0xff; P3IE = 0xff; \
+                              P4IE = 0xff; P5IE = 0xff; P6IE = 0xff; P7IE = 0xff; }
+#define PIN_all_disable()   { P0IE = 0x00; P1IE = 0x00; P2IE = 0x00; P3IE = 0x00; \
+                              P4IE = 0x00; P5IE = 0x00; P6IE = 0x00; P7IE = 0x00; }
+
+// ===================================================================================
+// PIN manipulation macros
 // ===================================================================================
 #define PIN_low(PIN)          PIN_h_s(PIN) = 0              // set pin to LOW
 #define PIN_high(PIN)         PIN_h_s(PIN) = 1              // set pin to HIGH
@@ -354,24 +400,35 @@ enum{ P00, P01, P02, P03, P04, P05, P06, P07, P10, P11, P12, P13, P14, P15, P16,
 #define PIN_write(PIN, val)   PIN_h_s(PIN) = val            // WRITE pin value
 
 // ===================================================================================
-// Convert pin for inline assembly and direct manipulation
+// Convert PIN for inline assembly and direct manipulation
 // ===================================================================================
 #define PIN_asm(PIN)          PIN_h_a(PIN)
 #define PIN_set(PIN)          PIN_h_s(PIN)
 
 // ===================================================================================
-// (PORT, PIN) manipulation macros
+// PORT manipulation macros
 // ===================================================================================
-#define PORT_input(PORT, PIN)     PORT_h_i(PORT, PIN)       // set pin as INPUT
-#define PORT_input_PU(PORT, PIN)  PORT_h_iP(PORT, PIN)      // set pin as INPUT PULLUP
-#define PORT_output(PORT, PIN)    PORT_h_o(PORT, PIN)       // set pin as OUTPUT
-#define PORT_output_OD(PORT, PIN) PORT_h_oO(PORT, PIN)      // set pin as OUTPUT OPEN-DRAIN
+#define PORT_input(PORT)      PORT_h_in(PORT)       // set PORT as INPUT
+#define PORT_output(PORT)     PORT_h_pp(PORT)       // set PORT as OUTPUT PUSH_PULL
+#define PORT_output_OD(PORT)  PORT_h_od(PORT)       // set PORT as OUTPUT OPEN-DRAIN
+#define PORT_bidirect(PORT)   PORT_h_bi(PORT)       // set PORT as QUASI_BIDIRECT
 
-#define PORT_low(PORT, PIN)       PORT_h_l(PORT, PIN)       // set pin to LOW
-#define PORT_high(PORT, PIN)      PORT_h_h(PORT, PIN)       // set pin to HIGH
-#define PORT_toggle(PORT, PIN)    PORT_h_t(PORT, PIN)       // TOGGLE pin
-#define PORT_read(PORT, PIN)      PORT_h_r(PORT, PIN)       // READ pin
-#define PORT_write(PORT,PIN,val)  PORT_h_w(PORT, PIN, val)  // WRITE pin value
+#define PORT_pullup(PORT)     PORT_h_pe(PORT)       // pullup enable
+#define PORT_pulloff(PORT)    PORT_h_pd(PORT)       // pullup disable
+#define PORT_slow(PORT)       PORT_h_ss(PORT)       // slow speed
+#define PORT_fast(PORT)       PORT_h_sf(PORT)       // fast speed
+#define PORT_weak(PORT)       PORT_h_dg(PORT)       // general drive current
+#define PORT_strong(PORT)     PORT_h_de(PORT)       // enhanced drive current
+#define PORT_enable(PORT)     PORT_h_ie(PORT)       // digital input enable
+#define PORT_disable(PORT)    PORT_h_id(PORT)       // digital input disable
+#define PORT_ST_enable(PORT)  PORT_h_se(PORT)       // schmitt trigger enable
+#define PORT_ST_disable(PORT) PORT_h_sd(PORT)       // schmitt trigger disable
+
+#define PORT_low(PORT)        PORT_h_l(PORT)        // set PORT to LOW
+#define PORT_high(PORT)       PORT_h_h(PORT)        // set PORT to HIGH
+#define PORT_toggle(PORT)     PORT_h_t(PORT)        // TOGGLE PORT
+#define PORT_read(PORT)       PORT_h_r(PORT)        // READ PORT
+#define PORT_write(PORT,val)  PORT_h_w(PORT,val)    // WRITE PORT value
 
 // ===================================================================================
 // Basic PWM functions

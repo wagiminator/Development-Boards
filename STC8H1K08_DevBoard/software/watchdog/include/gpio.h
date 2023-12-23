@@ -143,7 +143,7 @@ enum{ P00, P01, P02, P03, P04, P05, P06, P07, P10, P11, P12, P13, P14, P15, P16,
 
 #define PORT_h_l(PORT)      P##PORT = 0x00            // port low
 #define PORT_h_h(PORT)      P##PORT = 0xff            // port high
-#define PORT_h_t(PORT)      P##PORT = ~(P##PORT)      // port toggle
+#define PORT_h_t(PORT)      P##PORT = -(P##PORT)      // port toggle
 #define PORT_h_r(PORT)      (P##PORT)                 // read port
 #define PORT_h_w(PORT,val)  P##PORT = val             // write port
 
