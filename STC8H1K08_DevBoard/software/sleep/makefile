@@ -73,9 +73,9 @@ install: flash
 
 size:
 	@echo "------------------"
-	@echo "FLASH: $(shell awk '$$1 == "ROM/EPROM/FLASH"      {print $$4}' $(TARGET).mem) bytes"
+	@echo "FLASH: $(shell awk '$$1 == "ROM/EPROM/FLASH"    {print 0+$$4}' $(TARGET).mem) bytes"
 	@echo "IRAM:  $(shell awk '$$1 == "Stack"           {print 248-$$10}' $(TARGET).mem) bytes"
-	@echo "XRAM:  $(shell awk '$$1 == "EXTERNAL"             {print $$5}' $(TARGET).mem) bytes"
+	@echo "XRAM:  $(shell awk '$$1 == "EXTERNAL"           {print 0+$$5}' $(TARGET).mem) bytes"
 	@echo "------------------"
 
 removetemp:
