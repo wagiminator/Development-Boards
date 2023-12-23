@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for STC8H Microcontrollers                          * v1.0 *
+// Basic System Functions for STC8H Microcontrollers                          * v1.1 *
 // ===================================================================================
 //
 // Functions available:
@@ -18,6 +18,8 @@
 // LSE_enable(g)            Enable low speed external oscillator (LSE)
 //                          (g=0: low gain, g=1: high gain)
 // LSE_disable()            Disable low speed external oscillator (LSE)
+// IRC48M_enable()          Enable 48MHz internal oscillator (IRC48M)
+// IRC48M_disable()         Disable 48MHz internal oscillator (IRC48M)
 //
 // SYS_MCO_DIV(d)           Set sytem clock output (MCO) divider (0: MCO off)
 // SYS_MCO_PIN(p)           Define MCO pin (0: P5.4, 1: P1.6)
@@ -40,7 +42,7 @@
 //
 // SLEEP_idle()             Put device into IDLE mode
 // SLEEP_stop()             Put device into STOP mode
-// SLEEP_stop_ms(ms)        Put device into STOP, wakeup after ms milliseconds (max 16384)
+// SLEEP_ms(ms)             Put device into STOP, wakeup after ms milliseconds (max 16384)
 // SLEEP_timer_read()       Get time in milliseconds the device was in sleep
 // SLEEP_timer_set(ms)      Set wakeup timer in milliseconds
 //
@@ -103,6 +105,17 @@ inline void LSE_disable(void) {
   X32KCR =  0x00;
 }
 
+// Enable 48MHz internal oscillator (IRC48M)
+inline void IRC48M_enable(void) {
+  IRC48MCR = 0x80;
+  while(!(IRC48MCR & 0x01));
+}
+
+// Disable 48MHz internal oscillator (IRC48M)
+inline void IRC48M_disable(void) {
+  IRC48MCR = 0x00;
+}
+
 // Set HSI as system clock source
 inline void SYS_CLK_HSI(void) {
   IRCCR  =  0x80;
@@ -153,6 +166,6 @@ inline void SYS_CLK_HSE(__bit xitype) {
 // ===================================================================================
 #define SLEEP_idle()        PCON |= 0x01
 #define SLEEP_stop()        PCON |= 0x02
-#define SLEEP_stop_ms(ms)   {SLEEP_timer_set(ms); SLEEP_stop();}
+#define SLEEP_ms(ms)        {SLEEP_timer_set(ms); SLEEP_stop();}
 #define SLEEP_timer_read()  ( ((((uint16_t)(WKTCH & 0x7f) << 8) | WKTCL) + 1) >> 1 )
 #define SLEEP_timer_set(ms) {WKTCL = ((ms) << 1) - 1; WKTCH = 0x80 | ((((ms) << 1) - 1) >> 8);}

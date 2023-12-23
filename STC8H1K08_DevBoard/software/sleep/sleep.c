@@ -41,6 +41,6 @@ void main() {
   // Loop
   while (1) {
     PIN_toggle(PIN_LED);                // toggle LED
-    SLEEP_stop_ms(100);                 // sleep for 100ms
+    SLEEP_ms(100);                      // sleep for 100ms
   }
 }

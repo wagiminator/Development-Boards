@@ -42,7 +42,7 @@
 //
 // SLEEP_idle()             Put device into IDLE mode
 // SLEEP_stop()             Put device into STOP mode
-// SLEEP_stop_ms(ms)        Put device into STOP, wakeup after ms milliseconds (max 16384)
+// SLEEP_ms(ms)             Put device into STOP, wakeup after ms milliseconds (max 16384)
 // SLEEP_timer_read()       Get time in milliseconds the device was in sleep
 // SLEEP_timer_set(ms)      Set wakeup timer in milliseconds
 //
@@ -166,6 +166,6 @@ inline void SYS_CLK_HSE(__bit xitype) {
 // ===================================================================================
 #define SLEEP_idle()        PCON |= 0x01
 #define SLEEP_stop()        PCON |= 0x02
-#define SLEEP_stop_ms(ms)   {SLEEP_timer_set(ms); SLEEP_stop();}
+#define SLEEP_ms(ms)        {SLEEP_timer_set(ms); SLEEP_stop();}
 #define SLEEP_timer_read()  ( ((((uint16_t)(WKTCH & 0x7f) << 8) | WKTCL) + 1) >> 1 )
 #define SLEEP_timer_set(ms) {WKTCL = ((ms) << 1) - 1; WKTCH = 0x80 | ((((ms) << 1) - 1) >> 8);}
