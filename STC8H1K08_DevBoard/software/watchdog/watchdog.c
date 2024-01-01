@@ -31,17 +31,13 @@
 // Pin definitions
 #define PIN_LED   P34                   // define LED pin
 
-// Set watchdog timer clock divider WDTDIV (0-7)
-// Watchdog timer period = 12 * 32768 * (2 << WDTDIV) / F_CPU [s]
-#define WDTDIV    2
-
 // ===================================================================================
 // Main Function
 // ===================================================================================
 void main() {
-  WDT_start(WDTDIV);                    // start watchdog timer with specified period
+  WDT_start(200);                       // start watchdog timer with ~200ms
   PIN_output(PIN_LED);                  // set LED pin as output
-  DLY_ms(393216000/F_CPU*(1<<WDTDIV));  // wait half the watchdog period
+  DLY_ms(100);                          // wait half the watchdog period
   PIN_toggle(PIN_LED);                  // toggle LED on/off
   while(1);                             // wait for watchdog reset
 }
