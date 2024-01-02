@@ -5,8 +5,8 @@
 // Pins must be defined as PA0, PA1, .., PC0, PC1, etc. - e.g.:
 // #define PIN_LED PC0      // LED on pin PC0
 //
-// Functions available:
-// --------------------
+// PIN functions available:
+// ------------------------
 // PIN_input(PIN)           Set PIN as INPUT (floating, no pullup/pulldown)
 // PIN_input_PU(PIN)        Set PIN as INPUT with internal PULLUP resistor
 // PIN_input_PD(PIN)        Set PIN as INPUT with internal PULLDOWN resistor
@@ -20,6 +20,8 @@
 // PIN_read(PIN)            Read PIN input value
 // PIN_write(PIN, val)      Write PIN output value (0 = LOW / 1 = HIGH)
 //
+// PORT functions available:
+// -------------------------
 // PORT_enable(PIN)         Enable GPIO PORT of PIN
 // PORTA_enable()           Enable GPIO PORT A
 // PORTC_enable()           Enable GPIO PORT C
@@ -32,6 +34,8 @@
 // PORTD_disable()          Disable GPIO PORT D
 // PORTS_disable()          Disable all GPIO PORTS
 //
+// Analog-to-Digital Converter (ADC) functions available:
+// ------------------------------------------------------
 // ADC_init()               Init, enable and calibrate ADC (must be called first)
 // ADC_enable()             Enable ADC (power-up)
 // ADC_disable()            Disable ADC (power-down)
@@ -48,13 +52,15 @@
 // ADC_read()               Sample and read ADC value (0..1023)
 // ADC_read_VDD()           Sample and read supply voltage (VDD) in millivolts (mV)
 //
-// OPA_enable()             Enable OPA comparator
-// OPA_disable()            Disable OPA comparator
-// OPA_negative(PIN)        Set OPA inverting input PIN (PA1, PD0 only)
-// OPA_positive(PIN)        Set OPA non-inverting input PIN (PA2, PD7 only)
-// OPA_output()             Enable OPA output (push-pull) on pin PD4
-// OPA_output_OD()          Enable OPA output (open-drain) on pin PD4
-// OPA_read()               Read OPA output (0: pos < neg, 1: pos > neg)
+// Op-Amp Comparator (CMP) functions available:
+// --------------------------------------------
+// CMP_enable()             Enable OPA comparator
+// CMP_disable()            Disable OPA comparator
+// CMP_negative(PIN)        Set OPA inverting input PIN (PA1, PD0 only)
+// CMP_positive(PIN)        Set OPA non-inverting input PIN (PA2, PD7 only)
+// CMP_output()             Enable OPA output (push-pull) on pin PD4
+// CMP_output_OD()          Enable OPA output (open-drain) on pin PD4
+// CMP_read()               Read OPA output (0: pos < neg, 1: pos > neg)
 //
 // Notes:
 // ------
@@ -327,10 +333,11 @@ static inline uint16_t ADC_read_VDD(void) {
 #define OPA_output_PP       OPA_output
 
 // ===================================================================================
-// CMP Functions
+// CMP Functions (alias)
 // ===================================================================================
 #define CMP_enable          OPA_enable
 #define CMP_disable         OPA_disable
+#define CMP_read            OPA_read
 #define CMP_negative        OPA_negative
 #define CMP_positive        OPA_positive
 #define CMP_output          OPA_output

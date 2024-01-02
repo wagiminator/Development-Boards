@@ -8,8 +8,8 @@
 # ===================================================================================
 
 # Files and Folders
-MAINFILE = millis.c
-TARGET   = millis
+MAINFILE = millis_test.c
+TARGET   = millis_test
 INCLUDE  = include
 TOOLS    = tools
 
