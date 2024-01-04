@@ -24,6 +24,10 @@ extern "C" {
 #include <stdio.h>
 #include "system.h"
 
+#if SYS_USE_VECTORS == 0
+  #error Interrupt vector table must be enabled (SYS_USE_VECTORS in system.h)!
+#endif
+
 void MIL_init(void);
 void MIL_reset(void);
 uint32_t MIL_read(void);

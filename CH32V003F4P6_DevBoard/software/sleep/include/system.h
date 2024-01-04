@@ -1,12 +1,12 @@
 // ===================================================================================
-// Basic System Functions for CH32V003                                        * v1.4 *
+// Basic System Functions for CH32V003                                        * v1.5 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
 // set up automatically on system start.
 //
-// Functions available:
-// --------------------
+// System clock functions available:
+// ---------------------------------
 // CLK_init_HSI()           init internal oscillator (non PLL) as system clock source
 // CLK_init_HSI_PLL()       init internal oscillator with PLL as system clock source
 // CLK_init_HSE()           init external crystal (non PLL) as system clock source
@@ -39,10 +39,14 @@
 // MCO_setHSE()             output external crystal on pin PC4 (if available)
 // MCO_setPLL()             output PLL on pin PC4
 //
+// Delay (DLY) functions available:
+// --------------------------------
 // DLY_ticks(n)             delay n clock cycles
 // DLY_us(n)                delay n microseconds
 // DLY_ms(n)                delay n milliseconds
 //
+// Reset (RST) functions available:
+// --------------------------------
 // RST_now()                conduct software reset
 // RST_clearFlags()         clear all reset flags
 // RST_wasLowPower()        check if last reset was caused by low power
@@ -52,18 +56,42 @@
 // RST_wasPower()           check if last reset was caused by power up
 // RST_wasPin()             check if last reset was caused by RST pin low
 //
+// Independent Watchdog Timer (IWDG) functions available:
+// ------------------------------------------------------
 // IWDG_start(n)            start independent watchdog timer, n milliseconds, n<=8191
 // IWDG_reload(n)           reload watchdog counter with n milliseconds, n<=8191
 // IWDG_feed()              feed the dog (reload last time)
 //
+// Automatic Wake-up Timer (AWU) functions available:
+// --------------------------------------------------
+// AWU_start(n)             start AWU with n milliseconds period and event trigger
+// AWU_stop()               stop AWU and event trigger
+// AWU_set(n)               set AWU period to n milliseconds
+//
+// AWU_enable()             enable AWU (without LSI and PWR module)
+// AWU_disable()            disable AWU (without LSI and PWR module)
+// AWU_RT_enable()          enable AWU rising edge trigger
+// AWU_RT_disable()         disable AWU rising edge trigger
+// AWU_EV_enable()          enable AWU event
+// AWU_EV_disable()         disable AWU event
+// AWU_INT_enable()         enable AWU interrupt (without NVIC)
+// AWU_INT_disable()        disable AWU interrupt (without NVIC)
+//
+// Sleep functions available:
+// --------------------------
 // SLEEP_WFI_now()          put device into sleep, wake up by interrupt
 // SLEEP_WFE_now()          put device into sleep, wake up by event
 // STDBY_WFI_now()          put device into standby (deep sleep), wake by interrupt
 // STDBY_WFE_now()          put device into standby (deep sleep), wake by event
-// AWU_init()               init automatic wake-up timer
-// AWU_set(n)               set automatic wake-up timer for n milliseconds
-// AWU_sleep(n)             put device into sleep for n milliseconds
-// AWU_stdby(n)             put device into standby for n milliseconds
+//
+// SLEEP_ms(n)              put device into SLEEP for n milliseconds (uses AWU)
+// STDBY_ms(n)              put device into STANDBY for n milliseconds (uses AWU)
+//
+// Interrupt (INT) functions available:
+// ------------------------------------
+// INT_enable()             global interrupt enable
+// INT_disable()            global interrupt disable
+// INT_ATOMIC_BLOCK { }     execute block without being interrupted
 //
 // References:
 // -----------
@@ -217,15 +245,27 @@ void DLY_ticks(uint32_t n);                             // delay n system ticks
 void IWDG_start(uint16_t ms);                           // start IWDG with time in ms
 void IWDG_reload(uint16_t ms);                          // reload IWDG with time in ms
 #define IWDG_feed()       IWDG->CTLR = 0xAAAA           // feed the dog (reload time)
+#define IWDG_reset()      IWDG->CTLR = 0xAAAA           // alias
 
 // ===================================================================================
-// Sleep Functions
+// Automatic Wake-up Timer (AWU) Functions
 // ===================================================================================
-void SLEEP_WFI_now(void);   // put device into sleep, wake up by interrupt
-void SLEEP_WFE_now(void);   // put device into sleep, wake up by event
-void STDBY_WFI_now(void);   // put device into standby (deep sleep), wake up interrupt
-void STDBY_WFE_now(void);   // put device into standby (deep sleep), wake up event
 void AWU_init(void);        // init automatic wake-up timer
+void AWU_stop(void);        // stop automatic wake-up timer
+
+// AWU macros
+#define AWU_start(n)          {AWU_init(); AWU_set(n);}
+#define AWU_enable()          PWR->AWUCSR = PWR_AWUCSR_AWUEN
+#define AWU_disable()         PWR->AWUCSR = 0x00
+#define AWU_RT_enable()       EXTI->RTENR  |=  ((uint32_t)1 << 9)
+#define AWU_RT_disable()      EXTI->RTENR  &= ~((uint32_t)1 << 9)
+#define AWU_EV_enable()       EXTI->EVENR  |=  ((uint32_t)1 << 9)
+#define AWU_EV_disable()      EXTI->EVENR  &= ~((uint32_t)1 << 9)
+#define AWU_INT_enable()      EXTI->INTENR |=  ((uint32_t)1 << 9)
+#define AWU_INT_disable()     EXTI->INTENR &= ~((uint32_t)1 << 9)
+
+#define AWU_sleep(ms)         {AWU_set(ms); SLEEP_WFE_now();}
+#define AWU_stdby(ms)         {AWU_set(ms); STDBY_WFE_now();}
 
 // Set automatic wake-up timer in milliseconds
 #define AWU_set(ms) \
@@ -239,8 +279,50 @@ void AWU_init(void);        // init automatic wake-up timer
   (ms < 30720 ? ({PWR->AWUPSC = 0b1111; PWR->AWUWR = (ms)/480;}) : \
   (0)))))))))
 
-#define AWU_sleep(ms)       {AWU_set(ms); SLEEP_WFE_now();}
-#define AWU_stdby(ms)       {AWU_set(ms); STDBY_WFE_now();}
+// ===================================================================================
+// Sleep Functions
+// ===================================================================================
+void SLEEP_WFI_now(void);   // put device into sleep, wake up by interrupt
+void SLEEP_WFE_now(void);   // put device into sleep, wake up by event
+void STDBY_WFI_now(void);   // put device into standby (deep sleep), wake up interrupt
+void STDBY_WFE_now(void);   // put device into standby (deep sleep), wake up event
+
+#define SLEEP_ms(n)           {AWU_start(n); SLEEP_WFE_now(); AWU_stop();}
+#define STDBY_ms(n)           {AWU_start(n); STDBY_WFE_now(); AWU_stop();}
+
+// ===================================================================================
+// Interrupt (INT) Functions
+// ===================================================================================
+#define INT_enable()          __enable_irq()
+#define INT_disable()         __disable_irq()
+#define INT_ATOMIC_BLOCK      for(INT_ATOMIC_RESTORE, __ToDo = 1; __ToDo; __ToDo = 0)
+#define INT_ATOMIC_RESTORE    uint32_t __reg_save __attribute__((__cleanup__(__iRestore))) = __iSave()
+
+// Save interrupt status and disable interrupts
+static inline uint32_t __iSave(void) {
+  uint32_t result, temp;
+  __asm volatile("csrr %0, mstatus" : "=r" (temp));
+  result = temp & 0x88;
+  temp  &= ~0x88;
+  __asm volatile("csrw mstatus, %0" :: "r" (temp));
+  return result;
+}
+
+// Restore interrupt status
+static inline void __iRestore(const uint32_t *__s) {
+  uint32_t temp;
+  __asm volatile("csrr %0, mstatus" : "=r" (temp));
+  temp |= *__s;
+  __asm volatile("csrw mstatus, %0" :: "r" (temp));
+}
+
+// ===================================================================================
+// Device Electronic Signature (ESIG)
+// ===================================================================================
+#define ESIG_FLASHSIZE      (*(__I uint16_t*)(0x1FFFF7E0))
+#define ESIG_UID1           (*(__I uint32_t*)(0x1FFFF7E8))
+#define ESIG_UID2           (*(__I uint32_t*)(0x1FFFF7EC))
+#define ESIG_UID3           (*(__I uint32_t*)(0x1FFFF7F0))
 
 // ===================================================================================
 // Imported System Functions
@@ -248,22 +330,22 @@ void AWU_init(void);        // init automatic wake-up timer
 // Enable Global Interrupt
 static inline void __enable_irq(void) {
   uint32_t result;
-  __asm volatile("csrr %0," "mstatus": "=r"(result));
+  __asm volatile("csrr %0," "mstatus" : "=r"(result));
   result |= 0x88;
-  __asm volatile ("csrw mstatus, %0" : : "r" (result) );
+  __asm volatile("csrw mstatus, %0" : : "r" (result) );
 }
 
 // Disable Global Interrupt
 static inline void __disable_irq(void) {
   uint32_t result;
-  __asm volatile("csrr %0," "mstatus": "=r"(result));
+  __asm volatile("csrr %0," "mstatus" : "=r"(result));
   result &= ~0x88;
-  __asm volatile ("csrw mstatus, %0" : : "r" (result) );
+  __asm volatile("csrw mstatus, %0" : : "r" (result) );
 }
 
 // No OPeration
 static inline void __NOP(void) {
-  __asm volatile ("nop");
+  __asm volatile("nop");
 }
 
 // Enable NVIC interrupt (interrupt numbers)

@@ -62,16 +62,30 @@
 // IWDG_reload(n)           reload watchdog counter with n milliseconds, n<=8191
 // IWDG_feed()              feed the dog (reload last time)
 //
+// Automatic Wake-up Timer (AWU) functions available:
+// --------------------------------------------------
+// AWU_start(n)             start AWU with n milliseconds period and event trigger
+// AWU_stop()               stop AWU and event trigger
+// AWU_set(n)               set AWU period to n milliseconds
+//
+// AWU_enable()             enable AWU (without LSI and PWR module)
+// AWU_disable()            disable AWU (without LSI and PWR module)
+// AWU_RT_enable()          enable AWU rising edge trigger
+// AWU_RT_disable()         disable AWU rising edge trigger
+// AWU_EV_enable()          enable AWU event
+// AWU_EV_disable()         disable AWU event
+// AWU_INT_enable()         enable AWU interrupt (without NVIC)
+// AWU_INT_disable()        disable AWU interrupt (without NVIC)
+//
 // Sleep functions available:
 // --------------------------
 // SLEEP_WFI_now()          put device into sleep, wake up by interrupt
 // SLEEP_WFE_now()          put device into sleep, wake up by event
 // STDBY_WFI_now()          put device into standby (deep sleep), wake by interrupt
 // STDBY_WFE_now()          put device into standby (deep sleep), wake by event
-// AWU_init()               init automatic wake-up timer
-// AWU_set(n)               set automatic wake-up timer for n milliseconds
-// AWU_sleep(n)             put device into sleep for n milliseconds
-// AWU_stdby(n)             put device into standby for n milliseconds
+//
+// SLEEP_ms(n)              put device into SLEEP for n milliseconds (uses AWU)
+// STDBY_ms(n)              put device into STANDBY for n milliseconds (uses AWU)
 //
 // Interrupt (INT) functions available:
 // ------------------------------------
@@ -101,7 +115,7 @@ extern "C" {
 #define SYS_TICK_INIT     1         // 1: init and start SYSTICK on startup
 #define SYS_GPIO_EN       1         // 1: enable GPIO ports on startup
 #define SYS_CLEAR_BSS     1         // 1: clear uninitialized variables
-#define SYS_USE_VECTORS   1         // 1: create interrupt vector table
+#define SYS_USE_VECTORS   1        // 1: create interrupt vector table
 #define SYS_USE_HSE       0         // 1: use external crystal
 
 // ===================================================================================
@@ -231,15 +245,27 @@ void DLY_ticks(uint32_t n);                             // delay n system ticks
 void IWDG_start(uint16_t ms);                           // start IWDG with time in ms
 void IWDG_reload(uint16_t ms);                          // reload IWDG with time in ms
 #define IWDG_feed()       IWDG->CTLR = 0xAAAA           // feed the dog (reload time)
+#define IWDG_reset()      IWDG->CTLR = 0xAAAA           // alias
 
 // ===================================================================================
-// Sleep Functions
+// Automatic Wake-up Timer (AWU) Functions
 // ===================================================================================
-void SLEEP_WFI_now(void);   // put device into sleep, wake up by interrupt
-void SLEEP_WFE_now(void);   // put device into sleep, wake up by event
-void STDBY_WFI_now(void);   // put device into standby (deep sleep), wake up interrupt
-void STDBY_WFE_now(void);   // put device into standby (deep sleep), wake up event
 void AWU_init(void);        // init automatic wake-up timer
+void AWU_stop(void);        // stop automatic wake-up timer
+
+// AWU macros
+#define AWU_start(n)          {AWU_init(); AWU_set(n);}
+#define AWU_enable()          PWR->AWUCSR = PWR_AWUCSR_AWUEN
+#define AWU_disable()         PWR->AWUCSR = 0x00
+#define AWU_RT_enable()       EXTI->RTENR  |=  ((uint32_t)1 << 9)
+#define AWU_RT_disable()      EXTI->RTENR  &= ~((uint32_t)1 << 9)
+#define AWU_EV_enable()       EXTI->EVENR  |=  ((uint32_t)1 << 9)
+#define AWU_EV_disable()      EXTI->EVENR  &= ~((uint32_t)1 << 9)
+#define AWU_INT_enable()      EXTI->INTENR |=  ((uint32_t)1 << 9)
+#define AWU_INT_disable()     EXTI->INTENR &= ~((uint32_t)1 << 9)
+
+#define AWU_sleep(ms)         {AWU_set(ms); SLEEP_WFE_now();}
+#define AWU_stdby(ms)         {AWU_set(ms); STDBY_WFE_now();}
 
 // Set automatic wake-up timer in milliseconds
 #define AWU_set(ms) \
@@ -253,11 +279,16 @@ void AWU_init(void);        // init automatic wake-up timer
   (ms < 30720 ? ({PWR->AWUPSC = 0b1111; PWR->AWUWR = (ms)/480;}) : \
   (0)))))))))
 
-#define AWU_sleep(ms)       {AWU_set(ms); SLEEP_WFE_now();}
-#define AWU_stdby(ms)       {AWU_set(ms); STDBY_WFE_now();}
+// ===================================================================================
+// Sleep Functions
+// ===================================================================================
+void SLEEP_WFI_now(void);   // put device into sleep, wake up by interrupt
+void SLEEP_WFE_now(void);   // put device into sleep, wake up by event
+void STDBY_WFI_now(void);   // put device into standby (deep sleep), wake up interrupt
+void STDBY_WFE_now(void);   // put device into standby (deep sleep), wake up event
 
-#define SLEEP_ms(ms)        {AWU_init(); AWU_set(ms); SLEEP_WFE_now();}
-#define STDBY_ms(ms)        {AWU_init(); AWU_set(ms); STDBY_WFE_now();}
+#define SLEEP_ms(n)           {AWU_start(n); SLEEP_WFE_now(); AWU_stop();}
+#define STDBY_ms(n)           {AWU_start(n); STDBY_WFE_now(); AWU_stop();}
 
 // ===================================================================================
 // Interrupt (INT) Functions

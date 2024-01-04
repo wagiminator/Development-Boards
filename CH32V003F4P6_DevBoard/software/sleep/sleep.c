@@ -1,6 +1,6 @@
 // ===================================================================================
 // Project:   Sleep / Automatic Wake-Up Timer Demo for CH32V003
-// Version:   v1.0
+// Version:   v1.1
 // Year:      2023
 // Author:    Stefan Wagner
 // Github:    https://github.com/wagiminator
@@ -10,7 +10,7 @@
 //
 // Description:
 // ------------
-// Blink built-in LED using deep sleep with automatic wake-up timer.
+// Blink built-in LED using deep sleep with automatic wake-up timer (AWU).
 //
 // References:
 // -----------
@@ -39,11 +39,11 @@
 int main(void) {
   // Setup
   PIN_output(PIN_LED);        // set LED pin as output
-  AWU_init();                 // init automatic wake-up timer
+  AWU_start(100);             // start automatic wake-up timer, period 100ms
 
   // Loop
   while(1) {
     PIN_toggle(PIN_LED);      // toggle LED on/off
-    AWU_stdby(100);           // put device into standby (deep sleep) for 100ms
+    STDBY_WFE_now();          // go to STANDBY (deep sleep), wake up by AWU
   }
 }

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO Functions for CH32V003                                          * v1.4 *
+// Basic GPIO Functions for CH32V003                                          * v1.5 *
 // ===================================================================================
 //
 // Pins must be defined as PA0, PA1, .., PC0, PC1, etc. - e.g.:
@@ -13,6 +13,8 @@
 // PIN_input_AN(PIN)        Set PIN as INPUT for analog peripherals (e.g. ADC) (*)
 // PIN_output(PIN)          Set PIN as OUTPUT (push-pull)
 // PIN_output_OD(PIN)       Set PIN as OUTPUT (open-drain)
+// PIN_alternate(PIN)       Set PIN as alternate output (push-pull)
+// PIN_alternate_OD(PIN)    Set PIN as alternate output (open-drain)
 //
 // PIN_low(PIN)             Set PIN output value to LOW (*)
 // PIN_high(PIN)            Set PIN output value to HIGH
@@ -52,15 +54,15 @@
 // ADC_read()               Sample and read ADC value (0..1023)
 // ADC_read_VDD()           Sample and read supply voltage (VDD) in millivolts (mV)
 //
-// Op-Amp Comparator (CMP) functions available:
+// Op-Amp Comparator (OPA) functions available:
 // --------------------------------------------
-// CMP_enable()             Enable OPA comparator
-// CMP_disable()            Disable OPA comparator
-// CMP_negative(PIN)        Set OPA inverting input PIN (PA1, PD0 only)
-// CMP_positive(PIN)        Set OPA non-inverting input PIN (PA2, PD7 only)
-// CMP_output()             Enable OPA output (push-pull) on pin PD4
-// CMP_output_OD()          Enable OPA output (open-drain) on pin PD4
-// CMP_read()               Read OPA output (0: pos < neg, 1: pos > neg)
+// OPA_enable()             Enable OPA comparator
+// OPA_disable()            Disable OPA comparator
+// OPA_negative(PIN)        Set OPA inverting input PIN (PA1, PD0 only)
+// OPA_positive(PIN)        Set OPA non-inverting input PIN (PA2, PD7 only)
+// OPA_output()             Enable OPA output (push-pull) on pin PD4
+// OPA_output_OD()          Enable OPA output (open-drain) on pin PD4
+// OPA_read()               Read OPA output (0: pos < neg, 1: pos > neg)
 //
 // Notes:
 // ------
@@ -113,15 +115,15 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
   ((PIN>=PA0)&&(PIN<=PA7) ? ( GPIOA->CFGLR  =  (GPIOA->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
                                             |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOA->OUTDR |=  ((uint32_t)1<<((PIN)&7))          ) : \
+                              GPIOA->BSHR   =  ((uint32_t)1<<((PIN)&7))          ) : \
   ((PIN>=PC0)&&(PIN<=PC7) ? ( GPIOC->CFGLR  =  (GPIOC->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
                                             |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOC->OUTDR |=  ((uint32_t)1<<((PIN)&7))          ) : \
+                              GPIOC->BSHR   =  ((uint32_t)1<<((PIN)&7))          ) : \
   ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR  =  (GPIOD->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
                                             |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOD->OUTDR |=  ((uint32_t)1<<((PIN)&7))          ) : \
+                              GPIOD->BSHR   =  ((uint32_t)1<<((PIN)&7))          ) : \
 (0))))
 
 // ===================================================================================
@@ -131,15 +133,15 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
   ((PIN>=PA0)&&(PIN<=PA7) ? ( GPIOA->CFGLR  =  (GPIOA->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
                                             |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOA->OUTDR &= ~((uint32_t)1<<((PIN)&7))          ) : \
+                              GPIOA->BCR    =  ((uint32_t)1<<((PIN)&7))          ) : \
   ((PIN>=PC0)&&(PIN<=PC7) ? ( GPIOC->CFGLR  =  (GPIOC->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
                                             |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOC->OUTDR &= ~((uint32_t)1<<((PIN)&7))          ) : \
+                              GPIOC->BCR    =  ((uint32_t)1<<((PIN)&7))          ) : \
   ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR  =  (GPIOD->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
                                             |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOD->OUTDR &= ~((uint32_t)1<<((PIN)&7))          ) : \
+                              GPIOD->BCR    =  ((uint32_t)1<<((PIN)&7))          ) : \
 (0))))
 
 // ===================================================================================
@@ -182,6 +184,37 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
   ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR =  (GPIOD->CFGLR                          \
                                            & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))    \
                                            |  ((uint32_t)0b0101<<(((PIN)&7)<<2)) ) : \
+(0))))
+
+// ===================================================================================
+// Set PIN as alternate output (push-pull, maximum speed 10MHz)
+// ===================================================================================
+#define PIN_alternate(PIN) \
+  ((PIN>=PA0)&&(PIN<=PA7) ? ( GPIOA->CFGLR =  (GPIOA->CFGLR                          \
+                                           & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))    \
+                                           |  ((uint32_t)0b1001<<(((PIN)&7)<<2)) ) : \
+  ((PIN>=PC0)&&(PIN<=PC7) ? ( GPIOC->CFGLR =  (GPIOC->CFGLR                          \
+                                           & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))    \
+                                           |  ((uint32_t)0b1001<<(((PIN)&7)<<2)) ) : \
+  ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR =  (GPIOD->CFGLR                          \
+                                           & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))    \
+                                           |  ((uint32_t)0b1001<<(((PIN)&7)<<2)) ) : \
+(0))))
+#define PIN_alternate_PP PIN_alternate
+
+// ===================================================================================
+// Set PIN as alternate output (open-drain, maximum speed 10MHz)
+// ===================================================================================
+#define PIN_alternate_OD(PIN) \
+  ((PIN>=PA0)&&(PIN<=PA7) ? ( GPIOA->CFGLR =  (GPIOA->CFGLR                          \
+                                           & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))    \
+                                           |  ((uint32_t)0b1101<<(((PIN)&7)<<2)) ) : \
+  ((PIN>=PC0)&&(PIN<=PC7) ? ( GPIOC->CFGLR =  (GPIOC->CFGLR                          \
+                                           & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))    \
+                                           |  ((uint32_t)0b1101<<(((PIN)&7)<<2)) ) : \
+  ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR =  (GPIOD->CFGLR                          \
+                                           & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))    \
+                                           |  ((uint32_t)0b1101<<(((PIN)&7)<<2)) ) : \
 (0))))
 
 // ===================================================================================
