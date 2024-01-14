@@ -77,7 +77,7 @@ python3 chprog.py firmware.bin
 
 ## Serial 2-Wire Debug Interface
 ### WCH-LinkE
-To program the CH32V203 microcontroller via the serial debug interface, you will need a special programming device. The [WCH-LinkE](http://www.wch-ic.com/products/WCH-Link.html) (pay attention to the "E" in the name) is a suitable option for this purpose and can be purchased commercially for around $4. This debugging tool is not only compatible with the CH32X033 but also with other WCH RISC-V and ARM-based microcontrollers.
+To program the microcontroller via the serial debug interface, you will need a special programming device. The [WCH-LinkE](http://www.wch-ic.com/products/WCH-Link.html) (pay attention to the "E" in the name) is a suitable option for this purpose and can be purchased commercially for around $4. This debugging tool is compatible with most WCH RISC-V and ARM-based microcontrollers.
 
 ![CH32V003_wch-linke.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003_wch-linke.jpg)
 
