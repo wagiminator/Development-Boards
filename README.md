@@ -36,6 +36,11 @@ Development board for the CH32V203F6P6 low-cost 32-bit RISC-V microcontroller wi
 
 ![CH32V203F6P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V203F6P6_DevBoard/documentation/CH32V203F6P6_DevBoard_pic1.jpg)
 
+## [CH32X033 F8P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32X033F8P6_DevBoard)
+Development board for the CH32X033F8P6 low-cost 32-bit RISC-V microcontroller with native USB2.0 and Arduino IDE support.
+
+![CH32X033F8P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32X033F8P6_DevBoard/documentation/CH32X033F8P6_DevBoard_pic1.jpg)
+
 ## [PY32F002A F15P Development Board](https://github.com/wagiminator/Development-Boards/tree/main/PY32F002AF15P_DevBoard)
 Development board for the PY32F002AF15P ultra-cheap 32-bit ARM Cortex microcontroller with integrated USB-to-serial adapter which can also be used to upload firmware utilizing the factory built-in serial bootloader.
 
