@@ -99,11 +99,10 @@ void CDC_EP_init(void) {
 
 // Handle class setup requests
 uint8_t CDC_control(void) {
-  uint8_t i;
   switch(USB_SetupReq) {
     case GET_LINE_CODING:                   // 0x21  currently configured 
-      for(i=0; i<sizeof(CDC_lineCoding); i++)
-        EP0_buffer[i] = ((uint8_t*)&CDC_lineCoding)[i]; // transmit line coding to host
+      USB_pDescr = (uint8_t*)&CDC_lineCoding;
+      USB_EP0_copyDescr(sizeof(CDC_lineCoding));
       if(USB_SetupLen > sizeof(CDC_lineCoding)) USB_SetupLen = sizeof(CDC_lineCoding);
       return USB_SetupLen;
     case SET_CONTROL_LINE_STATE:            // 0x22  generates RS-232/V.24 style control signals
