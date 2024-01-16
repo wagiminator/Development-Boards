@@ -62,9 +62,8 @@ void USB_init(void) {
 // ===================================================================================
 // Copy descriptor *USB_pDescr to Ep0
 void USB_EP0_copyDescr(uint8_t len) {
-  const uint8_t* src = USB_pDescr;
-  uint8_t*       tgt = EP0_buffer;
-  while(len--) *tgt++ = *src++;
+  uint8_t* tgt = EP0_buffer;
+  while(len--) *tgt++ = *USB_pDescr++;
 }
 
 // ===================================================================================
@@ -144,8 +143,6 @@ void USB_EP0_SETUP(void) {
           if(USB_SetupLen > len) USB_SetupLen = len;
           len = USB_SetupLen >= EP0_SIZE ? EP0_SIZE : USB_SetupLen;
           USB_EP0_copyDescr(len);
-          USB_SetupLen -= len;
-          USB_pDescr   += len;
         }
         break;
 
@@ -155,7 +152,8 @@ void USB_EP0_SETUP(void) {
 
       case USB_GET_CONFIGURATION:
         EP0_buffer[0] = USB_Config;
-        if(USB_SetupLen >= 1) len = 1;
+        if(USB_SetupLen > 1) USB_SetupLen = 1;
+        len = USB_SetupLen;
         break;
 
       case USB_SET_CONFIGURATION:
@@ -172,8 +170,8 @@ void USB_EP0_SETUP(void) {
       case USB_GET_STATUS:
         EP0_buffer[0] = 0x00;
         EP0_buffer[1] = 0x00;
-        if(USB_SetupLen >= 2) len = 2;
-        else len = USB_SetupLen;
+        if(USB_SetupLen > 2) USB_SetupLen = 2;
+        len = USB_SetupLen;
         break;
 
       case USB_CLEAR_FEATURE:
@@ -409,6 +407,7 @@ void USB_EP0_SETUP(void) {
     USBFSD->UEP0_CTRL_H = USBFS_UEP_T_TOG | USBFS_UEP_T_RES_STALL | USBFS_UEP_R_TOG | USBFS_UEP_R_RES_STALL;
   }
   else {
+    USB_SetupLen -= len;
     USBFSD->UEP0_TX_LEN = len;
     USBFSD->UEP0_CTRL_H = USBFS_UEP_T_TOG | USBFS_UEP_T_RES_ACK | USBFS_UEP_R_TOG | USBFS_UEP_R_RES_ACK;
   }
@@ -437,18 +436,17 @@ void USB_EP0_IN(void) {
       len = USB_SetupLen >= EP0_SIZE ? EP0_SIZE : USB_SetupLen;
       USB_EP0_copyDescr(len);
       USB_SetupLen -= len;
-      USB_pDescr   += len;
       USBFSD->UEP0_TX_LEN = len;
       USBFSD->UEP0_CTRL_H ^= USBFS_UEP_T_TOG;
       break;
 
     case USB_SET_ADDRESS:
       USBFSD->DEV_ADDR    = (USBFSD->DEV_ADDR & USBFS_UDA_GP_BIT) | USB_Addr;
-      USBFSD->UEP0_CTRL_H = USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
+      USBFSD->UEP0_CTRL_H = USBFS_UEP_T_RES_NAK | USBFS_UEP_R_TOG | USBFS_UEP_R_RES_ACK;
       break;
 
     default:
-      USBFSD->UEP0_CTRL_H = USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
+      USBFSD->UEP0_CTRL_H = USBFS_UEP_T_RES_NAK | USBFS_UEP_R_TOG | USBFS_UEP_R_RES_ACK;
       break;
   }
 }
@@ -469,8 +467,7 @@ void USB_EP0_OUT(void) {
   }
   #endif
 
-  USBFSD->UEP0_TX_LEN = 0;
-  USBFSD->UEP0_CTRL_H = USBFS_UEP_T_RES_ACK | USBFS_UEP_R_RES_ACK;
+  USBFSD->UEP0_CTRL_H = USBFS_UEP_T_TOG | USBFS_UEP_T_RES_ACK | USBFS_UEP_R_RES_ACK;
 }
 
 // ===================================================================================
