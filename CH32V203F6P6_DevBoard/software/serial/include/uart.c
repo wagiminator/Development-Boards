@@ -17,40 +17,40 @@ void UART1_init(void) {
 
   // Set pin PA9  (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PA10 (RX) to input, pullup
-  GPIOA->CFGHR  = (GPIOA->CFGHR & ~(((uint32_t)0b1111<<(1<<2)) | ((uint32_t)0b1111<<(2<<2))))
-                                |  (((uint32_t)0b1001<<(1<<2)) | ((uint32_t)0b1000<<(2<<2)));
-  GPIOA->OUTDR |= 1<<10;
+  GPIOA->CFGHR = (GPIOA->CFGHR & ~(((uint32_t)0b1111<<(1<<2)) | ((uint32_t)0b1111<<(2<<2))))
+                               |  (((uint32_t)0b1001<<(1<<2)) | ((uint32_t)0b1000<<(2<<2)));
+  GPIOA->BSHR  = (uint32_t)1<<10;
 #elif UART1_REMAP == 1
   // Remap UART pins, enable GPIO port B and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPBEN | RCC_USART1EN;
   
   // Set pin PB6 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PB7 (RX) to input, pullup
-  GPIOB->CFGLR  = (GPIOB->CFGLR & ~(((uint32_t)0b1111<<(6<<2)) | ((uint32_t)0b1111<<(7<<2))))
-                                |  (((uint32_t)0b1001<<(6<<2)) | ((uint32_t)0b1000<<(7<<2)));
-  GPIOB->OUTDR |= 1<<7;
-  AFIO->PCFR1  |= 1<<2;
+  GPIOB->CFGLR = (GPIOB->CFGLR & ~(((uint32_t)0b1111<<(6<<2)) | ((uint32_t)0b1111<<(7<<2))))
+                               |  (((uint32_t)0b1001<<(6<<2)) | ((uint32_t)0b1000<<(7<<2)));
+  GPIOB->BSHR  = (uint32_t)1<<7;
+  AFIO->PCFR1 |= (uint32_t)1<<2;
 #elif UART1_REMAP == 2
   // Remap UART pins, enable GPIO port A/B and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPAEN | RCC_IOPBEN | RCC_USART1EN;
 
   // Set pin PB15 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PA8  (RX) to input, pullup
-  GPIOB->CFGHR  = (GPIOB->CFGHR & ~((uint32_t)0b1111<<(7<<2))) | ((uint32_t)0b1001<<(7<<2));
-  GPIOA->CFGHR  = (GPIOA->CFGHR & ~((uint32_t)0b1111<<(1<<2))) | ((uint32_t)0b1000<<(1<<2));
-  GPIOA->OUTDR |= 1<<8;
-  AFIO->PCFR2  |= 1<<26;
+  GPIOB->CFGHR = (GPIOB->CFGHR & ~((uint32_t)0b1111<<(7<<2))) | ((uint32_t)0b1001<<(7<<2));
+  GPIOA->CFGHR = (GPIOA->CFGHR & ~((uint32_t)0b1111<<(1<<2))) | ((uint32_t)0b1000<<(1<<2));
+  GPIOA->BSHR  = (uint32_t)1<<8;
+  AFIO->PCFR2 |= (uint32_t)1<<26;
 #elif UART1_REMAP == 3
   // Remap UART pins, enable GPIO port A and UART
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPAEN | RCC_USART1EN;
 
   // Set pin PA6 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PA7 (RX) to input, pullup
-  GPIOA->CFGLR  = (GPIOA->CFGLR & ~(((uint32_t)0b1111<<(6<<2)) | ((uint32_t)0b1111<<(7<<2))))
-                                |  (((uint32_t)0b1001<<(6<<2)) | ((uint32_t)0b1000<<(7<<2)));
-  GPIOA->OUTDR |= 1<<7;
-  AFIO->PCFR1  |= 1<<2;
-  AFIO->PCFR2  |= 1<<26;
+  GPIOA->CFGLR = (GPIOA->CFGLR & ~(((uint32_t)0b1111<<(6<<2)) | ((uint32_t)0b1111<<(7<<2))))
+                               |  (((uint32_t)0b1001<<(6<<2)) | ((uint32_t)0b1000<<(7<<2)));
+  GPIOA->BSHR  = (uint32_t)1<<7;
+  AFIO->PCFR1 |= (uint32_t)1<<2;
+  AFIO->PCFR2 |= (uint32_t)1<<26;
 #else
   #warning Wrong UART1 REMAP
 #endif

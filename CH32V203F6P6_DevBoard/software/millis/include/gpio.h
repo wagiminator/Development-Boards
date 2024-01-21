@@ -138,35 +138,35 @@ enum{
   ((PIN>=PA0)&&(PIN<=PA7)  ? ( GPIOA->CFGLR  =  (GPIOA->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOA->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOA->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PA8)&&(PIN<=PA15) ? ( GPIOA->CFGHR  =  (GPIOA->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOA->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOA->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PB0)&&(PIN<=PB7)  ? ( GPIOB->CFGLR  =  (GPIOB->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOB->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOB->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PB8)&&(PIN<=PB15) ? ( GPIOB->CFGHR  =  (GPIOB->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOB->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOB->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PC0)&&(PIN<=PC7)  ? ( GPIOC->CFGLR  =  (GPIOC->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOC->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOC->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PC8)&&(PIN<=PC15) ? ( GPIOC->CFGHR  =  (GPIOC->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOC->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOC->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PD0)&&(PIN<=PD7)  ? ( GPIOD->CFGLR  =  (GPIOD->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOD->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOD->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PD8)&&(PIN<=PD15) ? ( GPIOD->CFGHR  =  (GPIOD->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOD->OUTDR |=  ((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOD->BSHR   =  ((uint32_t)1<<((PIN)&15))        ) : \
 (0)))))))))
 
 // ===================================================================================
@@ -176,35 +176,35 @@ enum{
   ((PIN>=PA0)&&(PIN<=PA7)  ? ( GPIOA->CFGLR  =  (GPIOA->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOA->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOA->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PA8)&&(PIN<=PA15) ? ( GPIOA->CFGHR  =  (GPIOA->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOA->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOA->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PB0)&&(PIN<=PB7)  ? ( GPIOB->CFGLR  =  (GPIOB->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOB->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOB->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PB8)&&(PIN<=PB15) ? ( GPIOB->CFGHR  =  (GPIOB->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOB->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOB->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PC0)&&(PIN<=PC7)  ? ( GPIOC->CFGLR  =  (GPIOC->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOC->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOC->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PC8)&&(PIN<=PC15) ? ( GPIOC->CFGHR  =  (GPIOC->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOC->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOC->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PD0)&&(PIN<=PD7)  ? ( GPIOD->CFGLR  =  (GPIOD->CFGLR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOD->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOD->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
   ((PIN>=PD8)&&(PIN<=PD15) ? ( GPIOD->CFGHR  =  (GPIOD->CFGHR                        \
                                              & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))  \
                                              |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),  \
-                               GPIOD->OUTDR &= ~((uint32_t)1<<((PIN)&15))        ) : \
+                               GPIOD->BCR    =  ((uint32_t)1<<((PIN)&15))        ) : \
 (0)))))))))
 
 // ===================================================================================

@@ -18,15 +18,15 @@ void UART2_init(void) {
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPAEN;
   GPIOA->CFGLR    = (GPIOA->CFGLR & ~(((uint32_t)0b1111<<(2<<2)) | ((uint32_t)0b1111<<(3<<2))))
                                   |  (((uint32_t)0b1001<<(2<<2)) | ((uint32_t)0b1000<<(3<<2)));
-  GPIOA->OUTDR   |= 1<<3;
+  GPIOA->BSHR     = (uint32_t)1<<3;
 #elif UART2_REMAP == 1 
   // Set pin PD5 (TX) to output, push-pull, 10MHz, multiplex
   // Set pin PD6 (RX) to input, pullup
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPDEN;
   GPIOD->CFGLR    = (GPIOD->CFGLR & ~(((uint32_t)0b1111<<(5<<2)) | ((uint32_t)0b1111<<(6<<2))))
                                   |  (((uint32_t)0b1001<<(5<<2)) | ((uint32_t)0b1000<<(6<<2)));
-  GPIOD->OUTDR   |= 1<<6;
-  AFIO->PCFR1    |= 1<<3;
+  GPIOD->BSHR     = (uint32_t)1<<6;
+  AFIO->PCFR1    |= (uint32_t)1<<3;
 #else
   #warning Wrong UART2 REMAP
 #endif
