@@ -5,8 +5,8 @@
 // Pins must be defined as PA0, PA1, .., PD14, PD15 - e.g.:
 // #define PIN_LED PC0      // LED on pin PC0
 //
-// Functions available:
-// --------------------
+// PIN functions available:
+// ------------------------
 // PIN_input(PIN)           Set PIN as INPUT (floating, no pullup/pulldown)
 // PIN_input_PU(PIN)        Set PIN as INPUT with internal PULLUP resistor
 // PIN_input_PD(PIN)        Set PIN as INPUT with internal PULLDOWN resistor
@@ -20,6 +20,8 @@
 // PIN_read(PIN)            Read PIN input value
 // PIN_write(PIN, val)      Write PIN output value (0 = LOW / 1 = HIGH)
 //
+// PORT functions available:
+// -------------------------
 // PORT_enable(PIN)         Enable GPIO PORT of PIN
 // PORTA_enable()           Enable GPIO PORT A
 // PORTB_enable()           Enable GPIO PORT B
@@ -34,6 +36,8 @@
 // PORTD_disable()          Disable GPIO PORT D
 // PORTS_disable()          Disable all GPIO PORTS
 //
+// Analog-to-Digital Converter (ADC) functions available:
+// ------------------------------------------------------
 // ADC_init()               Init, enable and calibrate ADC (must be called first)
 // ADC_enable()             enable ADC (power-up)
 // ADC_disable()            disable ADC (power-down)
@@ -49,6 +53,8 @@
 // ADC_read_VDD()           Sample and read supply voltage (VDD) in millivolts (mV)
 // ADC_read_TEMP()          Sample and read temperature sensor in °C
 //
+// Op-Amp Comparator (OPA) functions available:
+// --------------------------------------------
 // OPA1_enable()            Enable OPA1 comparator
 // OPA1_disable()           Disable OPA1 comparator
 // OPA1_negative(PIN)       Set OPA1 inverting input PIN (PA6 or PB11)

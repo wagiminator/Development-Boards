@@ -23,37 +23,9 @@
 // ===================================================================================
 #include <system.h>                 // system functions
 #include <gpio.h>                   // GPIO functions
+#include <millis.h>                 // millis functions
 
 #define PIN_LED   PB1               // define LED pin
-
-// ===================================================================================
-// Millis Counter using SysTick
-// ===================================================================================
-volatile uint32_t MIL_millis = 0;   // millis counter
-
-// Init millis counter
-void MIL_init(void) {
-  STK->CTLR = 0;                    // disable SysTick
-  NVIC_EnableIRQ(SysTicK_IRQn);     // enable the SysTick IRQ
-  STK->CMPL = DLY_MS_TIME - 1;      // set interval to 1ms
-  STK->CMPH = 0;
-  STK->CNTL = 0;                    // start at zero
-  STK->CNTH = 0;
-  STK->CTLR = STK_CTLR_STE          // enable SysTick
-            | STK_CTLR_STIE         // enable SysTick compare match interrupt
-            | STK_CTLR_STCLK;       // set SysTick clock to F_CPU
-}
-
-// Interrupt service routine
-void SysTick_Handler(void) __attribute__((interrupt));
-void SysTick_Handler(void) {
-  uint32_t temp;
-  MIL_millis++;                     // increase millis counter
-  temp = STK->CMPL;                 // save for 64-bit add
-  STK->CMPL += DLY_MS_TIME;         // next interrupt 1ms later
-  if(STK->CMPL < temp) STK->CMPH++; // high-word
-  STK->SR   = 0;                    // clear interrupt flag
-}
 
 // ===================================================================================
 // Main Function
@@ -67,7 +39,7 @@ int main(void) {
   // Loop
   while(1) {
     PIN_toggle(PIN_LED);            // toggle LED on/off
-    while(MIL_millis < nexttime);   // wait for next time
+    while(MIL_read() < nexttime);   // wait for next time
     nexttime += 100;                // increase next timeby 100 milliseconds
   }
 }

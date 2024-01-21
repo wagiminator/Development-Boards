@@ -1,79 +1,95 @@
 // ===================================================================================
-// Basic System Functions for CH32V203                                        * v1.0 *
+// Basic System Functions for CH32V203                                        * v1.1 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
 // set up automatically on system start.
 //
-// Functions available:
-// --------------------
-// CLK_init_HSI()         // init internal oscillator (non PLL) as system clock source
-// CLK_init_HSI_PLL()     // init internal oscillator with PLL as system clock source
-// CLK_init_HSE()         // init external crystal (non PLL) as system clock source
-// CLK_init_HSE_PLL()     // init external crystal (PLL) as system clock source
+// System clock functions available:
+// ---------------------------------
+// CLK_init_HSI()           init internal oscillator (non PLL) as system clock source
+// CLK_init_HSI_PLL()       init internal oscillator with PLL as system clock source
+// CLK_init_HSE()           init external crystal (non PLL) as system clock source
+// CLK_init_HSE_PLL()       init external crystal (PLL) as system clock source
+// CLK_reset()              reset system clock to default state
 //
-// HSI_enable()           // enable internal 8MHz high-speed clock (HSI)
-// HSI_disable()          // disable HSI
-// HSI_ready()            // check if HSI is stable
+// HSI_enable()             enable internal 8MHz high-speed clock (HSI)
+// HSI_disable()            disable HSI
+// HSI_ready()              check if HSI is stable
 //
-// HSE_enable()           // enable external high-speed clock (HSE)
-// HSE_disable()          // disable HSE
-// HSE_ready()            // check if HSE is stable
-// HSE_bypass_on()        // enable HSE clock bypass
-// HSE_bypass_off()       // disable HSE clock bypass
+// HSE_enable()             enable external high-speed clock (HSE)
+// HSE_disable()            disable HSE
+// HSE_ready()              check if HSE is stable
+// HSE_bypass_on()          enable HSE clock bypass
+// HSE_bypass_off()         disable HSE clock bypass
 //
-// LSI_enable()           // enable internal 40kHz low-speed clock (LSI)
-// LSI_disable()          // disable LSI
-// LSI_ready()            // check if LSI is stable
+// LSI_enable()             enable internal 40kHz low-speed clock (LSI)
+// LSI_disable()            disable LSI
+// LSI_ready()              check if LSI is stable
 //
-// LSE_enable()           // enable external 32.768kHz low-speed clock (LSE)
-// LSE_disable()          // disable LSE
-// LSE_ready()            // check if LSE is stable
-// LSE_bypass_on()        // enable LSE clock bypass
-// LSE_bypass_off()       // disable LSE clock bypass
+// LSE_enable()             enable external 32.768kHz low-speed clock (LSE)
+// LSE_disable()            disable LSE
+// LSE_ready()              check if LSE is stable
+// LSE_bypass_on()          enable LSE clock bypass
+// LSE_bypass_off()         disable LSE clock bypass
 //
-// MCO_init()             // init clock output to pin PA8
-// MCO_setSYS()           // output SYS_CLK on pin PA8
-// MCO_setHSI()           // output internal oscillator on pin PA8
-// MCO_setHSE()           // output external crystal on pin PA8 (if available)
-// MCO_setPLL()           // output PLL on pin PA8
+// MCO_init()               init clock output to pin PA8
+// MCO_setSYS()             output SYS_CLK on pin PA8
+// MCO_setHSI()             output internal oscillator on pin PA8
+// MCO_setHSE()             output external crystal on pin PA8 (if available)
+// MCO_setPLL()             output PLL on pin PA8
 //
-// RTC_init_LSI()         // init RTC with internal low-speed clock
-// RTC_init_LSE()         // Init RTC with external low-speed clock
-// RTC_set(n)             // set RTC counter
-// RTC_get()              // get RTC counter
-// RTC_ALARM_set(n)       // set RTC ALARM value
-// RTC_ALARM_get()        // get RTC ALARM value
+// Real-Time Clock (RTC) functions available:
+// ------------------------------------------
+// RTC_init_LSI()           init RTC with internal low-speed clock
+// RTC_init_LSE()           init RTC with external low-speed clock
+// RTC_set(n)               set RTC counter
+// RTC_get()                get RTC counter
+// RTC_ALARM_set(n)         set RTC ALARM value
+// RTC_ALARM_get()          get RTC ALARM value
 //
-// DLY_ticks(n)           // delay n system clock cycles
-// DLY_us(n)              // delay n microseconds
-// DLY_ms(n)              // delay n milliseconds
+// Delay (DLY) functions available:
+// --------------------------------
+// DLY_ticks(n)             delay n system clock cycles
+// DLY_us(n)                delay n microseconds
+// DLY_ms(n)                delay n milliseconds
 //
-// RST_now()              // conduct software reset
-// RST_clearFlags()       // clear all reset flags
-// RST_wasLowPower()      // check if last reset was caused by low power
-// RST_wasWWDG()          // check if last reset was caused by window watchdog
-// RST_wasIWDG()          // check if last reset was caused by independent watchdog
-// RST_wasSoftware()      // check if last reset was caused by software
-// RST_wasPower()         // check if last reset was caused by power up
-// RST_wasPin()           // check if last reset was caused by RST pin low
+// Reset (RST) functions available:
+// --------------------------------
+// RST_now()                conduct software reset
+// RST_clearFlags()         clear all reset flags
+// RST_wasLowPower()        check if last reset was caused by low power
+// RST_wasWWDG()            check if last reset was caused by window watchdog
+// RST_wasIWDG()            check if last reset was caused by independent watchdog
+// RST_wasSoftware()        check if last reset was caused by software
+// RST_wasPower()           check if last reset was caused by power up
+// RST_wasPin()             check if last reset was caused by RST pin low
 //
-// IWDG_start(n)          // start independent watchdog timer, n cycles, n<=4095
-// IWDG_start_ms(n)       // start independent watchdog timer, n milliseconds, n<=6552
-// IWDG_reload(n)         // reload watchdog counter with n cycles, n<=4095
-// IWDG_reload_ms(n)      // reload watchdog counter with n milliseconds, n<=6552
-// IWDG_feed()            // feed the dog (reload last time)
+// Independent Watchdog Timer (IWDG) functions available:
+// ------------------------------------------------------
+// IWDG_start(n)            start independent watchdog timer, n cycles, n<=4095
+// IWDG_start_ms(n)         start independent watchdog timer, n milliseconds, n<=6552
+// IWDG_reload(n)           reload watchdog counter with n cycles, n<=4095
+// IWDG_reload_ms(n)        reload watchdog counter with n milliseconds, n<=6552
+// IWDG_feed()              feed the dog (reload last time)
 //
-// SLEEP_WFI_now()        // put device into sleep, wake up by interrupt
-// SLEEP_WFE_now()        // put device into sleep, wake up by event
-// STOP_WFI_now()         // put device into stop, wake up by interrupt
-// STOP_WFE_now()         // put device into stop, wake up by event
-// STDBY_WFI_now()        // put device into standby (deep sleep), wake by interrupt
-// STDBY_WFE_now()        // put device into standby (deep sleep), wake by event
+// Sleep functions available:
+// --------------------------
+// SLEEP_WFI_now()          put device into sleep, wake up by interrupt
+// SLEEP_WFE_now()          put device into sleep, wake up by event
+// STOP_WFI_now()           put device into stop, wake up by interrupt
+// STOP_WFE_now()           put device into stop, wake up by event
+// STDBY_WFI_now()          put device into standby (deep sleep), wake by interrupt
+// STDBY_WFE_now()          put device into standby (deep sleep), wake by event
+//
+// Interrupt (INT) functions available:
+// ------------------------------------
+// INT_enable()             global interrupt enable
+// INT_disable()            global interrupt disable
+// INT_ATOMIC_BLOCK { }     execute block without being interrupted
 //
 // References:
 // -----------
-// - CNLohr ch32v003fun: https://github.com/cnlohr/ch32v003fun
 // - WCH Nanjing Qinheng Microelectronics: http://wch.cn
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
@@ -93,6 +109,8 @@ extern "C" {
 #define SYS_TICK_INIT     1         // 1: init and start SYSTICK on startup
 #define SYS_GPIO_EN       1         // 1: enable GPIO ports on startup
 #define SYS_USE_HSE       0         // 1: use external crystal
+#define SYS_CLEAR_BSS     1         // 1: clear uninitialized variables
+#define SYS_USE_VECTORS   1         // 1: create interrupt vector table
 
 // ===================================================================================
 // Sytem Clock Defines
@@ -169,6 +187,7 @@ void CLK_init_HSI(void);      // init internal oscillator (non PLL) as system cl
 void CLK_init_HSI_PLL(void);  // init internal oscillator with PLL as system clock source
 void CLK_init_HSE(void);      // init external crystal (non PLL) as system clock source
 void CLK_init_HSE_PLL(void);  // init external crystal (PLL) as system clock source
+void CLK_reset(void);         // reset system clock to default state
 
 // Internal 8MHz high-speed clock (HSI) functions
 #define HSI_enable()      RCC->CTLR |= RCC_HSION        // enable HSI
@@ -213,7 +232,7 @@ void RTC_ALARM_set(uint32_t n);   // set RTC ALARM
 #define RTC_ALARM_get()   (((uint32_t)RTC->ALRMH << 16) & RTC->ALRML) // get RTC ALARM
 
 // ===================================================================================
-// Delay Functions
+// Delay (DLY) Functions
 // ===================================================================================
 #define STK_init()        STK->CTLR = STK_CTLR_STE | STK_CTLR_STCLK // init SYSTICK @ F_CPU
 #define DLY_US_TIME       (F_CPU / 1000000)             // system ticks per us
@@ -224,7 +243,7 @@ void RTC_ALARM_set(uint32_t n);   // set RTC ALARM
 void DLY_ticks(uint32_t n);                             // delay n system ticks
 
 // ===================================================================================
-// Reset Functions
+// Reset (RST) Functions
 // ===================================================================================
 #define RST_now()         PFIC->CFGR    = PFIC_RESETSYS | PFIC_KEY3
 #define RST_clearFlags()  RCC->RSTSCKR |= RCC_RMVF
@@ -253,6 +272,27 @@ void STOP_WFI_now(void);    // put device into stop, wake up by interrupt
 void STOP_WFE_now(void);    // put device into stop, wake up by event
 void STDBY_WFI_now(void);   // put device into standby (deep sleep), wake up interrupt
 void STDBY_WFE_now(void);   // put device into standby (deep sleep), wake up event
+
+// ===================================================================================
+// Interrupt (INT) Functions
+// ===================================================================================
+#define INT_enable()          __enable_irq()
+#define INT_disable()         __disable_irq()
+#define INT_ATOMIC_BLOCK      for(INT_ATOMIC_RESTORE, __ToDo = 1; __ToDo; __ToDo = 0)
+#define INT_ATOMIC_RESTORE    uint32_t __reg_save __attribute__((__cleanup__(__iRestore))) = __iSave()
+
+// Save interrupt status and disable interrupts
+static inline uint32_t __iSave(void) {
+  uint32_t result;
+  __asm volatile("csrr %0, 0x800" : "=r" (result));
+  __asm volatile("csrw 0x800, %0" :: "r" (0x6000));
+  return result;
+}
+
+// Restore interrupt status
+static inline void __iRestore(const uint32_t *__s) {
+  __asm volatile("csrw 0x800, %0" :: "r" (*__s));
+}
 
 // ===================================================================================
 // Imported System Functions

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for CH32V203                                        * v1.0 *
+// Basic System Functions for CH32V203                                        * v1.1 *
 // ===================================================================================
 //
 // This file must be included!!!!
@@ -18,7 +18,13 @@
 void SYS_init(void) {
   // Init system clock
   #if SYS_CLK_INIT > 0
-  CLK_init();
+    RCC->INTR = 0x009F0000;                               // Clear ready flags
+    CLK_init();                                           // Setup system clock
+    #if F_CPU > 60000000
+      FLASH->CTLR &= ~FLASH_CTLR_SCKMOD;                  // FLASH CLK = SYSCLK / 2
+    #else
+      FLASH->CTLR |=  FLASH_CTLR_SCKMOD;                  // FLASH CLK = SYSCLK
+    #endif
   #endif
 
   // Init SYSTICK
@@ -38,21 +44,15 @@ void SYS_init(void) {
 
 // Init internal oscillator (non PLL) as system clock source
 void CLK_init_HSI(void) {
-  RCC->INTR  = 0x009F0000;                                // Clear ready flags
   RCC->CFGR0 = RCC_HPRE_DIV1                              // HCLK = SYSCLK
              | RCC_PPRE2_DIV1                             // PCLK2 = HCLK
              | RCC_PPRE1_DIV1                             // PCLK1 = HCLK
              | RCC_SW_HSI;                                // HSI as system clock source
   while((RCC->CFGR0 & RCC_SWS));                          // Wait for HSI
-  FLASH->CTLR |= FLASH_CTLR_SCKMOD;                       // FLASH CLK = SYSCLK
 }
 
 // Init internal oscillator with PLL as system clock source
 void CLK_init_HSI_PLL(void) {
-  #if F_CPU > 60000000
-  //FLASH->CTLR &= ~(uint32_t)FLASH_CTLR_SCKMOD;          // FLASH CLK = SYSCLK / 2
-  #endif
-  RCC->INTR = 0x009F0000;                                 // Clear ready flags
   EXTEN->EXTEN_CTR |= EXTEN_PLL_HSI_PRE;                  // HSI not divided for PLL
   RCC->CFGR0 = RCC_HPRE_DIV1                              // HCLK = SYSCLK
              | RCC_PPRE2_DIV1                             // PCLK2 = HCLK
@@ -63,16 +63,12 @@ void CLK_init_HSI_PLL(void) {
   while(!(RCC->CTLR & RCC_PLLRDY));                       // Wait till PLL is ready      
   RCC->CFGR0 |= RCC_SW_PLL;                               // PLL as system clock source
   while((RCC->CFGR0 & RCC_SWS) != (uint32_t)0x08);        // Wait for PLL
-  #if F_CPU <= 60000000
-  FLASH->CTLR |= FLASH_CTLR_SCKMOD;                       // FLASH CLK = SYSCLK
-  #endif
 }
 
 // Init external crystal (non PLL) as system clock source
 void CLK_init_HSE(void) {
   RCC->APB2PCENR |= RCC_AFIOEN;                           // enable auxiliary clock module
   AFIO->PCFR1 |= AFIO_PCFR1_PD01_REMAP;                   // Use PD0/PD1 for crystal
-  RCC->INTR    = 0x009F0000;                              // Clear ready flags
   RCC->CTLR   |= RCC_HSEON;                               // Turn on HSE
   while(!(RCC->CTLR & RCC_HSERDY));                       // wait till HSE is ready
   RCC->CFGR0   = RCC_HPRE_DIV1                            // HCLK = SYSCLK
@@ -80,17 +76,12 @@ void CLK_init_HSE(void) {
                | RCC_PPRE1_DIV1                           // PCLK1 = HCLK
                | RCC_SW_HSE;                              // HSE as system clock source
   while((RCC->CFGR0 & RCC_SWS) != (uint32_t)0x04);        // Wait for HSE
-  FLASH->CTLR |= FLASH_CTLR_SCKMOD;                       // FLASH CLK = SYSCLK
 }
 
 // Init external oscillator with PLL as system clock source
 void CLK_init_HSE_PLL(void) {
-  #if F_CPU > 60000000
-  //FLASH->CTLR &= ~FLASH_CTLR_SCKMOD;                    // FLASH CLK = SYSCLK / 2
-  #endif
   RCC->APB2PCENR |= RCC_AFIOEN;                           // enable auxiliary clock module
   AFIO->PCFR1 |= AFIO_PCFR1_PD01_REMAP;                   // Use PD0/PD1 for crystal
-  RCC->INTR    = 0x009F0000;                              // Clear ready flags
   RCC->CTLR   |= RCC_HSEON;                               // Turn on HSE
   while(!(RCC->CTLR & RCC_HSERDY));                       // wait till HSE is ready
   RCC->CFGR0   = RCC_HPRE_DIV1                            // HCLK = SYSCLK
@@ -103,9 +94,17 @@ void CLK_init_HSE_PLL(void) {
   while(!(RCC->CTLR & RCC_PLLRDY));                       // Wait till PLL is ready      
   RCC->CFGR0   |= RCC_SW_PLL;                             // PLL as system clock source
   while((RCC->CFGR0 & RCC_SWS) != (uint32_t)0x08);        // Wait for PLL
-  #if F_CPU <= 60000000
-  FLASH->CTLR |= FLASH_CTLR_SCKMOD;                       // FLASH CLK = SYSCLK
-  #endif
+}
+
+// Reset system clock to default state
+void CLK_reset(void) {
+  FLASH->CTLR &= ~FLASH_CTLR_SCKMOD;
+  RCC->INTR = 0x009F0000;
+  RCC->CTLR |= RCC_HSION;
+  while(!(RCC->CTLR & RCC_HSIRDY));
+  RCC->CFGR0 = RCC_HPRE_DIV1 | RCC_PPRE2_DIV1 | RCC_PPRE1_DIV1 | RCC_SW_HSI;
+  while((RCC->CFGR0 & RCC_SWS));
+  RCC->CFGR0 &= 0x0000FFFF;
 }
 
 // Setup pin PA8 for MCO (output, push-pull, 50MHz, auxiliary)
@@ -286,8 +285,12 @@ int main(void)                __attribute__((section(".text.main"), used));
 void jump_reset(void)         __attribute__((section(".init.jump"), naked, used));
 const uint32_t init_data[]    __attribute__((section(".init.data"), used));
 void (*const vectors[])(void) __attribute__((section(".vector"), used));
-void default_handler(void)    __attribute__((section(".text.vector_handler"), naked, used));
 void reset_handler(void)      __attribute__((section(".text.reset_handler"), naked, used));
+
+#if SYS_USE_VECTORS > 0
+// Unless a specific handler is overridden, it just spins forever
+void default_handler(void)    __attribute__((section(".text.vector_handler"), naked, used));
+void default_handler(void)    { while(1); }
 
 // All interrupt handlers are aliased to default_handler unless overridden individually
 #define DUMMY_HANDLER __attribute__((section(".text.vector_handler"), weak, alias("default_handler"), used))
@@ -345,6 +348,7 @@ DUMMY_HANDLER void USBHD_IRQHandler(void);
 DUMMY_HANDLER void USBHDWakeUp_IRQHandler(void);
 DUMMY_HANDLER void UART4_IRQHandler(void);
 DUMMY_HANDLER void DMA1_Channel8_IRQHandler(void);
+#endif  // SYS_USE_VECTORS > 0
 
 // FLASH starts with a jump to the reset handler
 void jump_reset(void) { asm volatile("j reset_handler"); }
@@ -361,6 +365,7 @@ const uint32_t init_data[] = {
 void (* const vectors[])(void) = {
   // RISC-V handlers
   jump_reset,                       //  0 - Reset
+  #if SYS_USE_VECTORS > 0
   0,                                //  1 - Reserved
   NMI_Handler,                      //  2 - NMI Handler
   HardFault_Handler,                //  3 - Hard Fault Handler
@@ -425,10 +430,8 @@ void (* const vectors[])(void) = {
   USBHDWakeUp_IRQHandler,           // 60 - USBHD Wake up from suspend
   UART4_IRQHandler,                 // 61 - UART4
   DMA1_Channel8_IRQHandler          // 62 - DMA1 Channel8
+  #endif  // SYS_USE_VECTORS > 0
 };
-
-// Unless a specific handler is overridden, it just spins forever
-void default_handler(void) { while(1); }
 
 // Reset handler
 void reset_handler(void) {
@@ -436,7 +439,10 @@ void reset_handler(void) {
   
   // Set pointers, vectors, processor status, and interrupts
   asm volatile(
-  " la gp, __global_pointer$  \n\
+  " .option push              \n\
+    .option norelax           \n\
+    la gp, __global_pointer$  \n\
+    .option pop               \n\
     la sp, _eusrstack         \n\
     li a0, 0x1f               \n\
     csrw 0xbc0, a0            \n\
@@ -457,8 +463,10 @@ void reset_handler(void) {
   while(dst < &_edata) *dst++ = *src++;
 
   // Clear uninitialized variables
+  #if SYS_CLEAR_BSS > 0
   dst = &_sbss;
   while(dst < &_ebss) *dst++ = 0;
+  #endif
 
   // C++ Support
   #ifdef __cplusplus

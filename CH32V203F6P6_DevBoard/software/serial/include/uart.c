@@ -72,17 +72,6 @@ void UART1_write(const char c) {
   USART1->DATAR = c;
 }
 
-// Send string via UART
-void UART1_print(const char* str) {
-  while(*str) UART1_write(*str++);
-}
-
-// Send string via UART with newline
-void UART1_println(const char* str) {
-  UART1_print(str);
-  UART1_write('\n');
-}
-
 // ===================================================================================
 // UART2
 // ===================================================================================
@@ -124,15 +113,4 @@ char UART2_read(void) {
 void UART2_write(const char c) {
   while(!UART2_ready());
   USART2->DATAR = c;
-}
-
-// Send string via UART
-void UART2_print(const char* str) {
-  while(*str) UART2_write(*str++);
-}
-
-// Send string via UART with newline
-void UART2_println(const char* str) {
-  UART2_print(str);
-  UART2_write('\n');
 }
