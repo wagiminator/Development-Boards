@@ -1,5 +1,5 @@
 // ===================================================================================
-// Header file for CH32X035/X034/X033                                         * v0.2 *
+// Header file for CH32X035/X034/X033                                         * v0.3 *
 // ===================================================================================
 // This contains a copy of ch32x035.h and core_riscv.h and other misc functions.
 // NOTE: This file includes modifications by Stefan Wagner.
@@ -106,519 +106,504 @@ typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 /* Analog to Digital Converter */
 typedef struct
 {
-    __IO uint32_t STATR;
-    __IO uint32_t CTLR1;
-    __IO uint32_t CTLR2;
-    __IO uint32_t SAMPTR1;
-    __IO uint32_t SAMPTR2;
-    __IO uint32_t IOFR1;
-    __IO uint32_t IOFR2;
-    __IO uint32_t IOFR3;
-    __IO uint32_t IOFR4;
-    __IO uint32_t WDHTR;
-    __IO uint32_t WDLTR;
-    __IO uint32_t RSQR1;
-    __IO uint32_t RSQR2;
-    __IO uint32_t RSQR3;
-    __IO uint32_t ISQR;
-    __IO uint32_t IDATAR1;
-    __IO uint32_t IDATAR2;
-    __IO uint32_t IDATAR3;
-    __IO uint32_t IDATAR4;
-    __IO uint32_t RDATAR;
-    __IO uint32_t CTLR3;
-    __IO uint32_t WDTR1;
-    __IO uint32_t WDTR2;
-    __IO uint32_t WDTR3;
+    __IO uint32_t     STATR;
+    __IO uint32_t     CTLR1;
+    __IO uint32_t     CTLR2;
+    __IO uint32_t     SAMPTR1;
+    __IO uint32_t     SAMPTR2;
+    __IO uint32_t     IOFR1;
+    __IO uint32_t     IOFR2;
+    __IO uint32_t     IOFR3;
+    __IO uint32_t     IOFR4;
+    __IO uint32_t     WDHTR;
+    __IO uint32_t     WDLTR;
+    __IO uint32_t     RSQR1;
+    __IO uint32_t     RSQR2;
+    __IO uint32_t     RSQR3;
+    __IO uint32_t     ISQR;
+    __IO uint32_t     IDATAR1;
+    __IO uint32_t     IDATAR2;
+    __IO uint32_t     IDATAR3;
+    __IO uint32_t     IDATAR4;
+    __IO uint32_t     RDATAR;
+    __IO uint32_t     CTLR3;
+    __IO uint32_t     WDTR1;
+    __IO uint32_t     WDTR2;
+    __IO uint32_t     WDTR3;
 } ADC_TypeDef;
 
 /* DMA Channel Controller */
 typedef struct
 {
-    __IO uint32_t CFGR;
-    __IO uint32_t CNTR;
-    __IO uint32_t PADDR;
-    __IO uint32_t MADDR;
+    __IO uint32_t     CFGR;
+    __IO uint32_t     CNTR;
+    __IO uint32_t     PADDR;
+    __IO uint32_t     MADDR;
 } DMA_Channel_TypeDef;
 
 /* DMA Controller */
 typedef struct
 {
-    __IO uint32_t INTFR;
-    __IO uint32_t INTFCR;
+    __IO uint32_t     INTFR;
+    __IO uint32_t     INTFCR;
 } DMA_TypeDef;
 
 /* External Interrupt/Event Controller */
 typedef struct
 {
-    __IO uint32_t INTENR;
-    __IO uint32_t EVENR;
-    __IO uint32_t RTENR;
-    __IO uint32_t FTENR;
-    __IO uint32_t SWIEVR;
-    __IO uint32_t INTFR;
+    __IO uint32_t     INTENR;
+    __IO uint32_t     EVENR;
+    __IO uint32_t     RTENR;
+    __IO uint32_t     FTENR;
+    __IO uint32_t     SWIEVR;
+    __IO uint32_t     INTFR;
 } EXTI_TypeDef;
 
 /* FLASH Registers */
 typedef struct
 {
-    __IO uint32_t ACTLR;
-    __IO uint32_t KEYR;
-    __IO uint32_t OBKEYR;
-    __IO uint32_t STATR;
-    __IO uint32_t CTLR;
-    __IO uint32_t ADDR;
-    uint32_t      RESERVED;
-    __IO uint32_t OBR;
-    __IO uint32_t WPR;
-    __IO uint32_t MODEKEYR;
-    __IO uint32_t BOOT_MODEKEYR;
+    __IO uint32_t     ACTLR;
+    __IO uint32_t     KEYR;
+    __IO uint32_t     OBKEYR;
+    __IO uint32_t     STATR;
+    __IO uint32_t     CTLR;
+    __IO uint32_t     ADDR;
+    uint32_t          RESERVED;
+    __IO uint32_t     OBR;
+    __IO uint32_t     WPR;
+    __IO uint32_t     MODEKEYR;
+    __IO uint32_t     BOOT_MODEKEYR;
 } FLASH_TypeDef;
 
 /* Option Bytes Registers */
 typedef struct
 {
-    __IO uint16_t RDPR;
-    __IO uint16_t USER;
-    __IO uint16_t Data0;
-    __IO uint16_t Data1;
-    __IO uint16_t WRPR0;
-    __IO uint16_t WRPR1;
-    __IO uint16_t WRPR2;
-    __IO uint16_t WRPR3;
+    __IO uint16_t     RDPR;
+    __IO uint16_t     USER;
+    __IO uint16_t     Data0;
+    __IO uint16_t     Data1;
+    __IO uint16_t     WRPR0;
+    __IO uint16_t     WRPR1;
+    __IO uint16_t     WRPR2;
+    __IO uint16_t     WRPR3;
 } OB_TypeDef;
 
 /* General Purpose I/O */
 typedef struct
 {
-    __IO uint32_t CFGLR;
-    __IO uint32_t CFGHR;
-    __IO uint32_t INDR;
-    __IO uint32_t OUTDR;
-    __IO uint32_t BSHR;
-    __IO uint32_t BCR;
-    __IO uint32_t LCKR;
-    __IO uint32_t CFGXR;
-    __IO uint32_t BSXR;
+    __IO uint32_t     CFGLR;
+    __IO uint32_t     CFGHR;
+    __IO uint32_t     INDR;
+    __IO uint32_t     OUTDR;
+    __IO uint32_t     BSHR;
+    __IO uint32_t     BCR;
+    __IO uint32_t     LCKR;
+    __IO uint32_t     CFGXR;
+    __IO uint32_t     BSXR;
 } GPIO_TypeDef;
 
 /* Alternate Function I/O */
 typedef struct
 {
-    uint32_t      RESERVED0;
-    __IO uint32_t PCFR1;
-    __IO uint32_t EXTICR[2];
-    uint32_t      RESERVED1;
-    uint32_t      RESERVED2;
-    __IO uint32_t CTLR;
+    uint32_t          RESERVED0;
+    __IO uint32_t     PCFR1;
+    __IO uint32_t     EXTICR[2];
+    uint32_t          RESERVED1;
+    uint32_t          RESERVED2;
+    __IO uint32_t     CTLR;
 } AFIO_TypeDef;
 
 /* Inter Integrated Circuit Interface */
 typedef struct
 {
-    __IO uint16_t CTLR1;
-    uint16_t      RESERVED0;
-    __IO uint16_t CTLR2;
-    uint16_t      RESERVED1;
-    __IO uint16_t OADDR1;
-    uint16_t      RESERVED2;
-    __IO uint16_t OADDR2;
-    uint16_t      RESERVED3;
-    __IO uint16_t DATAR;
-    uint16_t      RESERVED4;
-    __IO uint16_t STAR1;
-    uint16_t      RESERVED5;
-    __IO uint16_t STAR2;
-    uint16_t      RESERVED6;
-    __IO uint16_t CKCFGR;
-    uint16_t      RESERVED7;
+    __IO uint16_t     CTLR1;
+    uint16_t          RESERVED0;
+    __IO uint16_t     CTLR2;
+    uint16_t          RESERVED1;
+    __IO uint16_t     OADDR1;
+    uint16_t          RESERVED2;
+    __IO uint16_t     OADDR2;
+    uint16_t          RESERVED3;
+    __IO uint16_t     DATAR;
+    uint16_t          RESERVED4;
+    __IO uint16_t     STAR1;
+    uint16_t          RESERVED5;
+    __IO uint16_t     STAR2;
+    uint16_t          RESERVED6;
+    __IO uint16_t     CKCFGR;
+    uint16_t          RESERVED7;
 } I2C_TypeDef;
 
 /* Independent WatchDog */
 typedef struct
 {
-    __IO uint32_t CTLR;
-    __IO uint32_t PSCR;
-    __IO uint32_t RLDR;
-    __IO uint32_t STATR;
+    __IO uint32_t     CTLR;
+    __IO uint32_t     PSCR;
+    __IO uint32_t     RLDR;
+    __IO uint32_t     STATR;
 } IWDG_TypeDef;
 
 /* Power Control */
 typedef struct
 {
-    __IO uint32_t CTLR;
-    __IO uint32_t CSR;
+    __IO uint32_t     CTLR;
+    __IO uint32_t     CSR;
 } PWR_TypeDef;
 
 /* Reset and Clock Control */
 typedef struct
 {
-    __IO uint32_t CTLR;
-    __IO uint32_t CFGR0;
-    __IO uint32_t RESERVED0;
-    __IO uint32_t APB2PRSTR;
-    __IO uint32_t APB1PRSTR;
-    __IO uint32_t AHBPCENR;
-    __IO uint32_t APB2PCENR;
-    __IO uint32_t APB1PCENR;
-    __IO uint32_t RESERVED1;
-    __IO uint32_t RSTSCKR;
-    __IO uint32_t AHBRSTR;
+    __IO uint32_t     CTLR;
+    __IO uint32_t     CFGR0;
+    __IO uint32_t     RESERVED0;
+    __IO uint32_t     APB2PRSTR;
+    __IO uint32_t     APB1PRSTR;
+    __IO uint32_t     AHBPCENR;
+    __IO uint32_t     APB2PCENR;
+    __IO uint32_t     APB1PCENR;
+    __IO uint32_t     RESERVED1;
+    __IO uint32_t     RSTSCKR;
+    __IO uint32_t     AHBRSTR;
 } RCC_TypeDef;
 
 /* Serial Peripheral Interface */
 typedef struct
 {
-    __IO uint16_t CTLR1;
-    uint16_t      RESERVED0;
-    __IO uint16_t CTLR2;
-    uint16_t      RESERVED1;
-    __IO uint16_t STATR;
-    uint16_t      RESERVED2;
-    __IO uint16_t DATAR;
-    uint16_t      RESERVED3;
-    __IO uint16_t CRCR;
-    uint16_t      RESERVED4;
-    __IO uint16_t RCRCR;
-    uint16_t      RESERVED5;
-    __IO uint16_t TCRCR;
-    uint16_t      RESERVED6;
-    uint32_t      RESERVED7;
-    uint32_t      RESERVED8;
-    __IO uint16_t HSCR;
-    uint16_t      RESERVED9;
+    __IO uint16_t     CTLR1;
+    uint16_t          RESERVED0;
+    __IO uint16_t     CTLR2;
+    uint16_t          RESERVED1;
+    __IO uint16_t     STATR;
+    uint16_t          RESERVED2;
+    __IO uint16_t     DATAR;
+    uint16_t          RESERVED3;
+    __IO uint16_t     CRCR;
+    uint16_t          RESERVED4;
+    __IO uint16_t     RCRCR;
+    uint16_t          RESERVED5;
+    __IO uint16_t     TCRCR;
+    uint16_t          RESERVED6;
+    uint32_t          RESERVED7;
+    uint32_t          RESERVED8;
+    __IO uint16_t     HSCR;
+    uint16_t          RESERVED9;
 } SPI_TypeDef;
 
 /* TIM */
 typedef struct
 {
-    __IO uint16_t CTLR1;
-    uint16_t      RESERVED0;
-    __IO uint16_t CTLR2;
-    uint16_t      RESERVED1;
-    __IO uint16_t SMCFGR;
-    uint16_t      RESERVED2;
-    __IO uint16_t DMAINTENR;
-    uint16_t      RESERVED3;
-    __IO uint16_t INTFR;
-    uint16_t      RESERVED4;
-    __IO uint16_t SWEVGR;
-    uint16_t      RESERVED5;
-    __IO uint16_t CHCTLR1;
-    uint16_t      RESERVED6;
-    __IO uint16_t CHCTLR2;
-    uint16_t      RESERVED7;
-    __IO uint16_t CCER;
-    uint16_t      RESERVED8;
-    __IO uint16_t CNT;
-    uint16_t      RESERVED9;
-    __IO uint16_t PSC;
-    uint16_t      RESERVED10;
-    __IO uint16_t ATRLR;
-    uint16_t      RESERVED11;
-    __IO uint16_t RPTCR;
-    uint16_t      RESERVED12;
-    __IO uint16_t CH1CVR;
-    uint16_t      RESERVED13;
-    __IO uint16_t CH2CVR;
-    uint16_t      RESERVED14;
-    __IO uint16_t CH3CVR;
-    uint16_t      RESERVED15;
-    __IO uint16_t CH4CVR;
-    uint16_t      RESERVED16;
-    __IO uint16_t BDTR;
-    uint16_t      RESERVED17;
-    __IO uint16_t DMACFGR;
-    uint16_t      RESERVED18;
-    __IO uint16_t DMAADR;
-    uint16_t      RESERVED19;
-    __IO uint16_t SPEC;
-    uint16_t      RESERVED20;
+    __IO uint16_t     CTLR1;
+    uint16_t          RESERVED0;
+    __IO uint16_t     CTLR2;
+    uint16_t          RESERVED1;
+    __IO uint16_t     SMCFGR;
+    uint16_t          RESERVED2;
+    __IO uint16_t     DMAINTENR;
+    uint16_t          RESERVED3;
+    __IO uint16_t     INTFR;
+    uint16_t          RESERVED4;
+    __IO uint16_t     SWEVGR;
+    uint16_t          RESERVED5;
+    __IO uint16_t     CHCTLR1;
+    uint16_t          RESERVED6;
+    __IO uint16_t     CHCTLR2;
+    uint16_t          RESERVED7;
+    __IO uint16_t     CCER;
+    uint16_t          RESERVED8;
+    __IO uint16_t     CNT;
+    uint16_t          RESERVED9;
+    __IO uint16_t     PSC;
+    uint16_t          RESERVED10;
+    __IO uint16_t     ATRLR;
+    uint16_t          RESERVED11;
+    __IO uint16_t     RPTCR;
+    uint16_t          RESERVED12;
+    __IO uint16_t     CH1CVR;
+    uint16_t          RESERVED13;
+    __IO uint16_t     CH2CVR;
+    uint16_t          RESERVED14;
+    __IO uint16_t     CH3CVR;
+    uint16_t          RESERVED15;
+    __IO uint16_t     CH4CVR;
+    uint16_t          RESERVED16;
+    __IO uint16_t     BDTR;
+    uint16_t          RESERVED17;
+    __IO uint16_t     DMACFGR;
+    uint16_t          RESERVED18;
+    __IO uint16_t     DMAADR;
+    uint16_t          RESERVED19;
+    __IO uint16_t     SPEC;
+    uint16_t          RESERVED20;
 } TIM_TypeDef;
 
 /* Universal Synchronous Asynchronous Receiver Transmitter */
 typedef struct
 {
-    __IO uint16_t STATR;
-    uint16_t      RESERVED0;
-    __IO uint16_t DATAR;
-    uint16_t      RESERVED1;
-    __IO uint16_t BRR;
-    uint16_t      RESERVED2;
-    __IO uint16_t CTLR1;
-    uint16_t      RESERVED3;
-    __IO uint16_t CTLR2;
-    uint16_t      RESERVED4;
-    __IO uint16_t CTLR3;
-    uint16_t      RESERVED5;
-    __IO uint16_t GPR;
-    uint16_t      RESERVED6;
+    __IO uint16_t     STATR;
+    uint16_t          RESERVED0;
+    __IO uint16_t     DATAR;
+    uint16_t          RESERVED1;
+    __IO uint16_t     BRR;
+    uint16_t          RESERVED2;
+    __IO uint16_t     CTLR1;
+    uint16_t          RESERVED3;
+    __IO uint16_t     CTLR2;
+    uint16_t          RESERVED4;
+    __IO uint16_t     CTLR3;
+    uint16_t          RESERVED5;
+    __IO uint16_t     GPR;
+    uint16_t          RESERVED6;
 } USART_TypeDef;
 
 /* Window WatchDog */
 typedef struct
 {
-    __IO uint32_t CTLR;
-    __IO uint32_t CFGR;
-    __IO uint32_t STATR;
+    __IO uint32_t     CTLR;
+    __IO uint32_t     CFGR;
+    __IO uint32_t     STATR;
 } WWDG_TypeDef;
 
 /* OPA Registers */
 typedef struct
 {
-    __IO uint16_t CFGR1;
-    __IO uint16_t CFGR2;
-    __IO uint32_t CTLR1;
-    __IO uint32_t CTLR2;
-    __IO uint32_t OPAKEY;
-    __IO uint32_t CMPKEY;
-    __IO uint32_t POLLKEY;
+    __IO uint16_t     CFGR1;
+    __IO uint16_t     CFGR2;
+    __IO uint32_t     CTLR1;
+    __IO uint32_t     CTLR2;
+    __IO uint32_t     OPAKEY;
+    __IO uint32_t     CMPKEY;
+    __IO uint32_t     POLLKEY;
 } OPA_TypeDef;
 
 /* AWU Registers */
 typedef struct
 {
-    __IO uint32_t CSR;
-    __IO uint32_t WR;
-    __IO uint32_t PSC;
+    __IO uint32_t     CSR;
+    __IO uint32_t     WR;
+    __IO uint32_t     PSC;
 } AWU_TypeDef;
 
-/* PD Registers */
-
+/* USBPD Registers */
 typedef struct
 {
-    union
-    {
-        __IO uint32_t USBPD_CONFIG;
-        struct
-        {
-            __IO uint16_t CONFIG;
-            __IO uint16_t BMC_CLK_CNT;
-        };
+  union {
+    __IO uint32_t       USBPD_CONFIG;
+    struct {
+      __IO uint16_t     CONFIG;
+      __IO uint16_t     BMC_CLK_CNT;
     };
-    union
-    {
-        __IO uint32_t USBPD_CONTROL;
-        struct
-        {
-            union
-            {
-                __IO uint16_t R16_CONTROL;
-                struct
-                {
-                    __IO uint8_t  CONTROL;
-                    __IO uint8_t  TX_SEL;
-                };
-            };
-            __IO uint16_t BMC_TX_SZ;
+  };
+  union {
+    __IO uint32_t       USBPD_CONTROL;
+    struct {
+      union {
+        __IO uint16_t   R16_CONTROL;
+        struct {
+          __IO uint8_t  CONTROL;
+          __IO uint8_t  TX_SEL;
         };
+      };
+      __IO uint16_t     BMC_TX_SZ;
     };
-    union
-    {
-        __IO uint32_t USBPD_STATUS;
-        struct
-        {
-            union
-            {
-                __IO uint16_t R16_STATUS;
-                struct
-                {
-                    __IO uint8_t  DATA_BUF;
-                    __IO uint8_t  STATUS;
-                };
-            };
-            __IO uint16_t BMC_BYTE_CNT;
+  };
+  union {
+    __IO uint32_t       USBPD_STATUS;
+    struct {
+      union {
+        __IO uint16_t   R16_STATUS;
+        struct {
+          __IO uint8_t  DATA_BUF;
+          __IO uint8_t  STATUS;
         };
+      };
+      __IO uint16_t     BMC_BYTE_CNT;
     };
-    union
-    {
-        __IO uint32_t USBPD_PORT;
-        struct
-        {
-            __IO uint16_t PORT_CC1;
-            __IO uint16_t PORT_CC2;
-        };
+  };
+  union {
+    __IO uint32_t       USBPD_PORT;
+    struct {
+      __IO uint16_t     PORT_CC1;
+      __IO uint16_t     PORT_CC2;
     };
-    union
-    {
-        __IO uint32_t USBPD_DMA;
-        struct
-        {
-            __IO uint16_t DMA;
-            __IO uint16_t RESERVED;
-        };
+  };
+  union {
+    __IO uint32_t       USBPD_DMA;
+    struct {
+      __IO uint16_t     DMA;
+      __IO uint16_t     RESERVED;
     };
+  };
 } USBPD_TypeDef;
 
 /* USBFS Registers */
 typedef struct
 {
-    __IO uint8_t  BASE_CTRL;
-    __IO uint8_t  UDEV_CTRL;
-    __IO uint8_t  INT_EN;
-    __IO uint8_t  DEV_ADDR;
-    uint8_t       RESERVED0;
-    __IO uint8_t  MIS_ST;
-    __IO uint8_t  INT_FG;
-    __IO uint8_t  INT_ST;
-    __IO uint16_t RX_LEN;
-    uint16_t      RESERVED1;
-    __IO uint8_t  UEP4_1_MOD;
-    __IO uint8_t  UEP2_3_MOD;
-    __IO uint8_t  UEP567_MOD;
-    uint8_t       RESERVED2;
-    __IO uint32_t UEP0_DMA;
-    __IO uint32_t UEP1_DMA;
-    __IO uint32_t UEP2_DMA;
-    __IO uint32_t UEP3_DMA;
-    union{
-        __IO uint32_t  UEP0_CTRL;
-        struct{
-            __IO uint16_t  UEP0_TX_LEN;
-            __IO uint16_t  UEP0_CTRL_H;
-        };
+    __IO uint8_t      BASE_CTRL;
+    __IO uint8_t      UDEV_CTRL;
+    __IO uint8_t      INT_EN;
+    __IO uint8_t      DEV_ADDR;
+    uint8_t           RESERVED0;
+    __IO uint8_t      MIS_ST;
+    __IO uint8_t      INT_FG;
+    __IO uint8_t      INT_ST;
+    __IO uint16_t     RX_LEN;
+    uint16_t          RESERVED1;
+    __IO uint8_t      UEP4_1_MOD;
+    __IO uint8_t      UEP2_3_MOD;
+    __IO uint8_t      UEP567_MOD;
+    uint8_t           RESERVED2;
+    __IO uint32_t     UEP0_DMA;
+    __IO uint32_t     UEP1_DMA;
+    __IO uint32_t     UEP2_DMA;
+    __IO uint32_t     UEP3_DMA;
+    union {
+      __IO uint32_t   UEP0_CTRL;
+      struct {
+        __IO uint16_t UEP0_TX_LEN;
+        __IO uint16_t UEP0_CTRL_H;
+      };
     };
-    union{
-        __IO uint32_t  UEP1_CTRL;
-        struct{
-            __IO uint16_t  UEP1_TX_LEN;
-            __IO uint16_t  UEP1_CTRL_H;
-        };
+    union {
+      __IO uint32_t   UEP1_CTRL;
+      struct {
+        __IO uint16_t UEP1_TX_LEN;
+        __IO uint16_t UEP1_CTRL_H;
+      };
     };
-    union{
-        __IO uint32_t  UEP2_CTRL;
-        struct{
-            __IO uint16_t  UEP2_TX_LEN;
-            __IO uint16_t  UEP2_CTRL_H;
-        };
+    union {
+      __IO uint32_t   UEP2_CTRL;
+      struct {
+        __IO uint16_t UEP2_TX_LEN;
+        __IO uint16_t UEP2_CTRL_H;
+      };
     };
-    union{
-        __IO uint32_t  UEP3_CTRL;
-        struct{
-            __IO uint16_t  UEP3_TX_LEN;
-            __IO uint16_t  UEP3_CTRL_H;
-        };
+    union {
+      __IO uint32_t   UEP3_CTRL;
+      struct {
+        __IO uint16_t UEP3_TX_LEN;
+        __IO uint16_t UEP3_CTRL_H;
+      };
     };
-    union{
-        __IO uint32_t  UEP4_CTRL;
-        struct{
-            __IO uint16_t  UEP4_TX_LEN;
-            __IO uint16_t  UEP4_CTRL_H;
-        };
+    union {
+      __IO uint32_t   UEP4_CTRL;
+      struct {
+        __IO uint16_t UEP4_TX_LEN;
+        __IO uint16_t UEP4_CTRL_H;
+      };
     };
-    uint32_t      RESERVED3;
-    uint32_t      RESERVED4;
-    uint32_t      RESERVED5;
-    uint32_t      RESERVED6;
-    uint32_t      RESERVED7;
-    uint32_t      RESERVED8;
-    uint32_t      RESERVED9;
-    uint32_t      RESERVED10;
-    __IO uint32_t UEP5_DMA;
-    __IO uint32_t UEP6_DMA;
-    __IO uint32_t UEP7_DMA;
-    uint32_t      RESERVED11;
-    union{
-        __IO uint32_t  UEP5_CTRL;
-        struct{
-            __IO uint16_t  UEP5_TX_LEN;
-            __IO uint16_t  UEP5_CTRL_H;
-        };
+    uint32_t          RESERVED3;
+    uint32_t          RESERVED4;
+    uint32_t          RESERVED5;
+    uint32_t          RESERVED6;
+    uint32_t          RESERVED7;
+    uint32_t          RESERVED8;
+    uint32_t          RESERVED9;
+    uint32_t          RESERVED10;
+    __IO uint32_t     UEP5_DMA;
+    __IO uint32_t     UEP6_DMA;
+    __IO uint32_t     UEP7_DMA;
+    uint32_t          RESERVED11;
+    union {
+      __IO uint32_t   UEP5_CTRL;
+      struct {
+        __IO uint16_t UEP5_TX_LEN;
+        __IO uint16_t UEP5_CTRL_H;
+      };
     };
-    union{
-        __IO uint32_t  UEP6_CTRL;
-        struct{
-            __IO uint16_t  UEP6_TX_LEN;
-            __IO uint16_t  UEP6_CTRL_H;
-        };
+    union {
+      __IO uint32_t   UEP6_CTRL;
+      struct {
+        __IO uint16_t UEP6_TX_LEN;
+        __IO uint16_t UEP6_CTRL_H;
+      };
     };
-    union{
-        __IO uint32_t  UEP7_CTRL;
-        struct{
-            __IO uint16_t  UEP7_TX_LEN;
-            __IO uint16_t  UEP7_CTRL_H;
-        };
+    union {
+      __IO uint32_t   UEP7_CTRL;
+      struct {
+        __IO uint16_t UEP7_TX_LEN;
+        __IO uint16_t UEP7_CTRL_H;
+      };
     };
-    __IO uint32_t UEPX_MOD;
+    __IO uint32_t     UEPX_MOD;
 } USBFSD_TypeDef;
 
 typedef struct
 {
-    __IO uint8_t   BASE_CTRL;
-    __IO uint8_t   HOST_CTRL;
-    __IO uint8_t   INT_EN;
-    __IO uint8_t   DEV_ADDR;
-    uint8_t        RESERVED0;
-    __IO uint8_t   MIS_ST;
-    __IO uint8_t   INT_FG;
-    __IO uint8_t   INT_ST;
-    __IO uint16_t  RX_LEN;
-    uint16_t       RESERVED1;
-    uint8_t        RESERVED2;
-    __IO uint8_t   HOST_EP_MOD;
-    uint16_t       RESERVED3;
-    uint32_t       RESERVED4;
-    uint32_t       RESERVED5;
-    __IO uint16_t  HOST_RX_DMA;
-    uint16_t       RESERVED6;
-    __IO uint16_t  HOST_TX_DMA;
-    uint16_t       RESERVED7;
-    uint32_t       RESERVED8;
-    uint16_t       RESERVED9;
-    __IO uint8_t   HOST_SETUP;
-    uint8_t        RESERVED10;
-    __IO uint8_t   HOST_EP_PID;
-    uint8_t        RESERVED11;
-    __IO uint8_t   HOST_RX_CTRL;
-    uint8_t        RESERVED12;
-    __IO uint8_t   HOST_TX_LEN;
-    uint8_t        RESERVED13;
-    __IO uint8_t   HOST_TX_CTRL;
-    uint8_t        RESERVED14;
+    __IO uint8_t      BASE_CTRL;
+    __IO uint8_t      HOST_CTRL;
+    __IO uint8_t      INT_EN;
+    __IO uint8_t      DEV_ADDR;
+    uint8_t           RESERVED0;
+    __IO uint8_t      MIS_ST;
+    __IO uint8_t      INT_FG;
+    __IO uint8_t      INT_ST;
+    __IO uint16_t     RX_LEN;
+    uint16_t          RESERVED1;
+    uint8_t           RESERVED2;
+    __IO uint8_t      HOST_EP_MOD;
+    uint16_t          RESERVED3;
+    uint32_t          RESERVED4;
+    uint32_t          RESERVED5;
+    __IO uint16_t     HOST_RX_DMA;
+    uint16_t          RESERVED6;
+    __IO uint16_t     HOST_TX_DMA;
+    uint16_t          RESERVED7;
+    uint32_t          RESERVED8;
+    uint16_t          RESERVED9;
+    __IO uint8_t      HOST_SETUP;
+    uint8_t           RESERVED10;
+    __IO uint8_t      HOST_EP_PID;
+    uint8_t           RESERVED11;
+    __IO uint8_t      HOST_RX_CTRL;
+    uint8_t           RESERVED12;
+    __IO uint8_t      HOST_TX_LEN;
+    uint8_t           RESERVED13;
+    __IO uint8_t      HOST_TX_CTRL;
+    uint8_t           RESERVED14;
 } USBFSH_TypeDef;
 
 /* memory mapped structure for Program Fast Interrupt Controller (PFIC) */
 typedef struct{
-  __I  uint32_t ISR[8];
-  __I  uint32_t IPR[8];
-  __IO uint32_t ITHRESDR;
-  __IO uint32_t RESERVED;
-  __IO uint32_t CFGR;
-  __I  uint32_t GISR;
-  __IO uint8_t VTFIDR[4];
-  uint8_t RESERVED0[12];
-  __IO uint32_t VTFADDR[4];
-  uint8_t RESERVED1[0x90];
-  __O  uint32_t IENR[8];
-  uint8_t RESERVED2[0x60];
-  __O  uint32_t IRER[8];
-  uint8_t RESERVED3[0x60];
-  __O  uint32_t IPSR[8];
-  uint8_t RESERVED4[0x60];
-  __O  uint32_t IPRR[8];
-  uint8_t RESERVED5[0x60];
-  __IO uint32_t IACTR[8];
-  uint8_t RESERVED6[0xE0];
-  __IO uint8_t IPRIOR[256];
-  uint8_t RESERVED7[0x810];
-  __IO uint32_t SCTLR;
+  __I  uint32_t       ISR[8];
+  __I  uint32_t       IPR[8];
+  __IO uint32_t       ITHRESDR;
+  __IO uint32_t       RESERVED;
+  __IO uint32_t       CFGR;
+  __I  uint32_t       GISR;
+  __IO uint8_t        VTFIDR[4];
+  uint8_t             RESERVED0[12];
+  __IO uint32_t       VTFADDR[4];
+  uint8_t             RESERVED1[0x90];
+  __O  uint32_t       IENR[8];
+  uint8_t             RESERVED2[0x60];
+  __O  uint32_t       IRER[8];
+  uint8_t             RESERVED3[0x60];
+  __O  uint32_t       IPSR[8];
+  uint8_t             RESERVED4[0x60];
+  __O  uint32_t       IPRR[8];
+  uint8_t             RESERVED5[0x60];
+  __IO uint32_t       IACTR[8];
+  uint8_t             RESERVED6[0xE0];
+  __IO uint8_t        IPRIOR[256];
+  uint8_t             RESERVED7[0x810];
+  __IO uint32_t       SCTLR;
 } PFIC_Type;
 
 /* memory mapped structure for SysTick */
 typedef struct
 {
-    __IO uint32_t CTLR;
-    __IO uint32_t SR;
-    union{
-      __IO uint64_t CNT;
-      struct{
+    __IO uint32_t     CTLR;
+    __IO uint32_t     SR;
+    union {
+      __IO uint64_t   CNT;
+      struct {
         __IO uint32_t CNTL;
         __IO uint32_t CNTH;
       };
     };
-    union{
-      __IO uint64_t CMP;
-      struct{
+    union {
+      __IO uint64_t   CMP;
+      struct {
         __IO uint32_t CMPL;
         __IO uint32_t CMPH;
       };
@@ -630,109 +615,109 @@ typedef struct
 {
     uint32_t          RESERVED00;
     union {
-      __IO uint32_t   D32_PIOC_SFR ; // RO/RW, PIOC SFR
+      __IO uint32_t   PIOC_SFR;
       struct {
-        __IO uint8_t  D8_INDIR_ADDR; // RO/RW, PIOC indirect address
-        __IO uint8_t  D8_TMR0_COUNT; // RO/RW, PIOC timer count
-        __IO uint8_t  D8_TMR0_CTRL; // RO/RW, PIOC timer control and GP bit
-        __IO uint8_t  D8_TMR0_INIT; // RO/RW, PIOC timer initial value
-      } ;
-    } ;
+        __IO uint8_t  INDIR_ADDR;
+        __IO uint8_t  TMR0_COUNT;
+        __IO uint8_t  TMR0_CTRL;
+        __IO uint8_t  TMR0_INIT;
+      };
+    };
     union {
-      __IO uint32_t   D32_PORT_CFG ; // RO/RW, port status and config
+      __IO uint32_t   PORT_CFG;
       struct {
-        __IO uint8_t  D8_BIT_CYCLE; // RO/RW, encode bit cycle
-        __IO uint8_t  D8_INDIR_ADDR2; // RO/RW, PIOC indirect address 2
-        __IO uint8_t  D8_PORT_DIR; // RO/RW, IO port direction and mode
-        __IO uint8_t  D8_PORT_IO; // RO/RW, IO port input and output
-      } ;
-    } ;
+        __IO uint8_t  BIT_CYCLE;
+        __IO uint8_t  INDIR_ADDR2;
+        __IO uint8_t  PORT_DIR;
+        __IO uint8_t  PORT_IO;
+      };
+    };
     uint32_t          RESERVED0C;
     uint32_t          RESERVED10;
     uint32_t          RESERVED14;
     uint32_t          RESERVED18;
     union {
-      __IO uint32_t   D32_DATA_CTRL ; // RW/RW, data control
+      __IO uint32_t   DATA_CTRL;
       struct {
-        __IO uint8_t  D8_SYS_CFG; // RW/RW, port config
-        __IO uint8_t  D8_CTRL_RD; // RO/RW, data for master read only and PIOC write only
-        __IO uint8_t  D8_CTRL_WR; // RW/RO, data for master write only and PIOC read only
-        __IO uint8_t  D8_DATA_EXCH; // RW/RW, data exchange
-      } ;
-    } ;
+        __IO uint8_t  SYS_CFG;
+        __IO uint8_t  CTRL_RD;
+        __IO uint8_t  CTRL_WR;
+        __IO uint8_t  DATA_EXCH;
+      };
+    };
     union {
-      __IO uint32_t   D32_DATA_REG0_3 ; // RW/RW, data buffer 0~3
+      __IO uint32_t   DATA_REG0_3;
       struct {
-        __IO uint8_t  D8_DATA_REG0; // RW/RW, data buffer 0
-        __IO uint8_t  D8_DATA_REG1; // RW/RW, data buffer 1
-        __IO uint8_t  D8_DATA_REG2; // RW/RW, data buffer 2
-        __IO uint8_t  D8_DATA_REG3; // RW/RW, data buffer 3
-      } ;
-      __IO uint16_t   D16_DATA_REG0_1 ; // RW/RW, data buffer 0~1
-    } ;
+        __IO uint8_t  DATA_REG0;
+        __IO uint8_t  DATA_REG1;
+        __IO uint8_t  DATA_REG2;
+        __IO uint8_t  DATA_REG3;
+      };
+      __IO uint16_t   DATA_REG0_1;
+    };
     union {
-      __IO uint32_t   D32_DATA_REG4_7 ; // RW/RW, data buffer 4~7
+      __IO uint32_t   DATA_REG4_7;
       struct {
-        __IO uint8_t  D8_DATA_REG4; // RW/RW, data buffer 4
-        __IO uint8_t  D8_DATA_REG5; // RW/RW, data buffer 5
-        __IO uint8_t  D8_DATA_REG6; // RW/RW, data buffer 6
-        __IO uint8_t  D8_DATA_REG7; // RW/RW, data buffer 7
-      } ;
-    } ;
+        __IO uint8_t  DATA_REG4;
+        __IO uint8_t  DATA_REG5;
+        __IO uint8_t  DATA_REG6;
+        __IO uint8_t  DATA_REG7;
+      };
+    };
     union {
-      __IO uint32_t   D32_DATA_REG8_11 ; // RW/RW, data buffer 8~11
+      __IO uint32_t   DATA_REG8_11;
       struct {
-        __IO uint8_t  D8_DATA_REG8; // RW/RW, data buffer 8
-        __IO uint8_t  D8_DATA_REG9; // RW/RW, data buffer 9
-        __IO uint8_t  D8_DATA_REG10; // RW/RW, data buffer 10
-        __IO uint8_t  D8_DATA_REG11; // RW/RW, data buffer 11
-      } ;
-    } ;
+        __IO uint8_t  DATA_REG8;
+        __IO uint8_t  DATA_REG9;
+        __IO uint8_t  DATA_REG10;
+        __IO uint8_t  DATA_REG11;
+      };
+    };
     union {
-      __IO uint32_t   D32_DATA_REG12_15 ; // RW/RW, data buffer 12~15
+      __IO uint32_t   DATA_REG12_15;
       struct {
-        __IO uint8_t  D8_DATA_REG12; // RW/RW, data buffer 12
-        __IO uint8_t  D8_DATA_REG13; // RW/RW, data buffer 13
-        __IO uint8_t  D8_DATA_REG14; // RW/RW, data buffer 14
-        __IO uint8_t  D8_DATA_REG15; // RW/RW, data buffer 15
-      } ;
-    } ;
+        __IO uint8_t  DATA_REG12;
+        __IO uint8_t  DATA_REG13;
+        __IO uint8_t  DATA_REG14;
+        __IO uint8_t  DATA_REG15;
+      };
+    };
     union {
-      __IO uint32_t   D32_DATA_REG16_19 ; // RW/RW, data buffer 16~19
+      __IO uint32_t   DATA_REG16_19;
       struct {
-        __IO uint8_t  D8_DATA_REG16; // RW/RW, data buffer 16
-        __IO uint8_t  D8_DATA_REG17; // RW/RW, data buffer 17
-        __IO uint8_t  D8_DATA_REG18; // RW/RW, data buffer 18
-        __IO uint8_t  D8_DATA_REG19; // RW/RW, data buffer 19
-      } ;
-    } ;
+        __IO uint8_t  DATA_REG16;
+        __IO uint8_t  DATA_REG17;
+        __IO uint8_t  DATA_REG18;
+        __IO uint8_t  DATA_REG19;
+      };
+    };
     union {
-      __IO uint32_t   D32_DATA_REG20_23 ; // RW/RW, data buffer 20~23
+      __IO uint32_t   DATA_REG20_23;
       struct {
-        __IO uint8_t  D8_DATA_REG20; // RW/RW, data buffer 20
-        __IO uint8_t  D8_DATA_REG21; // RW/RW, data buffer 21
-        __IO uint8_t  D8_DATA_REG22; // RW/RW, data buffer 22
-        __IO uint8_t  D8_DATA_REG23; // RW/RW, data buffer 23
-      } ;
-    } ;
+        __IO uint8_t  DATA_REG20;
+        __IO uint8_t  DATA_REG21;
+        __IO uint8_t  DATA_REG22;
+        __IO uint8_t  DATA_REG23;
+      };
+    };
     union {
-      __IO uint32_t   D32_DATA_REG24_27 ; // RW/RW, data buffer 24~27
+      __IO uint32_t   DATA_REG24_27;
       struct {
-        __IO uint8_t  D8_DATA_REG24; // RW/RW, data buffer 24
-        __IO uint8_t  D8_DATA_REG25; // RW/RW, data buffer 25
-        __IO uint8_t  D8_DATA_REG26; // RW/RW, data buffer 26
-        __IO uint8_t  D8_DATA_REG27; // RW/RW, data buffer 27
-      } ;
-    } ;
+        __IO uint8_t  DATA_REG24;
+        __IO uint8_t  DATA_REG25;
+        __IO uint8_t  DATA_REG26;
+        __IO uint8_t  DATA_REG27;
+      };
+    };
     union {
-      __IO uint32_t   D32_DATA_REG28_31 ; // RW/RW, data buffer 28~31
+      __IO uint32_t   DATA_REG28_31;
       struct {
-        __IO uint8_t  D8_DATA_REG28; // RW/RW, data buffer 28
-        __IO uint8_t  D8_DATA_REG29; // RW/RW, data buffer 29
-        __IO uint8_t  D8_DATA_REG30; // RW/RW, data buffer 30
-        __IO uint8_t  D8_DATA_REG31; // RW/RW, data buffer 31
-      } ;
-    } ;
+        __IO uint8_t  DATA_REG28;
+        __IO uint8_t  DATA_REG29;
+        __IO uint8_t  DATA_REG30;
+        __IO uint8_t  DATA_REG31;
+      };
+    };
 } PIOC_TypeDef;
 
 #endif
@@ -789,6 +774,8 @@ typedef struct
 #define USBPD_BASE                              (AHBPERIPH_BASE + 0x7000)
 
 #define OB_BASE                                 ((uint32_t)0x1FFFF800)
+#define PIOC_SRAM_BASE                          (SRAM_BASE+0x4000)
+#define PIOC_SFR_BASE                           PIOC_BASE
 
 /* Peripheral declaration */
 #define TIM2                                    ((TIM_TypeDef *)TIM2_BASE)
@@ -827,6 +814,7 @@ typedef struct
 #define USBFSH                                  ((USBFSH_TypeDef *)USBFS_BASE)
 #define OPA                                     ((OPA_TypeDef *)OPA_BASE)
 #define AWU                                     ((AWU_TypeDef *)AWU_BASE)
+#define PIOC                                    ((PIOC_TypeDef *)PIOC_BASE)
 #define USBPD                                   ((USBPD_TypeDef *)USBPD_BASE)
 
 #define OB                                      ((OB_TypeDef *)OB_BASE)
@@ -3247,124 +3235,50 @@ typedef struct
 /******************************************************************************/
 /*                                 PIOC                                       */
 /******************************************************************************/
-#define PIOC_SRAM_BASE      (SRAM_BASE+0x4000)        // PIOC code RAM base address
 
-#define PIOC_SFR_BASE       PIOC_BASE                 // PIOC SFR base address
+/******************  Bit definition for TMR0_CTRL register  *******************/
+#define PIOC_EN_LEVEL1                          ((uint8_t)0x80)    // RO/RW, enable IO1 level change to wakeup & action interrupt flag
+#define PIOC_EN_LEVEL0                          ((uint8_t)0x40)    // RO/RW, enable IO0 level change to wakeup & action interrupt flag
+#define PIOC_GP_BIT_Y                           ((uint8_t)0x20)    // RO/RW, general-purpose bit 1, reset by power on, no effect if system reset or RB_MST_RESET reset
+#define PIOC_GP_BIT_X                           ((uint8_t)0x10)    // RO/RW, general-purpose bit 0, reset by power on, no effect if system reset or RB_MST_RESET reset
+#define PIOC_TMR0_MODE                          ((uint8_t)0x08)    // RO/RW, timer mode: 0-timer, 1-PWM
+#define PIOC_TMR0_FREQ2                         ((uint8_t)0x04)    // RO/RW, timer clock frequency selection 2
+#define PIOC_TMR0_FREQ1                         ((uint8_t)0x02)    // RO/RW, timer clock frequency selection 1
+#define PIOC_TMR0_FREQ0                         ((uint8_t)0x01)    // RO/RW, timer clock frequency selection 0
 
-#define R32_PIOC_SFR        (*((volatile unsigned long *)(PIOC_SFR_BASE+0x04))) // RO/RW, PIOC SFR
+/******************  Bit definition for BIT_CYCLE register  *******************/
+#define PIOC_BIT_TX_IO0                         ((uint8_t)0x80)    // RO/RW, bit data for IO0 port encode output
+#define PIOC_BIT_CYCLE                          ((uint8_t)0x7F)    // RO/RW, IO0 port bit data cycle -1
 
-#define R8_INDIR_ADDR       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x04))) // RO/RW, PIOC indirect address
+/******************  Bit definition for PORT_DIR register  ********************/
+#define PIOC_PORT_MOD3                          ((uint8_t)0x80)    // RO/RW, IO port mode 3
+#define PIOC_PORT_MOD2                          ((uint8_t)0x40)    // RO/RW, IO port mode 2
+#define PIOC_PORT_MOD1                          ((uint8_t)0x20)    // RO/RW, IO port mode 1
+#define PIOC_PORT_MOD0                          ((uint8_t)0x10)    // RO/RW, IO port mode 0
+#define PIOC_PORT_PU1                           ((uint8_t)0x08)    // RO/RW, IO1 port pullup enable
+#define PIOC_PORT_PU0                           ((uint8_t)0x04)    // RO/RW, IO0 port pullup enable
+#define PIOC_PORT_DIR1                          ((uint8_t)0x02)    // RO/RW, IO1 port direction
+#define PIOC_PORT_DIR0                          ((uint8_t)0x01)    // RO/RW, IO0 port direction
 
-#define R8_TMR0_COUNT       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x05))) // RO/RW, PIOC timer count
+/*******************  Bit definition for PORT_IO register  ********************/
+#define PIOC_PORT_IN_XOR                        ((uint8_t)0x80)    // RO/RO, IO0 XOR IO1 port input
+#define PIOC_BIT_RX_I0                          ((uint8_t)0x40)    // RO/RO, decoced bit data for IO0 port received
+#define PIOC_PORT_IN1                           ((uint8_t)0x20)    // RO/RO, IO1 port input
+#define PIOC_PORT_IN0                           ((uint8_t)0x10)    // RO/RO, IO0 port input
+#define PIOC_PORT_XOR1                          ((uint8_t)0x08)    // RO/RO, IO1 port output XOR input
+#define PIOC_PORT_XOR0                          ((uint8_t)0x04)    // RO/RO, IO0 port output XOR input
+#define PIOC_PORT_OUT1                          ((uint8_t)0x02)    // RO/RW, IO1 port output
+#define PIOC_PORT_OUT0                          ((uint8_t)0x01)    // RO/RW, IO0 port output
 
-#define R8_TMR0_CTRL        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x06))) // RO/RW, PIOC timer control and GP bit
-#define  RB_EN_LEVEL1       0x80                      // RO/RW, enable IO1 level change to wakeup & action interrupt flag
-#define  RB_EN_LEVEL0       0x40                      // RO/RW, enable IO0 level change to wakeup & action interrupt flag
-#define  RB_GP_BIT_Y        0x20                      // RO/RW, general-purpose bit 1, reset by power on, no effect if system reset or RB_MST_RESET reset
-#define  RB_GP_BIT_X        0x10                      // RO/RW, general-purpose bit 0, reset by power on, no effect if system reset or RB_MST_RESET reset
-#define  RB_TMR0_MODE       0x08                      // RO/RW, timer mode: 0-timer, 1-PWM
-#define  RB_TMR0_FREQ2      0x04                      // RO/RW, timer clock frequency selection 2
-#define  RB_TMR0_FREQ1      0x02                      // RO/RW, timer clock frequency selection 1
-#define  RB_TMR0_FREQ0      0x01                      // RO/RW, timer clock frequency selection 0
-
-#define R8_TMR0_INIT        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x07))) // RO/RW, PIOC timer initial value
-
-
-#define R32_PORT_CFG        (*((volatile unsigned long *)(PIOC_SFR_BASE+0x08))) // RO/RW, port status and config
-
-#define R8_BIT_CYCLE        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x08))) // RO/RW, encode bit cycle
-#define  RB_BIT_TX_O0       0x80                      // RO/RW, bit data for IO0 port encode output
-#define  RB_BIT_CYCLE       0x7F                      // RO/RW, IO0 port bit data cycle -1
-
-#define R8_INDIR_ADDR2      (*((volatile unsigned char *)(PIOC_SFR_BASE+0x09))) // RO/RW, PIOC indirect address 2
-
-#define R8_PORT_DIR         (*((volatile unsigned char *)(PIOC_SFR_BASE+0x0A))) // RO/RW, IO port direction and mode
-//#define  RB_PORT_MOD3       0x80                      // RO/RW, IO port mode 3
-//#define  RB_PORT_MOD2       0x40                      // RO/RW, IO port mode 2
-//#define  RB_PORT_MOD1       0x20                      // RO/RW, IO port mode 1
-//#define  RB_PORT_MOD0       0x10                      // RO/RW, IO port mode 0
-//#define  RB_PORT_PU1        0x08                      // RO/RW, IO1 port pullup enable
-//#define  RB_PORT_PU0        0x04                      // RO/RW, IO0 port pullup enable
-#define  RB_PORT_DIR1       0x02                      // RO/RW, IO1 port direction
-#define  RB_PORT_DIR0       0x01                      // RO/RW, IO0 port direction
-
-#define R8_PORT_IO          (*((volatile unsigned char *)(PIOC_SFR_BASE+0x0B))) // RO/RW, IO port input and output
-#define  RB_PORT_IN_XOR     0x80                      // RO/RO, IO0 XOR IO1 port input
-#define  RB_BIT_RX_I0       0x40                      // RO/RO, decoced bit data for IO0 port received
-#define  RB_PORT_IN1        0x20                      // RO/RO, IO1 port input
-#define  RB_PORT_IN0        0x10                      // RO/RO, IO0 port input
-#define  RB_PORT_XOR1       0x08                      // RO/RO, IO1 port output XOR input
-#define  RB_PORT_XOR0       0x04                      // RO/RO, IO0 port output XOR input
-#define  RB_PORT_OUT1       0x02                      // RO/RW, IO1 port output
-#define  RB_PORT_OUT0       0x01                      // RO/RW, IO0 port output
-
-
-#define R32_DATA_CTRL       (*((volatile unsigned long *)(PIOC_SFR_BASE+0x1C))) // RW/RW, data control
-
-#define R8_SYS_CFG          (*((volatile unsigned char *)(PIOC_SFR_BASE+0x1C))) // RW/RW, port config
-#define  RB_INT_REQ         0x80                      // RO/RW, PIOC interrupt request action, set 1/0 by PIOC, clear 0 by master write R8_CTRL_RD (no effect)
-#define  RB_DATA_SW_MR      0x40                      // RO/RO, R8_CTRL_RD wait for read status, set 1 by PIOC write R8_CTRL_RD, clear 0 by master read R8_CTRL_RD
-#define  RB_DATA_MW_SR      0x20                      // RO/RO, R8_CTRL_WR wait for read status, set 1 by master write R8_CTRL_WR, clear 0 by PIOC read R8_CTRL_WR
-#define  RB_MST_CFG_B4      0x10                      // RW/RO, config inform bit, default 0
-#define  RB_MST_IO_EN1      0x08                      // RW/RO, IO1 switch enable, default 0
-#define  RB_MST_IO_EN0      0x04                      // RW/RO, IO0 switch enable, default 0
-#define  RB_MST_RESET       0x02                      // RW/RO, force PIOC reset, high action, default 0
-#define  RB_MST_CLK_GATE    0x01                      // RW/RO, PIOC global clock enable, high action, default 0
-
-#define R8_CTRL_RD          (*((volatile unsigned char *)(PIOC_SFR_BASE+0x1D))) // RO/RW, data for master read only and PIOC write only
-
-#define R8_CTRL_WR          (*((volatile unsigned char *)(PIOC_SFR_BASE+0x1E))) // RW/RO, data for master write only and PIOC read only
-
-#define R8_DATA_EXCH        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x1F))) // RW/RW, data exchange
-
-
-#define R32_DATA_REG0_3     (*((volatile unsigned long *)(PIOC_SFR_BASE+0x20))) // RW/RW, data buffer 0~3
-#define R8_DATA_REG0        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x20))) // RW/RW, data buffer 0
-#define R8_DATA_REG1        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x21))) // RW/RW, data buffer 1
-#define R8_DATA_REG2        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x22))) // RW/RW, data buffer 2
-#define R8_DATA_REG3        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x23))) // RW/RW, data buffer 3
-
-#define R32_DATA_REG4_7     (*((volatile unsigned long *)(PIOC_SFR_BASE+0x24))) // RW/RW, data buffer 4~7
-#define R8_DATA_REG4        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x24))) // RW/RW, data buffer 4
-#define R8_DATA_REG5        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x25))) // RW/RW, data buffer 5
-#define R8_DATA_REG6        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x26))) // RW/RW, data buffer 6
-#define R8_DATA_REG7        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x27))) // RW/RW, data buffer 7
-
-#define R32_DATA_REG8_11    (*((volatile unsigned long *)(PIOC_SFR_BASE+0x28))) // RW/RW, data buffer 8~11
-#define R8_DATA_REG8        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x28))) // RW/RW, data buffer 8
-#define R8_DATA_REG9        (*((volatile unsigned char *)(PIOC_SFR_BASE+0x29))) // RW/RW, data buffer 9
-#define R8_DATA_REG10       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x2A))) // RW/RW, data buffer 10
-#define R8_DATA_REG11       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x2B))) // RW/RW, data buffer 11
-
-#define R32_DATA_REG12_15   (*((volatile unsigned long *)(PIOC_SFR_BASE+0x2C))) // RW/RW, data buffer 12~15
-#define R8_DATA_REG12       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x2C))) // RW/RW, data buffer 12
-#define R8_DATA_REG13       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x2D))) // RW/RW, data buffer 13
-#define R8_DATA_REG14       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x2E))) // RW/RW, data buffer 14
-#define R8_DATA_REG15       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x2F))) // RW/RW, data buffer 15
-
-#define R32_DATA_REG16_19   (*((volatile unsigned long *)(PIOC_SFR_BASE+0x30))) // RW/RW, data buffer 16~19
-#define R8_DATA_REG16       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x30))) // RW/RW, data buffer 16
-#define R8_DATA_REG17       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x31))) // RW/RW, data buffer 17
-#define R8_DATA_REG18       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x32))) // RW/RW, data buffer 18
-#define R8_DATA_REG19       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x33))) // RW/RW, data buffer 19
-
-#define R32_DATA_REG20_23   (*((volatile unsigned long *)(PIOC_SFR_BASE+0x34))) // RW/RW, data buffer 20~23
-#define R8_DATA_REG20       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x34))) // RW/RW, data buffer 20
-#define R8_DATA_REG21       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x35))) // RW/RW, data buffer 21
-#define R8_DATA_REG22       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x36))) // RW/RW, data buffer 22
-#define R8_DATA_REG23       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x37))) // RW/RW, data buffer 23
-
-#define R32_DATA_REG24_27   (*((volatile unsigned long *)(PIOC_SFR_BASE+0x38))) // RW/RW, data buffer 24~27
-#define R8_DATA_REG24       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x38))) // RW/RW, data buffer 24
-#define R8_DATA_REG25       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x39))) // RW/RW, data buffer 25
-#define R8_DATA_REG26       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x3A))) // RW/RW, data buffer 26
-#define R8_DATA_REG27       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x3B))) // RW/RW, data buffer 27
-
-#define R32_DATA_REG28_31   (*((volatile unsigned long *)(PIOC_SFR_BASE+0x3C))) // RW/RW, data buffer 28~31
-#define R8_DATA_REG28       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x3C))) // RW/RW, data buffer 28
-#define R8_DATA_REG29       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x3D))) // RW/RW, data buffer 29
-#define R8_DATA_REG30       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x3E))) // RW/RW, data buffer 30
-#define R8_DATA_REG31       (*((volatile unsigned char *)(PIOC_SFR_BASE+0x3F))) // RW/RW, data buffer 31
+/*******************  Bit definition for SYS_CFG register  ********************/
+#define PIOC_INT_REQ                            ((uint8_t)0x80)    // RO/RW, PIOC interrupt request action, set 1/0 by PIOC, clear 0 by master write R8_CTRL_RD (no effect)
+#define PIOC_DATA_SW_MR                         ((uint8_t)0x40)    // RO/RO, R8_CTRL_RD wait for read status, set 1 by PIOC write R8_CTRL_RD, clear 0 by master read R8_CTRL_RD
+#define PIOC_DATA_MW_SR                         ((uint8_t)0x20)    // RO/RO, R8_CTRL_WR wait for read status, set 1 by master write R8_CTRL_WR, clear 0 by PIOC read R8_CTRL_WR
+#define PIOC_MST_CFG_B4                         ((uint8_t)0x10)    // RW/RO, config inform bit, default 0
+#define PIOC_MST_IO_EN1                         ((uint8_t)0x08)    // RW/RO, IO1 switch enable, default 0
+#define PIOC_MST_IO_EN0                         ((uint8_t)0x04)    // RW/RO, IO0 switch enable, default 0
+#define PIOC_MST_RESET                          ((uint8_t)0x02)    // RW/RO, force PIOC reset, high action, default 0
+#define PIOC_MST_CLK_GATE                       ((uint8_t)0x01)    // RW/RO, PIOC global clock enable, high action, default 0
 
 /******************************************************************************/
 /*               Programmable Fast Interrupt Controller (PFIC)                */
@@ -3582,6 +3496,121 @@ typedef struct
 #define USBFS_UH_RX_CTRL      USBFS_UEP2_CTRL
 #define USBFS_UH_TX_LEN       USBFS_UEP3_T_LEN
 #define USBFS_UH_TX_CTRL      USBFS_UEP3_CTRL
+
+/************************  AFIO->CTLR register aliases  **********************/
+#define USBFS_UDM_PUE         AFIO_CTLR_UDM_PUE                        /* PC16/UDM Pin pull-up Mode*/
+#define USBFS_UDM_PUE_1K5     AFIO_CTLR_UDM_PUE_1K5                    /* pull-up 1.5KΩ */
+#define USBFS_UDM_PUE_10K     AFIO_CTLR_UDM_PUE_10K                    /* pull-up 10KΩ */
+
+#define USBFS_UDP_PUE         AFIO_CTLR_UDP_PUE                        /* PC17/UDP Pin pull-up Mode*/
+#define USBFS_UDP_PUE_1K5     AFIO_CTLR_UDP_PUE_1K5                    /* pull-up 1.5KΩ */
+#define USBFS_UDP_PUE_10K     AFIO_CTLR_UDP_PUE_10K                    /* pull-up 10KΩ */
+
+#define USBFS_USB_PHY_V33     AFIO_CTLR_USB_PHY_V33                    /* USB transceiver PHY output and pull-up limiter configuration */
+#define USBFS_USB_IOEN        AFIO_CTLR_USB_IOEN                       /* USB Remap pin enable */
+
+/******************************************************************************/
+/*                             USBPD FUNCTION                                 */
+/******************************************************************************/
+
+/*****************************  CONFIG register  ******************************/
+#define USBPD_PD_FILT_EN                        ((uint16_t)0x0001)     // input filter enable on the PD pin
+#define USBPD_PD_ALL_CLR                        ((uint16_t)0x0002)     // clear all interrupt flags
+#define USBPD_CC_SEL                            ((uint16_t)0x0004)     // select current PD port (0:CC1, 1:CC2)
+#define USBPD_PD_DMA_EN                         ((uint16_t)0x0008)     // enable DMA function and DMA interrupt
+#define USBPD_PD_RST_EN                         ((uint16_t)0x0010)     // PD mode reset command enable
+#define USBPD_WAKE_POLAR                        ((uint16_t)0x0020)     // PD port wake-up level (0:active low, 1: active high)
+#define USBPD_IE_PD_IO                          ((uint16_t)0x0400)     // PD IO interrupt enable
+#define USBPD_IE_RX_BIT                         ((uint16_t)0x0800)     // receive bit interrupt enable
+#define USBPD_IE_RX_BYTE                        ((uint16_t)0x1000)     // receive byte interrupt enable
+#define USBPD_IE_RX_ACT                         ((uint16_t)0x2000)     // receive complete interrupt enable
+#define USBPD_IE_RX_RESET                       ((uint16_t)0x4000)     // receive reset interrupt enable
+#define USBPD_IE_TX_END                         ((uint16_t)0x8000)     // transmit end interrupt enable
+
+/*****************************  CONTROL register  *****************************/
+#define USBPD_PD_TX_EN                          ((uint8_t)0x01)        // PD mode (0: RX enable, 1: TX enable)
+#define USBPD_BMC_START                         ((uint8_t)0x02)        // BMC transmit start signal
+#define USBPD_RX_STATE                          ((uint8_t)0x1c)        // PD receive status identification
+#define USBPD_DATA_FLAG                         ((uint8_t)0x20)        // cache data valid flag bit
+#define USBPD_TX_BIT_BACK                       ((uint8_t)0x40)        // current bit status of the BMC (0: idle, 1: BMC byte is being transmitted)
+#define USBPD_BMC_BYTE_HI                       ((uint8_t)0x80)        // current half-byte status PD data (0: low nibble, 1: high nibble)
+
+#define USBPD_RX_STATE_INIT                     ((uint8_t)0x00)        // receive initial status
+#define USBPD_RX_STATE_START                    ((uint8_t)0x04)        // start receiving SOP
+#define USBPD_RX_STATE_RESET                    ((uint8_t)0x08)        // receive reset
+#define USBPD_RX_STATE_SOP                      ((uint8_t)0x0c)        // receive SOP
+#define USBPD_RX_STATE_END                      ((uint8_t)0x10)        // receive end
+#define USBPD_RX_STATE_UNUSED                   ((uint8_t)0x14)        // receive unused
+#define USBPD_RX_STATE_EOP                      ((uint8_t)0x18)        // receive EOP
+#define USBPD_RX_STATE_BYTE                     ((uint8_t)0x1c)        // receive byte
+
+/******************************  TX_SEL register  ******************************/
+#define USBPD_TX_SEL1                           ((uint8_t)0x01)        // K-CODE1 type selection in PD transmit mode
+#define USBPD_TX_SEL2                           ((uint8_t)0x0c)        // K-CODE2 type selection in PD transmit mode
+#define USBPD_TX_SEL3                           ((uint8_t)0x30)        // K-CODE3 type selection in PD transmit mode
+#define USBPD_TX_SEL4                           ((uint8_t)0xc0)        // K-CODE4 type selection in PD transmit mode
+
+#define USBPD_TX_SEL1_SYNC1                     ((uint8_t)0x00)        // SYNC1
+#define USBPD_TX_SEL1_RST1                      ((uint8_t)0x01)        // RST1
+#define USBPD_TX_SEL2_SYNC1                     ((uint8_t)0x00)        // SYNC1
+#define USBPD_TX_SEL2_SYNC3                     ((uint8_t)0x04)        // SYNC3
+#define USBPD_TX_SEL2_RST1                      ((uint8_t)0x08)        // RST1
+#define USBPD_TX_SEL3_SYNC1                     ((uint8_t)0x00)        // SYNC1
+#define USBPD_TX_SEL3_SYNC3                     ((uint8_t)0x10)        // SYNC3
+#define USBPD_TX_SEL3_RST1                      ((uint8_t)0x20)        // RST1
+#define USBPD_TX_SEL4_SYNC2                     ((uint8_t)0x00)        // SYNC2
+#define USBPD_TX_SEL4_SYNC3                     ((uint8_t)0x40)        // SYNC3
+#define USBPD_TX_SEL4_RST1                      ((uint8_t)0x80)        // RST2
+
+#define USBPD_TX_SOP0         (USBPD_TX_SEL1_SYNC1 | USBPD_TX_SEL2_SYNC1 | USBPD_TX_SEL3_SYNC1 | USBPD_TX_SEL4_SYNC2) // Start of Packet Sequence
+#define USBPD_TX_SOP1         (USBPD_TX_SEL1_SYNC1 | USBPD_TX_SEL2_SYNC1 | USBPD_TX_SEL3_SYNC3 | USBPD_TX_SEL4_SYNC3) // Start of Packet Sequence Prime
+#define USBPD_TX_SOP2         (USBPD_TX_SEL1_SYNC1 | USBPD_TX_SEL2_SYNC3 | USBPD_TX_SEL3_SYNC1 | USBPD_TX_SEL4_SYNC3) // Start of Packet Sequence Double Prime
+#define USBPD_TX_HARD_RESET   (USBPD_TX_SEL1_RST1  | USBPD_TX_SEL2_RST1  | USBPD_TX_SEL3_RST1  | USBPD_TX_SEL4_RST2 ) // Hard Reset
+#define USBPD_TX_CABLE_RESET  (USBPD_TX_SEL1_RST1  | USBPD_TX_SEL2_SYNC1 | USBPD_TX_SEL3_RST1  | USBPD_TX_SEL4_SYNC3) // Cable Reset
+
+/******************************  STATUS register  ******************************/
+#define USBPD_BMC_AUX                           ((uint8_t)0x03)        // current PD status
+#define USBPD_BUF_ERR                           ((uint8_t)0x04)        // BUFFER or DMA error interrupt flag, write 1 to clear
+#define USBPD_IF_RX_BIT                         ((uint8_t)0x08)        // receive bit or 5bit interrupt flag, write 1 to clear
+#define USBPD_IF_RX_BYTE                        ((uint8_t)0x10)        // receive byte or SOP interrupt flag, write 1 to clear
+#define USBPD_IF_RX_ACT                         ((uint8_t)0x20)        // receive complete interrupt flag, write 1 to clear
+#define USBPD_IF_RX_RESET                       ((uint8_t)0x40)        // receive reset interrupt flag, write 1 to clear
+#define USBPD_IF_TX_END                         ((uint8_t)0x80)        // transmit complete interrupt flag, write 1 to clear
+
+#define USBPD_BMC_AUX_INVALID                   ((uint8_t)0x00)        // reception idle or no valid packet received
+#define USBPD_BMC_AUX_SOP0                      ((uint8_t)0x01)        // SOP received i.e. SOP0
+#define USBPD_BMC_AUX_SOP1_HRST                 ((uint8_t)0x02)        // SOP received i.e. SOP1 or hard reset
+#define USBPD_BMC_AUX_SOP2_CRST                 ((uint8_t)0x03)        // SOP received i.e. SOP2 or cable reset
+
+#define USBPD_BMC_AUX_CRC0                      ((uint8_t)0x00)        // CRC32[ 7: 0] is being transmitted
+#define USBPD_BMC_AUX_CRC1                      ((uint8_t)0x01)        // CRC32[15: 8] is being transmitted
+#define USBPD_BMC_AUX_CRC2                      ((uint8_t)0x02)        // CRC32[23:16] is being transmitted
+#define USBPD_BMC_AUX_CRC3                      ((uint8_t)0x03)        // CRC32[31:24] is being transmitted
+
+/*****************************  PORT_CCx register  *****************************/
+#define USBPD_PA_CC_AI                          ((uint16_t)0x0001)     // CCx port comparator analog input
+#define USBPD_CC_PD                             ((uint16_t)0x0002)     // CCx port pull-down enable
+#define USBPD_CC_PU                             ((uint16_t)0x000c)     // CCx port pull-up current selection
+#define USBPD_CC_LVE                            ((uint16_t)0x0010)     // CCx port output low voltage enable
+#define USBPD_CC_CE                             ((uint16_t)0x00e0)     // CCx voltage comparator enable
+
+#define USBPD_CC_PU_CLR                         ((uint16_t)0x000c)     // CCx port pull-up current selection
+#define USBPD_CC_PU_NO                          ((uint16_t)0x0000)     // pull-up current disable
+#define USBPD_CC_PU_330                         ((uint16_t)0x0004)     // 330uA
+#define USBPD_CC_PU_180                         ((uint16_t)0x0008)     // 180uA
+#define USBPD_CC_PU_80                          ((uint16_t)0x000c)     //  80uA
+
+#define USBPD_CC_CMP_NO                         ((uint16_t)0x0000)     // CCx voltage comparator disable
+#define USBPD_CC_CMP_22                         ((uint16_t)0x0040)     // 0.22V
+#define USBPD_CC_CMP_43                         ((uint16_t)0x0060)     // 0.43V
+#define USBPD_CC_CMP_55                         ((uint16_t)0x0080)     // 0.55V
+#define USBPD_CC_CMP_66                         ((uint16_t)0x00a0)     // 0.66V
+#define USBPD_CC_CMP_96                         ((uint16_t)0x00c0)     // 0.96V
+#define USBPD_CC_CMP_123                        ((uint16_t)0x00e0)     // 1.23V
+
+/*************************  AFIO->CTLR register aliases  ***********************/
+#define USBPD_IN_HVT          AFIO_CTLR_USBPD_IN_HVT                   // PD pin PC14/PC15 high threshold input mode
+#define USBPD_PHY_V33         AFIO_CTLR_USBPD_PHY_V33                  // USBPD transceiver PHY output and pull-up limiter configuration
 
 #ifdef __cplusplus
 }

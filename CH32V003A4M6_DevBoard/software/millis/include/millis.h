@@ -21,7 +21,6 @@
 extern "C" {
 #endif
 
-#include <stdio.h>
 #include "system.h"
 
 #if SYS_USE_VECTORS == 0

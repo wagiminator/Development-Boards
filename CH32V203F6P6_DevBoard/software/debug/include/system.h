@@ -108,9 +108,9 @@ extern "C" {
 #define SYS_CLK_INIT      1         // 1: init system clock on startup
 #define SYS_TICK_INIT     1         // 1: init and start SYSTICK on startup
 #define SYS_GPIO_EN       1         // 1: enable GPIO ports on startup
-#define SYS_USE_HSE       0         // 1: use external crystal
 #define SYS_CLEAR_BSS     0         // 1: clear uninitialized variables
 #define SYS_USE_VECTORS   0         // 1: create interrupt vector table
+#define SYS_USE_HSE       0         // 1: use external crystal
 
 // ===================================================================================
 // Sytem Clock Defines
@@ -284,14 +284,25 @@ void STDBY_WFE_now(void);   // put device into standby (deep sleep), wake up eve
 // Save interrupt status and disable interrupts
 static inline uint32_t __iSave(void) {
   uint32_t result;
-  __asm volatile("csrr %0, 0x800" : "=r" (result));
-  __asm volatile("csrw 0x800, %0" :: "r" (0x6000));
+  __asm volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, 0x800       \n"
+    "csrw 0x800, %1       \n"
+    : "=&r" (result) : "r" (0x6000)
+  );
   return result;
 }
 
 // Restore interrupt status
 static inline void __iRestore(const uint32_t *__s) {
-  __asm volatile("csrw 0x800, %0" :: "r" (*__s));
+  __asm volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw 0x800, %0" : : "r" (*__s)
+  );
 }
 
 // ===================================================================================
@@ -299,12 +310,22 @@ static inline void __iRestore(const uint32_t *__s) {
 // ===================================================================================
 // Enable Global Interrupt
 static inline void __enable_irq(void) {
-  __asm volatile ("csrw 0x800, %0" : : "r" (0x6088) );
+  __asm volatile (
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw 0x800, %0" : : "r" (0x6088)
+  );
 }
 
 // Disable Global Interrupt
 static inline void __disable_irq(void) {
-  __asm volatile ("csrw 0x800, %0" : : "r" (0x6000) );
+  __asm volatile (
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw 0x800, %0" : : "r" (0x6000)
+  );
 }
 
 // No OPeration
@@ -389,108 +410,188 @@ static inline void NVIC_SystemReset(void) {
 // Return the Machine Status Register
 static inline uint32_t __get_MSTATUS(void) {
   uint32_t result;
-  __ASM volatile("csrr %0," "mstatus": "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mstatus" : "=r" (result)
+  );
+  return result;
 }
 
 // Set the Machine Status Register
 static inline void __set_MSTATUS(uint32_t value) {
-  __ASM volatile("csrw mstatus, %0" : : "r"(value));
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw mstatus, %0" : : "r" (value)
+  );
 }
 
 // Return the Machine ISA Register
 static inline uint32_t __get_MISA(void) {
   uint32_t result;
-  __ASM volatile("csrr %0,""misa" : "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, misa" : "=r" (result)
+  );
+  return result;
 }
 
 // Set the Machine ISA Register
 static inline void __set_MISA(uint32_t value) {
-  __ASM volatile("csrw misa, %0" : : "r"(value));
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw misa, %0" : : "r" (value)
+  );
 }
 
 // Return the Machine Trap-Vector Base-Address Register
 static inline uint32_t __get_MTVEC(void) {
   uint32_t result;
-  __ASM volatile("csrr %0," "mtvec": "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mtvec" : "=r" (result)
+  );
+  return result;
 }
 
 // Set the Machine Trap-Vector Base-Address Register
 static inline void __set_MTVEC(uint32_t value) {
-  __ASM volatile("csrw mtvec, %0":: "r"(value));
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw mtvec, %0" : : "r" (value)
+  );
 }
 
 // Return the Machine Seratch Register
 static inline uint32_t __get_MSCRATCH(void) {
   uint32_t result;
-  __ASM volatile("csrr %0," "mscratch" : "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mscratch" : "=r" (result)
+  );
+  return result;
 }
 
 // Set the Machine Seratch Register
 static inline void __set_MSCRATCH(uint32_t value) {
-  __ASM volatile("csrw mscratch, %0" : : "r"(value));
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw mscratch, %0" : : "r" (value)
+  );
 }
 
 // Return the Machine Exception Program Register
 static inline uint32_t __get_MEPC(void) {
   uint32_t result;
-  __ASM volatile("csrr %0," "mepc" : "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mepc" : "=r" (result)
+  );
+  return result;
 }
 
 // Set the Machine Exception Program Register
 static inline void __set_MEPC(uint32_t value) {
-  __ASM volatile("csrw mepc, %0" : : "r"(value));
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw mepc, %0" : : "r" (value)
+  );
 }
 
 // Return the Machine Cause Register
 static inline uint32_t __get_MCAUSE(void) {
   uint32_t result;
-  __ASM volatile("csrr %0," "mcause": "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mcause" : "=r" (result)
+  );
+  return result;
 }
 
 // Set the Machine Cause Register
 static inline void __set_MCAUSE(uint32_t value) {
-  __ASM volatile("csrw mcause, %0":: "r"(value));
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrw mcause, %0" : : "r" (value)
+  );
 }
 
 // Return Vendor ID Register
 static inline uint32_t __get_MVENDORID(void) {
   uint32_t result;
-  __ASM volatile("csrr %0,""mvendorid": "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mvendorid" : "=r" (result)
+  );
+  return result;
 }
 
 // Return Machine Architecture ID Register
 static inline uint32_t __get_MARCHID(void) {
   uint32_t result;
-  __ASM volatile("csrr %0,""marchid": "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, marchid" : "=r" (result)
+  );
+  return result;
 }
 
 // Return Machine Implementation ID Register
 static inline uint32_t __get_MIMPID(void) {
   uint32_t result;
-  __ASM volatile("csrr %0,""mimpid": "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mimpid" : "=r" (result)
+  );
+  return result;
 }
 
 // Return Hart ID Register
 static inline uint32_t __get_MHARTID(void) {
   uint32_t result;
-  __ASM volatile("csrr %0,""mhartid": "=r"(result));
-  return (result);
+  __ASM volatile(
+    #if __GNUC__ > 10
+    ".option arch, +zicsr \n"
+    #endif
+    "csrr %0, mhartid" : "=r" (result)
+  );
+  return result;
 }
 
 // Return SP Register
 static inline uint32_t __get_SP(void) {
   uint32_t result;
-  __ASM volatile("mv %0,""sp": "=r"(result):);
-  return (result);
+  __ASM volatile("mv %0, sp" : "=r" (result));
+  return result;
 }
 
 #ifdef __cplusplus

@@ -326,8 +326,11 @@ void reset_handler(void) {
     .option norelax           \n\
     la gp, __global_pointer$  \n\
     .option pop               \n\
-    la sp, _eusrstack         \n\
-    li a0, 0x1f               \n\
+    la sp, _eusrstack         \n"
+    #if __GNUC__ > 10
+    ".option arch, +zicsr     \n"
+    #endif
+  " li a0, 0x1f               \n\
     csrw 0xbc0, a0            \n\
     li a0, 0x88               \n\
     csrs mstatus, a0          \n\

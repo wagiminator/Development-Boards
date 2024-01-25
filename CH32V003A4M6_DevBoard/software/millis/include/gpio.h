@@ -112,36 +112,36 @@ enum{ PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
 // Set PIN as INPUT with internal PULLUP resistor
 // ===================================================================================
 #define PIN_input_PU(PIN) \
-  ((PIN>=PA0)&&(PIN<=PA7) ? ( GPIOA->CFGLR  =  (GPIOA->CFGLR                         \
+  ((PIN>=PA0)&&(PIN<=PA7) ? ({GPIOA->CFGLR  =  (GPIOA->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
-                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOA->BSHR   =  ((uint32_t)1<<((PIN)&7))          ) : \
-  ((PIN>=PC0)&&(PIN<=PC7) ? ( GPIOC->CFGLR  =  (GPIOC->CFGLR                         \
+                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2));   \
+                              GPIOA->BSHR   =  ((uint32_t)1<<((PIN)&7));        }) : \
+  ((PIN>=PC0)&&(PIN<=PC7) ? ({GPIOC->CFGLR  =  (GPIOC->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
-                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOC->BSHR   =  ((uint32_t)1<<((PIN)&7))          ) : \
-  ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR  =  (GPIOD->CFGLR                         \
+                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2));   \
+                              GPIOC->BSHR   =  ((uint32_t)1<<((PIN)&7));        }) : \
+  ((PIN>=PD0)&&(PIN<=PD7) ? ({GPIOD->CFGLR  =  (GPIOD->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
-                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOD->BSHR   =  ((uint32_t)1<<((PIN)&7))          ) : \
+                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2));   \
+                              GPIOD->BSHR   =  ((uint32_t)1<<((PIN)&7));        }) : \
 (0))))
 
 // ===================================================================================
 // Set PIN as INPUT with internal PULLDOWN resistor
 // ===================================================================================
 #define PIN_input_PD(PIN) \
-  ((PIN>=PA0)&&(PIN<=PA7) ? ( GPIOA->CFGLR  =  (GPIOA->CFGLR                         \
+  ((PIN>=PA0)&&(PIN<=PA7) ? ({GPIOA->CFGLR  =  (GPIOA->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
-                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOA->BCR    =  ((uint32_t)1<<((PIN)&7))          ) : \
-  ((PIN>=PC0)&&(PIN<=PC7) ? ( GPIOC->CFGLR  =  (GPIOC->CFGLR                         \
+                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2));   \
+                              GPIOA->BCR    =  ((uint32_t)1<<((PIN)&7));        }) : \
+  ((PIN>=PC0)&&(PIN<=PC7) ? ({GPIOC->CFGLR  =  (GPIOC->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
-                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOC->BCR    =  ((uint32_t)1<<((PIN)&7))          ) : \
-  ((PIN>=PD0)&&(PIN<=PD7) ? ( GPIOD->CFGLR  =  (GPIOD->CFGLR                         \
+                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2));   \
+                              GPIOC->BCR    =  ((uint32_t)1<<((PIN)&7));        }) : \
+  ((PIN>=PD0)&&(PIN<=PD7) ? ({GPIOD->CFGLR  =  (GPIOD->CFGLR                         \
                                             & ~((uint32_t)0b1111<<(((PIN)&7)<<2)))   \
-                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2)),   \
-                              GPIOD->BCR    =  ((uint32_t)1<<((PIN)&7))          ) : \
+                                            |  ((uint32_t)0b1000<<(((PIN)&7)<<2));   \
+                              GPIOD->BCR    =  ((uint32_t)1<<((PIN)&7));        }) : \
 (0))))
 
 // ===================================================================================

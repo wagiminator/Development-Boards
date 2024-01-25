@@ -39,7 +39,7 @@
 int main(void) {
   // Setup
   PIN_output(PIN_LED);                            // set LED pin to output
-  
+
   // Loop
   while(1) {
     PIN_toggle(PIN_LED);                          // toggle LED
