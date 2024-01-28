@@ -8,7 +8,7 @@ Development board for the CH32X033F8P6 low-cost 32-bit RISC-V microcontroller wi
 
 # The CH32X033 32-bit RISC-V USB Microcontroller
 ## Overview
-CH32X033 is a low-cost microcontroller that utilizes the QingKe 32-bit RISC-V4C core, supporting the RV32IMAC instruction set along with self-extending instructions. This microcontroller comes with a built-in USB PHY and supports USB2.0 full-speed device functions. It features a programmable protocol I/O controller (PIOC), 2 groups of operational amplifiers (OPA), 2 groups of analog comparators (CMP), 4 groups of USART, I2C, SPI, multiple timers, a 12-bit ADC, a 10-channel Touchkey, and various other peripheral resources. The device can operate at clock frequencies of up to 48MHz and is compatible with a supply voltage range of 2.0V to 5.5V. The CH32X033 includes 62KB of flash, 20KB of SRAM, and an embedded USB bootloader.
+CH32X033 is a low-cost microcontroller that utilizes the QingKe 32-bit RISC-V4C core, supporting the RV32IMAC instruction set along with self-extending instructions. This microcontroller comes with a built-in USB PHY and supports USB2.0 full-speed device functions. It features a programmable protocol I/O controller (PIOC), 2 groups of operational amplifiers (OPA) with programmable gain (PGA), 2 groups of analog comparators (CMP), a 12-bit analog-to-digital converter (ADC), a 10-channel touch-key controller, 4 groups of USART, I2C, SPI, multiple timers, and various other peripheral resources. The device can operate at clock frequencies of up to 48MHz and is compatible with a supply voltage range of 2.0V to 5.5V. The CH32X033 includes 62KB of flash, 20KB of SRAM, and an embedded USB bootloader.
 
 ## Features
 - Qingke 32-bit RISC-V4C processor, RV32IMAC instruction set
@@ -23,7 +23,7 @@ CH32X033 is a low-cost microcontroller that utilizes the QingKe 32-bit RISC-V4C 
 - 2x operational amplifier (OPA) with programmable gain (PGA)
 - 2x analog comparator (CMP)
 - 1x 11-channel 12-bit analog-to-digital converter (ADC)
-- 1x 10-channel Touch-Key detection
+- 1x 10-channel touch-key detection
 - 2x 16-bit advanced-control timer with complementary output and dead time control
 - 1x 16-bit general-purpose timer with input capture
 - 2x watchdog timers (independent and window)
@@ -36,6 +36,9 @@ CH32X033 is a low-cost microcontroller that utilizes the QingKe 32-bit RISC-V4C 
 - 96-bit unique chip ID
 - Serial 2-wire debug interface
 - Factory built-in USB bootloader
+
+## Other Family Members
+![CH32X035_family.png](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32X033F8P6_DevBoard/documentation/CH32X035_family.png)
 
 # Programming and Debugging
 There are two ways to program the microcontroller: via USB using the built-in bootloader and via the serial 2-wire debug interface using a WCH-LinkE programming device.
