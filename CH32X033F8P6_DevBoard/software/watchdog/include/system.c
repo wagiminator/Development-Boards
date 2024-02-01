@@ -16,7 +16,6 @@
 // Setup Microcontroller (this function is called automatically at startup)
 // ===================================================================================
 void SYS_init(void) {
-  RCC->CTLR  |= (uint32_t)0x00000001;
 
   // Init system clock
   #if SYS_CLK_INIT > 0
@@ -28,8 +27,6 @@ void SYS_init(void) {
       FLASH->ACTLR = FLASH_ACTLR_LATENCY_2;
     #endif
     RCC->CFGR0 = SYS_CLK_DIV;
-  #else
-    RCC->CFGR0 = (uint32_t)0x00000050;
   #endif
 
   // Init SYSTICK

@@ -135,7 +135,7 @@ extern "C" {
   #define SYS_CLK_DIV     RCC_HPRE_DIV256
 #else
   #warning Unsupported system clock frequency, using internal 8 MHz
-  #define SYS_CLK_DIV     RCC_HPRE_DIV1
+  #define SYS_CLK_DIV     RCC_HPRE_DIV6
   #undef  F_CPU
   #define F_CPU           8000000
 #endif
