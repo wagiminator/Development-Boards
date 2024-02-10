@@ -1,16 +1,25 @@
-/*--------------------------------------------------------------------------
-CH554.H
-Header file for CH554 microcontrollers.
-****************************************
+// ===================================================================================
+// Header File for CH551, CH552 and CH554 Microcontrollers                    * v1.0 *
+// ===================================================================================
+// This contains a copy of CH554.H
+/***************************************
 **  Copyright  (C)  W.ch  1999-2014   **
 **  Web:              http://wch.cn   **
-****************************************
---------------------------------------------------------------------------*/
+***************************************/
 
-#ifndef __CH554_H__
-#define __CH554_H__
+#pragma once
+#include <stdint.h>
 
-#include <compiler.h>
+typedef unsigned char volatile __xdata    UINT8XV;
+typedef unsigned char volatile __pdata    UINT8PV;
+
+#define SBIT(name, addr, bit)  __sbit  __at(addr+bit) name
+#define SFR(name, addr)        __sfr   __at(addr) name
+#define SFRX(name, addr)       __xdata volatile unsigned char __at(addr) name
+#define SFR16(name, addr)      __sfr16 __at(((addr+1U)<<8) | addr) name
+#define SFR16E(name, fulladdr) __sfr16 __at(fulladdr) name
+#define SFR32(name, addr)      __sfr32 __at(((addr+3UL)<<24) | ((addr+2UL)<<16) | ((addr+1UL)<<8) | addr) name
+#define SFR32E(name, fulladdr) __sfr32 __at(fulladdr) name
 
 /*----- SFR --------------------------------------------------------------*/
 /*  sbit are bit addressable, others are byte addressable */
@@ -748,5 +757,3 @@ ASM example:
        .DB  0xA5    ;MOVX @DPTR1,A & INC DPTR1
        DJNZ R7,LOOP
 */
-
-#endif  // __CH554_H__

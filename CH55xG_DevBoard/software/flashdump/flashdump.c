@@ -46,7 +46,7 @@
 // Libraries
 #include "src/system.h"                   // system functions
 #include "src/delay.h"                    // delay functions
-#include "src/flash.h"                    // data flash functions
+#include "src/eeprom.h"                   // data flash functions
 #include "src/usb_cdc.h"                  // USB-CDC serial functions
 
 // Prototypes for used interrupts
@@ -88,7 +88,7 @@ void main(void) {
     for(j=8; j; j--) {
       printByte(0); printByte(addr); CDC_print(": ");
       for(i=16; i; i--) {
-        printByte(FLASH_read(addr++)); CDC_write(' ');
+        printByte(EEPROM_read(addr++)); CDC_write(' ');
       }
       CDC_println("");
     }

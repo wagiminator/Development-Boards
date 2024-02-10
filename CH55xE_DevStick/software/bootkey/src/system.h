@@ -1,29 +1,36 @@
 // ===================================================================================
-// Basic System Functions for CH551, CH552 and CH554                          * v1.5 *
+// Basic System Functions for CH551, CH552 and CH554                          * v1.6 *
 // ===================================================================================
 //
-// Functions available:
-// --------------------
+// System clock (CLK)functions available:
+// --------------------------------------
 // CLK_config()             set system clock frequency according to F_CPU
 // CLK_external()           set external crystal as clock source
 // CLK_internal()           set internal oscillator as clock source
 //
+// Watchdog Timer (WDT) functions available:
+// -----------------------------------------
 // WDT_start()              start watchdog timer with full period
 // WDT_stop()               stop watchdog timer
 // WDT_reset()              reload watchdog timer with full period
 // WDT_set(time)            reload watchdog timer with specified time in ms
 // WDT_feed(value)          reload watchdog timer with specified value
 //
-// BOOT_now()               enter bootloader
-// SLEEP_now()              put device into sleep
+// Reset (RST) and bootloader functions available:
+// -----------------------------------------------
 // RST_now()                perform software reset
-//
 // RST_keep(value)          keep this value after RESET
 // RST_getKeep()            read the keeped value
 // RST_wasWDT()             check if last RESET was caused by watchdog timer
 // RST_wasPIN()             check if last RESET was caused by RST PIN
 // RST_wasPWR()             check if last RESET was caused by power-on
 // RST_wasSOFT()            check if last RESET was caused by software
+//
+// BOOT_now()               enter bootloader
+//
+// Sleep functions available:
+// --------------------------
+// SLEEP_now()              put device into sleep
 //
 // WAKE_enable(source)      enable wake-up from sleep source (sources see below)
 // WAKE_disable(source)     disable wake-up from sleep source
@@ -58,6 +65,12 @@
 // WAKE_RST                 wake-up by pin RST high level
 // WAKE_INT                 wake-up by pin P3.2 edge or pin P3.3 low level
 //
+// Interrupt (INT) functions available:
+// ------------------------------------
+// INT_enable()             global interrupt enable
+// INT_disable()            global interrupt disable
+// INT_ATOMIC_BLOCK { }     execute block without being interrupted
+//
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
 #pragma once
@@ -65,7 +78,7 @@
 #include "ch554.h"
 
 // ===================================================================================
-// System Clock
+// System Clock (CLK) Functions
 // ===================================================================================
 inline void CLK_config(void) {
   SAFE_MOD = 0x55;
@@ -117,7 +130,7 @@ inline void CLK_inernal(void) {
 }
 
 // ===================================================================================
-// Watchdog Timer
+// Watchdog Timer (WDT) Functions
 // ===================================================================================
 #define WDT_reset()       WDOG_COUNT = 0
 #define WDT_feed(value)   WDOG_COUNT = value
@@ -139,7 +152,7 @@ inline void WDT_stop(void) {
 }
 
 // ===================================================================================
-// Reset
+// Reset (RST) Functions
 // ===================================================================================
 #define RST_keep(value)   RESET_KEEP = value
 #define RST_getKeep()     (RESET_KEEP)
@@ -155,7 +168,7 @@ inline void RST_now(void) {
 }
 
 // ===================================================================================
-// Bootloader
+// Bootloader (BOOT) Functions
 // ===================================================================================
 inline void BOOT_now(void) {
   __asm
@@ -176,7 +189,7 @@ inline void BOOT_prepare(void) {
 }
 
 // ===================================================================================
-// Sleep
+// Sleep Functions
 // ===================================================================================
 #define SLEEP_now()   PCON |= PD
 
@@ -210,3 +223,10 @@ inline void BOOT_prepare(void) {
 #define WAKE_P15_disable()      WAKE_CTRL &= ~bWAK_P1_5_LO
 #define WAKE_RST_disable()      WAKE_CTRL &= ~bWAK_RST_HI
 #define WAKE_INT_disable()      WAKE_CTRL &= ~bWAK_P3_2E_3L
+
+// ===================================================================================
+// Interrupt (INT) Functions
+// ===================================================================================
+#define INT_enable()        EA = 1
+#define INT_disable()       EA = 0
+#define INT_ATOMIC_BLOCK    for(EA=0;!EA;EA=1)

@@ -1,18 +1,15 @@
 // ===================================================================================
-// Basic USB CDC Functions for CH551, CH552 and CH554                         * v1.2 *
+// Basic USB CDC Functions for CH551, CH552 and CH554                         * v1.5 *
 // ===================================================================================
 
-#include "ch554.h"
 #include "usb_cdc.h"
-#include "usb_descr.h"
-#include "usb_handler.h"
 
 // ===================================================================================
 // Variables and Defines
 // ===================================================================================
 
 // Initialize line coding
-__xdata CDC_LINE_CODING_TYPE CDC_lineCodingB = {
+__xdata CDC_LINE_CODING_TYPE CDC_lineCoding = {
   .baudrate = 115200,       // baudrate 115200
   .stopbits = 0,            // 1 stopbit
   .parity   = 0,            // no parity
@@ -30,64 +27,50 @@ volatile __bit CDC_writeBusyFlag = 0;               // flag of whether upload po
 #define SET_LINE_CODING         0x20  // host configures line coding
 #define GET_LINE_CODING         0x21  // host reads configured line coding
 #define SET_CONTROL_LINE_STATE  0x22  // generates RS-232/V.24 style control signals
+#define SEND_BREAK              0x23  // send break
 
 // ===================================================================================
 // Front End Functions
 // ===================================================================================
 
-// Setup USB-CDC
-void CDC_init(void) {
-  USB_init();
-  UEP1_T_LEN  = 0;
-  UEP2_T_LEN  = 0;
-}
-
-// Check number of bytes in the IN buffer
-uint8_t CDC_available(void) {
-  return CDC_readByteCount;
-}
-
-// Check if OUT buffer is ready to be written
-__bit CDC_ready(void) {
-  return(!CDC_writeBusyFlag);
-}
-
-// Flush the OUT buffer
+// Flush the OUT buffer (upload to host)
 void CDC_flush(void) {
-  if(!CDC_writeBusyFlag && CDC_writePointer > 0) {      // not busy and buffer not empty?
-    UEP2_T_LEN = CDC_writePointer;                      // number of bytes in OUT buffer
-    UEP2_CTRL  = UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // respond ACK
-    CDC_writeBusyFlag = 1;                              // busy for now
-    CDC_writePointer  = 0;                              // reset write pointer
+  if(!CDC_writeBusyFlag && CDC_writePointer) {    // not busy and buffer not empty?
+    CDC_writeBusyFlag = 1;                        // busy for now
+    UEP2_T_LEN = CDC_writePointer;                // number of bytes to upload
+    UEP2_CTRL  = (UEP2_CTRL & ~MASK_UEP_T_RES)
+               | UEP_T_RES_ACK;                   // upload data to host
+    CDC_writePointer = 0;                         // reset write pointer
   }
 }
 
 // Write single character to OUT buffer
 void CDC_write(char c) {
-  while(CDC_writeBusyFlag);                             // wait for ready to write
-  EP2_buffer[64 + CDC_writePointer++] = c;              // write character
-  if(CDC_writePointer == EP2_SIZE) CDC_flush();         // flush if buffer full
+  while(CDC_writeBusyFlag);                       // wait for ready to write
+  EP2_buffer[64 + CDC_writePointer++] = c;        // write character to buffer
+  if(CDC_writePointer == EP2_SIZE) CDC_flush();   // flush if buffer full
 }
 
 // Write string to OUT buffer
 void CDC_print(char* str) {
-  while(*str) CDC_write(*str++);                        // write each char of string
+  while(*str) CDC_write(*str++);                  // write each char of string
 }
 
 // Write string with newline to OUT buffer and flush
 void CDC_println(char* str) {
-  CDC_print(str);                                       // write string
-  CDC_write('\n');                                      // write new line
-  CDC_flush();                                          // flush OUT buffer
+  CDC_print(str);                                 // write string
+  CDC_write('\n');                                // write new line
+  CDC_flush();                                    // flush OUT buffer
 }
 
 // Read single character from IN buffer
 char CDC_read(void) {
   char data;
-  while(!CDC_readByteCount);                            // wait for data
-  data = EP2_buffer[CDC_readPointer++];                 // get character
-  if(--CDC_readByteCount == 0)                          // dec number of bytes in buffer
-    UEP2_CTRL = UEP2_CTRL & ~MASK_UEP_R_RES | UEP_R_RES_ACK;// request new data if empty
+  while(!CDC_readByteCount);                      // wait for data
+  data = EP2_buffer[CDC_readPointer++];           // get character
+  if(--CDC_readByteCount == 0)                    // dec number of bytes in buffer
+    UEP2_CTRL = (UEP2_CTRL & ~MASK_UEP_R_RES)
+              | UEP_R_RES_ACK;                    // request new data if empty
   return data;
 }
 
@@ -95,84 +78,67 @@ char CDC_read(void) {
 // CDC-Specific USB Handler Functions
 // ===================================================================================
 
-// Setup CDC endpoints
-void CDC_setup(void) {
-  UEP1_DMA    = (uint16_t)EP1_buffer;       // EP1 data transfer address
-  UEP2_DMA    = (uint16_t)EP2_buffer;       // EP2 data transfer address
-  UEP1_CTRL   = bUEP_AUTO_TOG               // EP1 Auto flip sync flag
-              | UEP_T_RES_NAK;              // EP1 IN transaction returns NAK
-  UEP2_CTRL   = bUEP_AUTO_TOG               // EP2 Auto flip sync flag
-              | UEP_T_RES_NAK               // EP2 IN transaction returns NAK
-              | UEP_R_RES_ACK;              // EP2 OUT transaction returns ACK
-  UEP2_3_MOD  = bUEP2_RX_EN | bUEP2_TX_EN;  // EP2 double buffer (0x0C)
-  UEP4_1_MOD  = bUEP1_TX_EN;                // EP1 TX enable (0x40)
+// Setup/reset CDC endpoints
+void CDC_EP_init(void) {
+  UEP1_DMA    = (uint16_t)EP1_buffer;             // EP1 data transfer address
+  UEP2_DMA    = (uint16_t)EP2_buffer;             // EP2 data transfer address
+  UEP1_CTRL   = bUEP_AUTO_TOG                     // EP1 Auto flip sync flag
+              | UEP_T_RES_NAK;                    // EP1 IN transaction returns NAK
+  UEP2_CTRL   = bUEP_AUTO_TOG                     // EP2 Auto flip sync flag
+              | UEP_T_RES_NAK                     // EP2 IN transaction returns NAK
+              | UEP_R_RES_ACK;                    // EP2 OUT transaction returns ACK
+  UEP2_3_MOD  = bUEP2_RX_EN | bUEP2_TX_EN;        // EP2 double buffer (0x0C)
+  UEP4_1_MOD  = bUEP1_TX_EN;                      // EP1 TX enable (0x40)
+  UEP1_T_LEN  = 0;                                // EP1 nothing to send
+  UEP2_T_LEN  = 0;                                // EP2 nothing to send
+  CDC_readByteCount = 0;                          // reset received bytes counter
+  CDC_writeBusyFlag = 0;                          // reset write busy flag
 }
 
-// Reset CDC parameters
-void CDC_reset(void) {
-  UEP1_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;
-  UEP2_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK | UEP_R_RES_ACK;
-  CDC_readByteCount = 0;                    // reset received bytes counter
-  CDC_writeBusyFlag = 0;                    // reset write busy flag
-}
-
-// Handle non-standard control requests
+// Handle CLASS SETUP requests
 uint8_t CDC_control(void) {
   uint8_t i;
-  if((USB_setupBuf->bRequestType & USB_REQ_TYP_MASK) == USB_REQ_TYP_CLASS) {
-    switch(USB_setupBuf->bRequest) {
-      case GET_LINE_CODING:                   // 0x21  currently configured
-        for(i=0; i<sizeof(CDC_lineCodingB); i++)
-          EP0_buffer[i] = ((uint8_t*)&CDC_lineCodingB)[i]; // transmit line coding to host
-        return sizeof(CDC_lineCodingB);
-      case SET_CONTROL_LINE_STATE:            // 0x22  generates RS-232/V.24 style control signals
-        CDC_controlLineState = EP0_buffer[2]; // read control line state
-        return 0;
-      case SET_LINE_CODING:                   // 0x20  Configure
-        return 0;            
-      default:
-        return 0xFF;                          // command not supported
-    }
+  switch(USB_SetupReq) {
+    case GET_LINE_CODING:                         // 0x21  currently configured
+      for(i=0; i<sizeof(CDC_lineCoding); i++)
+        EP0_buffer[i] = ((uint8_t*)&CDC_lineCoding)[i]; // transmit line coding to host
+      return sizeof(CDC_lineCoding);
+    case SET_CONTROL_LINE_STATE:                  // 0x22  generates RS-232/V.24 style control signals
+      CDC_controlLineState = EP0_buffer[2];       // read control line state
+      return 0;
+    case SET_LINE_CODING:                         // 0x20  Configure
+      return 0;            
+    default:
+      return 0xff;                                // command not supported
   }
-  else return 0xFF;
 }
 
-// Endpoint 0 OUT handler
+// Endpoint 0 CLASS OUT handler
 void CDC_EP0_OUT(void) {
   uint8_t i;
-  if(SetupReq == SET_LINE_CODING) {                         // set line coding
-    if(U_TOG_OK) {
-      for(i=0; i<((sizeof(CDC_lineCodingB)<=USB_RX_LEN)?sizeof(CDC_lineCodingB):USB_RX_LEN); i++)
-        ((uint8_t*)&CDC_lineCodingB)[i] = EP0_buffer[i];    // receive line coding from host
-      UEP0_T_LEN = 0;
-      UEP0_CTRL |= UEP_R_RES_ACK | UEP_T_RES_ACK;           // send 0-length packet
-    }
+  if(USB_SetupReq == SET_LINE_CODING) {           // set line coding
+    for(i=0; i<((sizeof(CDC_lineCoding)<=USB_RX_LEN)?sizeof(CDC_lineCoding):USB_RX_LEN); i++)
+      ((uint8_t*)&CDC_lineCoding)[i] = EP0_buffer[i];      // receive line coding from host
   }
-  else {
-    UEP0_T_LEN = 0;
-    UEP0_CTRL |= UEP_R_RES_ACK | UEP_T_RES_NAK;             // respond Nak
-  }
+  UEP0_CTRL = bUEP_T_TOG | UEP_T_RES_ACK | UEP_R_RES_ACK;
 }
 
 // Endpoint 1 IN handler
-void CDC_EP1_IN(void) {
-  UEP1_T_LEN = 0;
-  UEP1_CTRL = UEP1_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK; // default NAK
-}
+// No handling is actually necessary here, the auto-NAK is sufficient.
 
-// Endpoint 2 IN handler (bulk data transfer to host)
+// Endpoint 2 IN handler (bulk data transfer to host completed)
 void CDC_EP2_IN(void) {
-  UEP2_T_LEN = 0;                                           // no data to send anymore
-  UEP2_CTRL = UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_NAK;  // respond NAK by default
-  CDC_writeBusyFlag = 0;                                    // clear busy flag
+  UEP2_CTRL  = (UEP2_CTRL & ~MASK_UEP_T_RES)
+             | UEP_T_RES_NAK;                     // -> respond NAK for now
+  CDC_writeBusyFlag = 0;                          // clear busy flag
 }
 
-// Endpoint 2 OUT handler (bulk data transfer from host)
+// Endpoint 2 OUT handler (bulk data transfer from host completed)
 void CDC_EP2_OUT(void) {
-  if(U_TOG_OK) {                                        // discard unsynchronized packets
-    CDC_readByteCount = USB_RX_LEN;                     // set number of received data bytes
-    CDC_readPointer = 0;                                // reset read pointer for fetching
-    if(CDC_readByteCount) 
-      UEP2_CTRL = UEP2_CTRL & ~MASK_UEP_R_RES | UEP_R_RES_NAK; // respond NAK after a packet. Let main code change response after handling.
+  if(U_TOG_OK && USB_RX_LEN) {                    // received synchronized packet?
+    UEP2_CTRL = (UEP2_CTRL & ~MASK_UEP_R_RES)
+              | UEP_R_RES_NAK;                    // not ready to receive more for now
+    CDC_readByteCount = USB_RX_LEN;               // set number of received data bytes
+    CDC_readPointer   = 0;                        // reset read pointer for fetching
   }
 }

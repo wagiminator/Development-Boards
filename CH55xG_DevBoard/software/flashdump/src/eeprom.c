@@ -1,11 +1,13 @@
 // ===================================================================================
-// Data Flash Functions for CH551, CH552 and CH554
+// Data Flash ("EEPROM") Functions for CH551, CH552 and CH554                 * v1.0 *
 // ===================================================================================
+//
+// 2022 by Stefan Wagner:   https://github.com/wagiminator
 
-#include "flash.h"
+#include "eeprom.h"
 
 // Write single byte to data flash
-void FLASH_write(uint8_t addr, uint8_t value) {
+void EEPROM_write(uint8_t addr, uint8_t value) {
   if(addr < 128) {                      // max addr
     SAFE_MOD    = 0x55;
     SAFE_MOD    = 0xAA;                 // enter safe mode
@@ -24,7 +26,7 @@ void FLASH_write(uint8_t addr, uint8_t value) {
 }
 
 // Read single byte from data flash
-uint8_t FLASH_read(uint8_t addr) {
+uint8_t EEPROM_read(uint8_t addr) {
   ROM_ADDR_H = DATA_FLASH_ADDR >> 8;    // set address high byte
   ROM_ADDR_L = addr << 1;               // set address low byte (must be even)
   ROM_CTRL   = ROM_CMD_READ;            // read value from data flash
@@ -32,6 +34,6 @@ uint8_t FLASH_read(uint8_t addr) {
 }
 
 // Write single byte to data flash if changed (this reduces write cycles)
-void FLASH_update(uint8_t addr, uint8_t value) {
-  if(FLASH_read(addr) != value) FLASH_write(addr, value);
+void EEPROM_update(uint8_t addr, uint8_t value) {
+  if(EEPROM_read(addr) != value) EEPROM_write(addr, value);
 }

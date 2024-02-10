@@ -1,17 +1,14 @@
 // ===================================================================================
-// USB HID Standard Keyboard Functions for CH551, CH552 and CH554
+// USB HID Standard Keyboard Functions for CH551, CH552 and CH554             * v1.1 *
 // ===================================================================================
 
 #include "usb_keyboard.h"
-#include "usb_hid.h"
-#include "usb_handler.h"
-
-#define KBD_sendReport()  HID_sendReport(KBD_report, sizeof(KBD_report))
 
 // ===================================================================================
 // Keyboard HID report
 // ===================================================================================
 __xdata uint8_t KBD_report[8] = {0,0,0,0,0,0,0,0};
+#define KBD_sendReport()  HID_sendReport(KBD_report, sizeof(KBD_report))
 
 // ===================================================================================
 // ASCII to keycode mapping table
@@ -36,31 +33,31 @@ void KBD_press(uint8_t key) {
   uint8_t i;
 
   // Convert key for HID report
-  if(key >= 136) key -= 136;                    // non-printing key/not a modifier?
-  else if(key >= 128) {                         // modifier key?
-    KBD_report[0] |= (1<<(key-128));            // add modifier to report
+  if(key >= 136) key -= 136;                      // non-printing key/not a modifier?
+  else if(key >= 128) {                           // modifier key?
+    KBD_report[0] |= (1<<(key-128));              // add modifier to report
     key = 0;
   }
-  else {                                        // printing key?
-    key = KBD_map[key];                         // convert ascii to keycode for report
-    if(!key) return;                            // no valid key
-    if(key & 0x80) {                            // capital letter/shift character?
-      KBD_report[0] |= 0x02;                    // add left shift modifier
-      key &= 0x7F;                              // remove shift from key itself
+  else {                                          // printing key?
+    key = KBD_map[key];                           // convert ascii to keycode for report
+    if(!key) return;                              // no valid key
+    if(key & 0x80) {                              // capital letter/shift character?
+      KBD_report[0] |= 0x02;                      // add left shift modifier
+      key &= 0x7F;                                // remove shift from key itself
     }
   }
 
   // Check if key is already present in report
   for(i=2; i<8; i++) {
-    if(KBD_report[i] == key) return;            // return if already in report
+    if(KBD_report[i] == key) return;              // return if already in report
   }
 
   // Find an empty slot, insert key and transmit report
   for(i=2; i<8; i++) {
-    if(KBD_report[i] == 0) {                    // empty slot?
-      KBD_report[i] = key;                      // insert key
-      KBD_sendReport();                         // send report
-      return;                                   // and return
+    if(KBD_report[i] == 0) {                      // empty slot?
+      KBD_report[i] = key;                        // insert key
+      KBD_sendReport();                           // send report
+      return;                                     // and return
     }
   }
 }
@@ -72,25 +69,25 @@ void KBD_release(uint8_t key) {
   uint8_t i;
 
   // Convert key for HID report
-  if(key >= 136) key -= 136;                    // non-printing key/not a modifier?
-  else if(key >= 128) {                         // modifier key?
-    KBD_report[0] &= ~(1<<(key-128));           // delete modifier in report
+  if(key >= 136) key -= 136;                      // non-printing key/not a modifier?
+  else if(key >= 128) {                           // modifier key?
+    KBD_report[0] &= ~(1<<(key-128));             // delete modifier in report
     key = 0;
   }
-  else {                                        // printing key?
-    key = KBD_map[key];                         // convert ascii to keycode for report
-    if(!key) return;                            // no valid key
-    if(key & 0x80) {                            // capital letter/shift character?
-      KBD_report[0] &= ~0x02;                   // remove shift modifier
-      key &= 0x7F;                              // remove shift from key itself
+  else {                                          // printing key?
+    key = KBD_map[key];                           // convert ascii to keycode for report
+    if(!key) return;                              // no valid key
+    if(key & 0x80) {                              // capital letter/shift character?
+      KBD_report[0] &= ~0x02;                     // remove shift modifier
+      key &= 0x7F;                                // remove shift from key itself
     }
   }
 
   // Delete key in report
   for(i=2; i<8; i++) {
-    if(KBD_report[i] == key) KBD_report[i] = 0; // delete key in report
+    if(KBD_report[i] == key) KBD_report[i] = 0;   // delete key in report
   }
-  KBD_sendReport();                             // send report
+  KBD_sendReport();                               // send report
 }
 
 // ===================================================================================
@@ -106,8 +103,8 @@ void KBD_type(uint8_t key) {
 // ===================================================================================
 void KBD_releaseAll(void) {
   uint8_t i;
-  for(i=0; i<8; i++) KBD_report[i] = 0;         // delete all keys in report
-  KBD_sendReport();                             // send report
+  for(i=0; i<8; i++) KBD_report[i] = 0;           // delete all keys in report
+  KBD_sendReport();                               // send report
 }
 
 // ===================================================================================
@@ -115,11 +112,4 @@ void KBD_releaseAll(void) {
 // ===================================================================================
 void KBD_print(char* str) {
   while(*str) KBD_type(*str++);
-}
-
-// ===================================================================================
-// Get keyboard status LEDs
-// ===================================================================================
-uint8_t KBD_getState(void) {
-  return EP2_buffer[0];
 }

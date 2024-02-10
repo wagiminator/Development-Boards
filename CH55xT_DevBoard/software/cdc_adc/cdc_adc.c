@@ -67,12 +67,10 @@ void USB_ISR(void) __interrupt(INT_NO_USB) {
 #if SDCC < 370
 void putchar(char c) {
   CDC_write(c);
-  if(c == '\n') CDC_flush();
 }
 #else
 int putchar(int c) {
   CDC_write(c & 0xFF);
-  if(c == '\n') CDC_flush();
   return c;
 }
 #endif
@@ -92,6 +90,7 @@ void main(void) {
   // Loop
   while(1) {
     printf("ADC value: %u \n", ADC_read());
+    CDC_flush();
     DLY_ms(250);
   }
 }

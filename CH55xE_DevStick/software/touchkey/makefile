@@ -7,10 +7,11 @@
 # Type "make help" in the command line.
 # ===================================================================================
 
-# Input and Output File Names
-SKETCH     = touchkey.c
+# Files and Folders
+MAINFILE   = touchkey.c
 TARGET     = touchkey
 INCLUDE    = src
+TOOLS      = tools
 
 # Microcontroller Settings
 FREQ_SYS   = 16000000
@@ -22,13 +23,12 @@ CODE_SIZE  = 0x3800
 CC         = sdcc
 OBJCOPY    = objcopy
 PACK_HEX   = packihx
-WCHISP    ?= python3 tools/chprog.py
+ISPTOOL   ?= python3 $(TOOLS)/chprog.py $(TARGET).bin
 
 # Compiler Flags
-CFLAGS  = -mmcs51 --model-small --no-xinit-opt
+CFLAGS  = -mmcs51 --model-small --no-xinit-opt -DF_CPU=$(FREQ_SYS) -I$(INCLUDE) -I.
 CFLAGS += --xram-size $(XRAM_SIZE) --xram-loc $(XRAM_LOC) --code-size $(CODE_SIZE)
-CFLAGS += -I$(INCLUDE) -DF_CPU=$(FREQ_SYS)
-CFILES  = $(SKETCH) $(wildcard $(INCLUDE)/*.c)
+CFILES  = $(MAINFILE) $(wildcard $(INCLUDE)/*.c)
 RFILES  = $(CFILES:.c=.rel)
 CLEAN   = rm -f *.ihx *.lk *.map *.mem *.lst *.rel *.rst *.sym *.asm *.adb
 
@@ -59,7 +59,7 @@ $(TARGET).bin: $(TARGET).ihx
 	
 flash: $(TARGET).bin size removetemp
 	@echo "Uploading to CH55x ..."
-	@$(WCHISP) $(TARGET).bin
+	@$(ISPTOOL)
 
 all: $(TARGET).bin $(TARGET).hex size
 

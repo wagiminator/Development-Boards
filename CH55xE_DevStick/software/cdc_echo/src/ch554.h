@@ -1,14 +1,17 @@
-/*--------------------------------------------------------------------------
-CH554.H
-Header file for CH554 microcontrollers.
-****************************************
+// ===================================================================================
+// Header File for CH551, CH552 and CH554 Microcontrollers                    * v1.0 *
+// ===================================================================================
+// This contains a copy of CH554.H
+/***************************************
 **  Copyright  (C)  W.ch  1999-2014   **
 **  Web:              http://wch.cn   **
-****************************************
---------------------------------------------------------------------------*/
+***************************************/
 
-#ifndef __CH554_H__
-#define __CH554_H__
+#pragma once
+#include <stdint.h>
+
+typedef unsigned char volatile __xdata    UINT8XV;
+typedef unsigned char volatile __pdata    UINT8PV;
 
 #define SBIT(name, addr, bit)  __sbit  __at(addr+bit) name
 #define SFR(name, addr)        __sfr   __at(addr) name
@@ -754,5 +757,3 @@ ASM example:
        .DB  0xA5    ;MOVX @DPTR1,A & INC DPTR1
        DJNZ R7,LOOP
 */
-
-#endif  // __CH554_H__

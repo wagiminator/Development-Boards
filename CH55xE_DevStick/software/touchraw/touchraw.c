@@ -66,12 +66,10 @@ void USB_ISR(void) __interrupt(INT_NO_USB) {
 #if SDCC < 370
 void putchar(char c) {
   CDC_write(c);
-  if(c == '\n') CDC_flush();
 }
 #else
 int putchar(int c) {
   CDC_write(c & 0xFF);
-  if(c == '\n') CDC_flush();
   return c;
 }
 #endif
@@ -88,7 +86,8 @@ void main(void) {
 
   // Loop
   while(1) {
-    DLY_ms(250);
+    DLY_ms(100);
     printf("Touchkey raw value: %u \n", TOUCH_sample(PIN_TOUCH));
+    CDC_flush();
   }
 }
