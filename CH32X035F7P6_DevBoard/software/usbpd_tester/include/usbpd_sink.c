@@ -1,5 +1,5 @@
 // ===================================================================================
-// USB PD SINK Handler for CH32X035                                           * v1.0 *
+// USB PD SINK Handler for CH32X035                                           * v1.1 *
 // ===================================================================================
 //
 // Reference:               https://github.com/openwch/ch32x035
@@ -221,14 +221,14 @@ void PD_PDO_analyze(void) {
     test.d32 = *(uint32_t*)(&PD_SC_buffer[i*4]);
     if((test.SourcePPSPDO.AugmentedPowerDataObject==3u) && 
        (test.SourcePPSPDO.SPRprogrammablePowerSupply==0)) {
-         PD_control.PPSSourceCap[PD_control.SourcePPSNum].MaxVoltage = POWER_DECODE_100MV(test.SourcePPSPDO.MaxVlotageIn100mVincrements);
-         PD_control.PPSSourceCap[PD_control.SourcePPSNum].MinVoltage = POWER_DECODE_100MV(test.SourcePPSPDO.MinVlotageIn100mVincrements);
+         PD_control.PPSSourceCap[PD_control.SourcePPSNum].MaxVoltage = POWER_DECODE_100MV(test.SourcePPSPDO.MaxVoltageIn100mVincrements);
+         PD_control.PPSSourceCap[PD_control.SourcePPSNum].MinVoltage = POWER_DECODE_100MV(test.SourcePPSPDO.MinVoltageIn100mVincrements);
          PD_control.PPSSourceCap[PD_control.SourcePPSNum].Current    = POWER_DECODE_50MA(test.SourcePPSPDO.MaxCurrentIn50mAincrements);
          PD_control.SourcePPSNum++;
     }
     else {
          PD_control.FixedSourceCap[i].Current = POWER_DECODE_10MA(test.SourceFixedPDO.MaxCurrentIn10mAunits);
-         PD_control.FixedSourceCap[i].Voltage = POWER_DECODE_50MV(test.SourceFixedPDO.VolatageIn50mVunits);
+         PD_control.FixedSourceCap[i].Voltage = POWER_DECODE_50MV(test.SourceFixedPDO.VoltageIn50mVunits);
     }
   }
 }
@@ -248,8 +248,8 @@ void PD_PDO_request(void) {
 
   if(pdoNum > (PD_control.SourcePDONum - PD_control.SourcePPSNum)) {
     pdo.SinkPPSRDO.ObjectPosition              = pdoNum;
-    pdo.SinkPPSRDO.OutputVoltagein20mVunits    = PD_control.SetVoltage / 20;
-    pdo.SinkPPSRDO.OperatingCurrentIN50mAuints = PD_SC_fixed[pdoNum+PD_control.SourcePPSNum-PD_control.SourcePDONum-1].Current/50;
+    pdo.SinkPPSRDO.OutputVoltageIn20mVunits    = PD_control.SetVoltage / 20;
+    pdo.SinkPPSRDO.OperatingCurrentIn50mAunits = PD_SC_fixed[pdoNum+PD_control.SourcePPSNum-PD_control.SourcePDONum-1].Current/50;
     pdo.SinkPPSRDO.NoUSBSuspend                = 1u;
     pdo.SinkPPSRDO.USBCommunicationsCapable    = 1u;
   }

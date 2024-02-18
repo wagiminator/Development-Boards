@@ -1,5 +1,5 @@
 // ===================================================================================
-// USB PD constant and structure define
+// USB PD Constant and Structure Define                                       * v1.1 *
 // ===================================================================================
 
 #pragma once
@@ -33,14 +33,14 @@ extern "C" {
 
 typedef struct {
   uint32_t MaxCurrentIn10mAunits      : 10u;
-  uint32_t VolatageIn50mVunits        : 10u;
+  uint32_t VoltageIn50mVunits         : 10u;
   uint32_t PeakCurrent                : 2u;
   uint32_t Reserved_22bit             : 1u;
   uint32_t EPRModeCapable             : 1u;
-  uint32_t UnchunkedExterndedMessage  : 1u;
+  uint32_t UnchunkedExtendedMessage   : 1u;
   uint32_t DualRoleData               : 1u;
   uint32_t USBCommunicationsCapable   : 1u;
-  uint32_t UnconstrainedPowe          : 1u;
+  uint32_t UnconstrainedPower         : 1u;
   uint32_t USBSuspendSupported        : 1u;
   uint32_t DualRolePower              : 1u;
   uint32_t FixedSupply                : 2u;
@@ -49,19 +49,30 @@ typedef struct {
 typedef struct {
   uint32_t MaxCurrentIn50mAincrements : 7u;
   uint32_t Reserved_7bit              : 1u; // shall be set to zero
-  uint32_t MinVlotageIn100mVincrements: 8u;
+  uint32_t MinVoltageIn100mVincrements: 8u;
   uint32_t Reserved_16bit             : 1u; // shall be set to zero
-  uint32_t MaxVlotageIn100mVincrements: 8u;
+  uint32_t MaxVoltageIn100mVincrements: 8u;
   uint32_t Reserved_25_26bit          : 2u; // shall be set to zero
   uint32_t PPSpowerLimited            : 1u; 
   uint32_t SPRprogrammablePowerSupply : 2u; // 00b
   uint32_t AugmentedPowerDataObject   : 2u; // 11b
 } USBPD_SourcePPSSupplyPDO_t;
 
+typedef struct {
+  uint32_t MaxPowerIn1Wincrements     : 8u;
+  uint32_t MinVoltageIn100mVincrements: 8u;
+  uint32_t Reserved_16bit             : 1u; // shall be set to zero
+  uint32_t MaxVoltageIn100mVincrements: 9u;
+  uint32_t Reserved_26_27bit          : 2u; // shall be set to zero
+  uint32_t EPRprogrammablePowerSupply : 2u; // 01b
+  uint32_t AugmentedPowerDataObject   : 2u; // 11b
+} USBPD_SourceEPRSupplyPDO_t;
+
 typedef union {
   uint32_t                     d32;
   USBPD_SourceFixedSupplyPDO_t SourceFixedPDO;
   USBPD_SourcePPSSupplyPDO_t   SourcePPSPDO;
+  USBPD_SourceEPRSupplyPDO_t   SourceEPRPDO;
 } USBPD_PDO_t;
 
 typedef enum {
@@ -142,9 +153,9 @@ typedef struct {
 } USBPD_SinkFixedVariableRDO_t;
 
 typedef struct {
-  uint32_t OperatingCurrentIN50mAuints  : 7u;
+  uint32_t OperatingCurrentIn50mAunits  : 7u;
   uint32_t Reserved7_8                  : 2u; // shall be set to zero
-  uint32_t OutputVoltagein20mVunits     : 12u;
+  uint32_t OutputVoltageIn20mVunits     : 12u;
   uint32_t Reserved21                   : 1u; // shall be set to zero
   uint32_t EPRModeCapable               : 1u;
   uint32_t UnchunkedExtendedMessage     : 1u;
