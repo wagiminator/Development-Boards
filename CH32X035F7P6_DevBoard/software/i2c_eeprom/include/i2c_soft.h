@@ -25,6 +25,7 @@
 extern "C" {
 #endif
 
+#include "config.h"
 #include "system.h"
 #include "gpio.h"
 

@@ -6,6 +6,8 @@
 
 // Pin definitions
 #define PIN_LED             PB1       // pin connected to LED
+#define PIN_SDA             PA11      // pin connected to serial data of the I2C bus
+#define PIN_SCL             PA10      // pin connected to serial clock of the I2C bus
 
 // MCU supply voltage
 #define USB_VDD             0         // 0: 3.3V, 1: 5V
