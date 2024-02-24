@@ -9,7 +9,7 @@
 // SPI Parameters and Variables
 // ===================================================================================
 
-// Define SPI prescaler for 6 MHz SPI frequency -> 166,67us per bit
+// Define SPI prescaler for 6 MHz SPI frequency -> 166,67us per bit, 750kHz byte freq
 #if F_CPU == 48000000
 #define SPI_PRESC   2
 #elif F_CPU == 24000000

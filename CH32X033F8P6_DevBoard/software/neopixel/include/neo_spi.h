@@ -16,6 +16,7 @@
 //
 // Notes:
 // ------
+// - Works with most 800kHz addressable LEDs (NeoPixels).
 // - Set number of pixels and pixel type in the parameters below!
 // - System clock frequency must be 48MHz, 24MHz, or 12MHz.
 //
