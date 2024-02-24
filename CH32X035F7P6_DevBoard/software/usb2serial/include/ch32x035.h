@@ -1,5 +1,5 @@
 // ===================================================================================
-// Header file for CH32X035/X034/X033                                         * v0.3 *
+// Header file for CH32X035/X034/X033                                         * v0.4 *
 // ===================================================================================
 // This contains a copy of ch32x035.h and core_riscv.h and other misc functions.
 // NOTE: This file includes modifications by Stefan Wagner.
@@ -822,9 +822,6 @@ typedef struct
 /* Core declaration */
 #define PFIC                                    ((PFIC_Type *) 0xE000E000 )
 #define NVIC                                    PFIC
-#define NVIC_KEY1                               ((uint32_t)0xFA050000)
-#define	NVIC_KEY2	                              ((uint32_t)0xBCAF0000)
-#define	NVIC_KEY3	                              ((uint32_t)0xBEEF0000)
 #define SysTick                                 ((SysTick_Type *) 0xE000F000)
 #define STK                                     SysTick
 
@@ -1838,6 +1835,10 @@ typedef struct
 /******************  Bit definition for FLASH_WRPR3 register  ******************/
 #define FLASH_WRPR3_WRPR3                       ((uint32_t)0x00FF0000) /* Flash memory write protection option bytes */
 #define FLASH_WRPR3_nWRPR3                      ((uint32_t)0xFF000000) /* Flash memory write protection complemented option bytes */
+
+/*******************************  FLASH keys  *********************************/
+#define FLASH_KEY1                              ((uint32_t)0x45670123)
+#define FLASH_KEY2                              ((uint32_t)0xCDEF89AB)
 
 /******************************************************************************/
 /*                General Purpose and Alternate Function I/O                  */
@@ -3289,6 +3290,8 @@ typedef struct
 #define PFIC_KEY1                               ((uint32_t)0xFA050000)
 #define PFIC_KEY2                               ((uint32_t)0xBCAF0000)
 #define PFIC_KEY3                               ((uint32_t)0xBEEF0000)
+
+#define NVIC_RESETSYS                           ((uint32_t)0x00000080)
 #define NVIC_KEY1                               ((uint32_t)0xFA050000)
 #define NVIC_KEY2                               ((uint32_t)0xBCAF0000)
 #define NVIC_KEY3                               ((uint32_t)0xBEEF0000)
@@ -3300,6 +3303,13 @@ typedef struct
 #define PFIC_WFITOWFE                           ((uint32_t)0x00000008) /* Treat WFI as WFE */
 #define PFIC_SLEEPDEEP                          ((uint32_t)0x00000004) /* 1:deep sleep; 0:sleep */
 #define PFIC_SLEEPONEXIT                        ((uint32_t)0x00000002) /* 1:sleep after ISR */
+
+#define NVIC_SYSRESET                           ((uint32_t)0x80000000)
+#define NVIC_SETEVENT                           ((uint32_t)0x00000020)
+#define NVIC_SEVONPEND                          ((uint32_t)0x00000010)
+#define NVIC_WFITOWFE                           ((uint32_t)0x00000008)
+#define NVIC_SLEEPDEEP                          ((uint32_t)0x00000004)
+#define NVIC_SLEEPONEXIT                        ((uint32_t)0x00000002)
 
 /******************************************************************************/
 /*                       System Counter (STK / SysTick)                       */
