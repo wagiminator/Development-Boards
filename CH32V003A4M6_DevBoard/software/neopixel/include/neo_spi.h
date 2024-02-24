@@ -1,10 +1,10 @@
 // ===================================================================================
-// Basic NeoPixel Functions using Hardware-SPI for CH32X033/034/035           * v1.0 *
+// Basic NeoPixel Functions using Hardware-SPI for CH32V003                   * v1.0 *
 // ===================================================================================
 //
 // Functions available:
 // --------------------
-// NEO_init()               init hardware-SPI for NeoPixels on pin PA7
+// NEO_init()               init hardware-SPI for NeoPixels on pin PC6
 // NEO_clearAll()           clear all pixels and update
 // NEO_clearPixel(p)        clear pixel p
 // NEO_writeColor(p,r,g,b)  write RGB color to pixel p
@@ -16,7 +16,7 @@
 //
 // Notes:
 // ------
-// - Connect pin PA7 (MOSI) to DIN of the pixels string.
+// - Connect pin PC6 (MOSI) to DIN of the pixels string.
 // - Works with most 800kHz addressable LEDs (NeoPixels).
 // - Set number of pixels and pixel type in the parameters below!
 // - System clock frequency must be 48MHz, 24MHz, or 12MHz.

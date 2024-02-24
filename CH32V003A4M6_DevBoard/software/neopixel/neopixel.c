@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   Example for CH32X035/X034/X033
+// Project:   Example for CH32V003
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner
@@ -11,18 +11,18 @@
 // Description:
 // ------------
 // Shows a colorful animation on a string of 8 NeoPixels. The number of pixels can be
-// changed in neo_spi.h. Connect pin PA7 (MOSI) to DIN of the pixels string.
+// changed in neo_spi.h. Connect pin PC6 (MOSI) to DIN of the pixels string.
 //
 // References:
 // -----------
+// - CNLohr ch32v003fun: https://github.com/cnlohr/ch32v003fun
 // - WCH Nanjing Qinheng Microelectronics: http://wch.cn
 //
 // Compilation Instructions:
 // -------------------------
 // - Make sure GCC toolchain (gcc-riscv64-unknown-elf, newlib) and Python3 with PyUSB
-//   is installed. In addition, Linux requires access rights to the USB bootloader.
-// - Press the BOOT button on the MCU board and keep it pressed while connecting it
-//   via USB to your PC.
+//   is installed. In addition, Linux requires access rights to WCH-LinkE programmer.
+// - Connect the WCH-LinkE programmer to the MCU board.
 // - Run 'make flash'.
 
 
