@@ -16,11 +16,6 @@ Development board for the CH552T, CH554T, CH558T, and CH559T low-cost 8-bit 8051
 
 ![CH55xT_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xT_DevBoard/documentation/CH55xT_DevBoard_pic2.jpg)
 
-## [CH55xE Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH55xE_DevStick)
-Development stick for the CH552E and CH554E 8-bit 8051 core USB microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
-
-![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
-
 ## [CH32V003 A4M6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003A4M6_DevBoard)
 Development board for the CH32V003A4M6 ultra-cheap (10 cents) 32-bit RISC-V microcontroller.
 
@@ -70,6 +65,16 @@ Development board for the STM32F030F4P6 cost-effective 32-bit ARM Cortex M0 micr
 Development board for the STM32G030F6P6 cost-effective 32-bit ARM Cortex M0+ microcontroller with integrated USB-to-serial adapter which can also be used to upload firmware utilizing the factory built-in serial bootloader.
 
 ![STM32G030F6P6_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STM32G030F6P6_DevBoard/documentation/STM32G030F6P6_DevBoard_pic2.jpg)
+
+## [Development Board Adapter](https://github.com/wagiminator/Development-Boards/tree/main/DevBoard_Adapter)
+The development adapter simplifies experimenting with the various development boards. Simply plug in the board, connect the desired components using jumper cables, and you're good to go.
+
+![DevBoard_Adapter_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/DevBoard_Adapter/documentation/DevBoard_Adapter_pic1.jpg)
+
+## [CH55xE Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH55xE_DevStick)
+Development stick for the CH552E and CH554E 8-bit 8051 core USB microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
+
+![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
 
 ## [CH554E USB Host Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH554E_HostDevBoard)
 Development board for the USB host capabilities of the CH554E microcontroller with an integrated USB-A female connector for connecting USB devices like keyboards, mice, printers, hubs, etc. and a USB-A male connector for providing a serial interface for analysis and debugging on the PC.
