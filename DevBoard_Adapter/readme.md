@@ -11,6 +11,7 @@ The development adapter simplifies experimenting with the various development bo
 - 3x LED
 - 8x WS2812-2020 addressable LED (NeoPixel)
 - 1x MLT-5030 buzzer
+- 1x SSD1306 I2C 128x64 pixels OLED
 - 1x ZD28C02B I2C EEPROM
 - 1x M93C46 SPI EEPROM
 - 1x CH340E USB-to-serial converter
