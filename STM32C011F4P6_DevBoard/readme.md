@@ -1,4 +1,4 @@
-# STM32C011 F6P6 Development Board
+# STM32C011 F4P6 Development Board
 Development board for the STM32C0x1FxP cost-effective 32-bit ARM Cortex M0+ microcontroller with integrated USB-to-serial adapter which can also be used to upload firmware utilizing the factory built-in serial bootloader.
 
 ![STM32C011F4P6_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STM32C011F4P6_DevBoard/documentation/STM32C011F4P6_DevBoard_pic1.jpg)
