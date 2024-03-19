@@ -1,10 +1,10 @@
 // ===================================================================================
-// Basic NeoPixel Functions using Hardware-SPI for CH32X033/034/035           * v1.0 *
+// Basic NeoPixel Functions using Hardware-SPI for CH32X033/034/035           * v1.1 *
 // ===================================================================================
 //
 // Functions available:
 // --------------------
-// NEO_init()               init hardware-SPI for NeoPixels on pin PA7
+// NEO_init()               init hardware-SPI for NeoPixels on MOSI-pin
 // NEO_clearAll()           clear all pixels and update
 // NEO_clearPixel(p)        clear pixel p
 // NEO_writeColor(p,r,g,b)  write RGB color to pixel p
@@ -14,9 +14,14 @@
 // NEO_sendByte(d)          send one data byte via hardware-SPI to pixels string
 // NEO_latch()              latch the data sent
 //
+// SPI MOSI pin mapping (set below in NeoPixel parameters):
+// --------------------------------------------------------
+// NEO_MAP    0     1     2     3
+// MOSI-pin  PA7   PA9   PA10  PC7
+//
 // Notes:
 // ------
-// - Connect pin PA7 (MOSI) to DIN of the pixels string.
+// - Connect MOSI-pin (define below) to DIN of the pixels string.
 // - Works with most 800kHz addressable LEDs (NeoPixels).
 // - Set number of pixels and pixel type in the parameters below!
 // - System clock frequency must be 48MHz, 24MHz, or 12MHz.
@@ -34,6 +39,7 @@ extern "C" {
 // ===================================================================================
 // NeoPixel Definitions
 // ===================================================================================
+#define NEO_MAP         0     // MOSI pin mapping (see above)
 #define NEO_GRB               // type of pixels: NEO_GRB or NEO_RGB
 #define NEO_COUNT       8     // total number of pixels in the string
 #define NEO_LATCH_TIME  281   // latch time in microseconds

@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic NeoPixel Functions using Hardware-SPI for CH32X033/034/035           * v1.1 *
+// Basic NeoPixel Functions using Hardware-SPI for PY32F0xx                   * v1.0 *
 // ===================================================================================
 //
 // Functions available:
@@ -16,8 +16,8 @@
 //
 // SPI MOSI pin mapping (set below in NeoPixel parameters):
 // --------------------------------------------------------
-// NEO_MAP    0     1     2     3
-// MOSI-pin  PA7   PA9   PA10  PC7
+// NEO_MAP    0     1     2     3     4     5     6
+// MOSI-pin  PA1   PA2   PA3   PA7   PA8   PA12  PB5
 //
 // Notes:
 // ------
@@ -39,7 +39,7 @@ extern "C" {
 // ===================================================================================
 // NeoPixel Definitions
 // ===================================================================================
-#define NEO_MAP         0     // MOSI pin mapping (see above)
+#define NEO_MAP         3     // MOSI pin mapping (see above)
 #define NEO_GRB               // type of pixels: NEO_GRB or NEO_RGB
 #define NEO_COUNT       8     // total number of pixels in the string
 #define NEO_LATCH_TIME  281   // latch time in microseconds

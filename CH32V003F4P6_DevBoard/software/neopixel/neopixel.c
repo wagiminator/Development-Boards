@@ -45,7 +45,7 @@ int main(void) {
   while(1) {
     j = nst;
     for(i=0; i<NEO_COUNT; i++) {
-      NEO_writeHue(i, j, 2);
+      NEO_writeHue(i, j, 0);
       j += 192 / NEO_COUNT;
       if(j >= 192) j -= 192;
     }

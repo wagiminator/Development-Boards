@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic NeoPixel Functions using Hardware-SPI for CH32X033/034/035           * v1.0 *
+// Basic NeoPixel Functions using Hardware-SPI for CH32X033/034/035           * v1.1 *
 // ===================================================================================
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -26,11 +26,30 @@ uint8_t NEO_buffer[3 * NEO_COUNT];          // pixel buffer
 // Init SPI for Neopixels
 // ===================================================================================
 void NEO_init(void) {
-  // Enable GPIO and SPI module clock
-  RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPAEN | RCC_SPI1EN;
-  
-  // Setup GPIO pin PA7 (MOSI)
-  GPIOA->CFGLR = (GPIOA->CFGLR & ~((uint32_t)0b1111<<(7<<2))) | ((uint32_t)0b1011<<(7<<2));
+  // Set GPIO pins
+  #if NEO_MAP == 0
+    // Setup GPIO pin PA7 (MOSI)
+    RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPAEN | RCC_SPI1EN;
+    GPIOA->CFGLR    = (GPIOA->CFGLR & ~((uint32_t)0b1111<<(7<<2))) | ((uint32_t)0b1011<<(7<<2));
+    AFIO->PCFR1    &= ~((uint32_t)0b11);
+  #elif NEO_MAP == 1
+    // Setup GPIO pin PA9 (MOSI)
+    RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPAEN | RCC_SPI1EN;
+    GPIOA->CFGHR    = (GPIOA->CFGHR & ~((uint32_t)0b1111<<(1<<2))) | ((uint32_t)0b1011<<(1<<2));
+    AFIO->PCFR1     = (AFIO->PCFR1 & ~((uint32_t)0b11)) | ((uint32_t)0b01);
+  #elif NEO_MAP == 2
+    // Setup GPIO pin PA10 (MOSI)
+    RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPAEN | RCC_SPI1EN;
+    GPIOA->CFGHR    = (GPIOA->CFGHR & ~((uint32_t)0b1111<<(2<<2))) | ((uint32_t)0b1011<<(2<<2));
+    AFIO->PCFR1     = (AFIO->PCFR1 & ~((uint32_t)0b11)) | ((uint32_t)0b10);
+  #elif NEO_MAP == 3
+    // Setup GPIO pin PC7 (MOSI)
+    RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPCEN | RCC_SPI1EN;
+    GPIOC->CFGLR    = (GPIOC->CFGLR & ~((uint32_t)0b1111<<(7<<2))) | ((uint32_t)0b1011<<(7<<2));
+    AFIO->PCFR1    |= ((uint32_t)0b10);
+  #else
+    #warning No automatic pin mapping for SPI
+  #endif
 
   // Setup and enable SPI master, TX only, standard configuration
   SPI1->CTLR1 = (SPI_PRESC << 3)            // set prescaler
