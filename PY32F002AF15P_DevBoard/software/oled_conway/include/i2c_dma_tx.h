@@ -28,7 +28,7 @@ extern "C" {
 #include "system.h"
 
 // I2C parameters
-#define I2C_CLKRATE       400000  // I2C bus clock rate (Hz)
+#define I2C_CLKRATE       600000  // I2C bus clock rate (Hz)
 #define I2C_MAP           6       // I2C pin mapping (see above)
 #define I2C_DMA_CHANNEL   1       // DMA channel (1 - 3)
 
