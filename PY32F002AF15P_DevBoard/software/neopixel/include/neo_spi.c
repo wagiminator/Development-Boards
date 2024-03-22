@@ -32,8 +32,8 @@ void NEO_init(void) {
     RCC->IOPENR   |= RCC_IOPENR_GPIOAEN;
     GPIOA->MODER   = (GPIOA->MODER  & ~((uint32_t)0b11<<(1<<1)))
                                     |  ((uint32_t)0b10<<(1<<1));
-    GPIOA->OTYPER &= ~((uint32_t)0b1<<(2<<0));
-    GPIOA->AFR[0]  = (GPIOA->AFR[0] & ~((uint32_t)0xf<<(2<<2))) | ((uint32_t)10<<(2<<2));
+    GPIOA->OTYPER &= ~((uint32_t)0b1<<(1<<0));
+    GPIOA->AFR[0]  = (GPIOA->AFR[0] & ~((uint32_t)0xf<<(1<<2))) | ((uint32_t)10<<(1<<2));
   #elif NEO_MAP == 1
     // Setup GPIO pin PA2 (MOSI)
     RCC->IOPENR   |= RCC_IOPENR_GPIOAEN;
