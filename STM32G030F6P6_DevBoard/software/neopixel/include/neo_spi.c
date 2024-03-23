@@ -5,6 +5,8 @@
 
 #include "neo_spi.h"
 
+#define SPI_DR_8BIT *((volatile uint8_t*) &(SPI1->DR))  // for 8-bit data transfer
+
 // ===================================================================================
 // SPI Parameters and Variables
 // ===================================================================================
@@ -77,8 +79,8 @@ void NEO_sendByte(uint8_t data) {
   uint8_t i;
   for(i=8; i; i--, data<<=1) {              // 8 bits, MSB first
     while(!(SPI1->SR & SPI_SR_TXE));        // wait for transmit buffer empty
-    if(data & 0x80) SPI1->DR = 0x7e;        // 750us high for "1"-bit
-    else            SPI1->DR = 0x60;        // 250us high for "0"-bit
+    if(data & 0x80) SPI_DR_8BIT = 0x7e;     // 750us high for "1"-bit
+    else            SPI_DR_8BIT = 0x60;     // 250us high for "0"-bit
   }
 }
 
