@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#include "i2c_soft.h"
+#include "i2c.h"
 #include "system.h"
 
 // EEPROM definitions

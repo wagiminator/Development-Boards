@@ -1,9 +1,12 @@
 // ===================================================================================
-// Basic I2C Master Functions (write only) for CH32V003                       * v1.2 *
+// Basic I2C Master Functions for CH32V003                                    * v1.0 *
 // ===================================================================================
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
-#include "i2c_tx.h"
+#include "i2c.h"
+
+// Read/write flag
+uint8_t I2C_rwflag;
 
 // Init I2C
 void I2C_init(void) {
@@ -46,11 +49,13 @@ void I2C_init(void) {
 #pragma GCC diagnostic ignored "-Wunused-variable"
 void I2C_start(uint8_t addr) {
   while(I2C1->STAR2 & I2C_STAR2_BUSY);            // wait until bus ready
-  I2C1->CTLR1 |= I2C_CTLR1_START;                 // set START condition
+  I2C1->CTLR1 |= I2C_CTLR1_START                  // set START condition
+               | I2C_CTLR1_ACK;                   // set ACK
   while(!(I2C1->STAR1 & I2C_STAR1_SB));           // wait for START generated
   I2C1->DATAR = addr;                             // send slave address + R/W bit
   while(!(I2C1->STAR1 & I2C_STAR1_ADDR));         // wait for address transmitted
   uint16_t reg = I2C1->STAR2;                     // clear flags
+  I2C_rwflag = addr & 1;                          // set read/write flag
 }
 #pragma GCC diagnostic pop
 
@@ -60,8 +65,20 @@ void I2C_write(uint8_t data) {
   I2C1->DATAR = data;                             // send data byte
 }
 
+// Read data byte via I2C bus (ack=0 for last byte, ack>0 if more bytes to follow)
+uint8_t I2C_read(uint8_t ack) {
+  if(!ack) {                                      // last byte?
+    I2C1->CTLR1 &= ~I2C_CTLR1_ACK;                // -> set NAK
+    I2C1->CTLR1 |=  I2C_CTLR1_STOP;               // -> set STOP condition
+  }
+  while(!(I2C1->STAR1 & I2C_STAR1_RXNE));         // wait for data byte received
+  return I2C1->DATAR;                             // return received data byte
+}
+
 // Stop I2C transmission
 void I2C_stop(void) {
-  while(!(I2C1->STAR1 & I2C_STAR1_BTF));          // wait for last byte transmitted
-  I2C1->CTLR1 |= I2C_CTLR1_STOP;                  // set STOP condition
+  if(!I2C_rwflag) {                               // for read operation only
+    while(!(I2C1->STAR1 & I2C_STAR1_BTF));        // wait for last byte transmitted
+    I2C1->CTLR1 |= I2C_CTLR1_STOP;                // set STOP condition
+  }
 }

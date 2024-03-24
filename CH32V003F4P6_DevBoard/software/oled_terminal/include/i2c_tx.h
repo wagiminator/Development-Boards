@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic I2C Master Functions (write only) for CH32V003                       * v1.1 *
+// Basic I2C Master Functions (write only) for CH32V003                       * v1.2 *
 // ===================================================================================
 //
 // Functions available:
@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-#include "ch32v003.h"
+#include "system.h"
 
 // I2C Parameters
 #define I2C_CLKRATE   400000    // I2C bus clock rate (Hz)

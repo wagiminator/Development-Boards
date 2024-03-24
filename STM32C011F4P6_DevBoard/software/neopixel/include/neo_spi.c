@@ -5,8 +5,6 @@
 
 #include "neo_spi.h"
 
-#define SPI_DR_8BIT *((volatile uint8_t*) &(SPI1->DR))  // for 8-bit data transfer
-
 // ===================================================================================
 // SPI Parameters and Variables
 // ===================================================================================
@@ -22,7 +20,11 @@
 #error Unsupported system frequency for NeoPixels!
 #endif
 
-uint8_t NEO_buffer[3 * NEO_COUNT];          // pixel buffer
+// Define SPI data register for 8-bit data transfer
+#define SPI_DR_8BIT   *((volatile uint8_t*) &(SPI1->DR))
+
+// NeoPixel data buffer
+uint8_t NEO_buffer[3 * NEO_COUNT];
 
 // ===================================================================================
 // Init SPI for Neopixels

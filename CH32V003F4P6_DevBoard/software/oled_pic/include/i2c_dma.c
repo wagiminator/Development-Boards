@@ -1,9 +1,12 @@
 // ===================================================================================
-// Basic I2C Master Functions (write only) for CH32V003                       * v1.2 *
+// Basic I2C Master Functions with DMA for TX for CH32V003                    * v1.0 *
 // ===================================================================================
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
-#include "i2c_tx.h"
+#include "i2c_dma.h"
+
+// Read/write flag
+uint8_t I2C_rwflag;
 
 // Init I2C
 void I2C_init(void) {
@@ -39,6 +42,15 @@ void I2C_init(void) {
     I2C1->CKCFGR  = (F_CPU / (2 * I2C_CLKRATE));  // -> set clock division factor 1:1
   #endif
   I2C1->CTLR1   = I2C_CTLR1_PE;                   // enable I2C
+
+  // Setup DMA Channel 5
+  RCC->AHBPCENR |= RCC_DMA1EN;                    // enable DMA module clock
+  DMA1_Channel6->PADDR = (uint32_t)&I2C1->DATAR;  // peripheral address
+  DMA1_Channel6->CFGR  = DMA_CFG6_MINC            // increment memory address
+                       | DMA_CFG6_DIR             // memory to I2C
+                       | DMA_CFG6_TCIE;           // transfer complete interrupt enable
+  DMA1->INTFCR         = DMA_CGIF6;               // clear interrupt flags
+  NVIC_EnableIRQ(DMA1_Channel6_IRQn);             // enable the DMA IRQ
 }
 
 // Start I2C transmission (addr must contain R/W bit)
@@ -46,11 +58,13 @@ void I2C_init(void) {
 #pragma GCC diagnostic ignored "-Wunused-variable"
 void I2C_start(uint8_t addr) {
   while(I2C1->STAR2 & I2C_STAR2_BUSY);            // wait until bus ready
-  I2C1->CTLR1 |= I2C_CTLR1_START;                 // set START condition
+  I2C1->CTLR1 |= I2C_CTLR1_START                  // set START condition
+               | I2C_CTLR1_ACK;                   // set ACK
   while(!(I2C1->STAR1 & I2C_STAR1_SB));           // wait for START generated
   I2C1->DATAR = addr;                             // send slave address + R/W bit
   while(!(I2C1->STAR1 & I2C_STAR1_ADDR));         // wait for address transmitted
   uint16_t reg = I2C1->STAR2;                     // clear flags
+  I2C_rwflag = addr & 1;                          // set read/write flag
 }
 #pragma GCC diagnostic pop
 
@@ -60,8 +74,38 @@ void I2C_write(uint8_t data) {
   I2C1->DATAR = data;                             // send data byte
 }
 
+// Read data byte via I2C bus (ack=0 for last byte, ack>0 if more bytes to follow)
+uint8_t I2C_read(uint8_t ack) {
+  if(!ack) {                                      // last byte?
+    I2C1->CTLR1 &= ~I2C_CTLR1_ACK;                // -> set NAK
+    I2C1->CTLR1 |=  I2C_CTLR1_STOP;               // -> set STOP condition
+  }
+  while(!(I2C1->STAR1 & I2C_STAR1_RXNE));         // wait for data byte received
+  return I2C1->DATAR;                             // return received data byte
+}
+
 // Stop I2C transmission
 void I2C_stop(void) {
+  if(!I2C_rwflag) {                               // only if not already stopped
+    while(!(I2C1->STAR1 & I2C_STAR1_BTF));        // wait for last byte transmitted
+    I2C1->CTLR1 |= I2C_CTLR1_STOP;                // set STOP condition
+  }
+}
+
+// Send data buffer via I2C bus using DMA
+void I2C_writeBuffer(uint8_t* buf, uint16_t len) {
+  DMA1_Channel6->CNTR  = len;                     // number of bytes to be transfered
+  DMA1_Channel6->MADDR = (uint32_t)buf;           // memory address
+  DMA1_Channel6->CFGR |= DMA_CFG6_EN;             // enable DMA channel
+  I2C1->CTLR2         |= I2C_CTLR2_DMAEN;         // enable DMA request
+}
+
+// Interrupt service routine
+void DMA1_Channel6_IRQHandler(void) __attribute__((interrupt));
+void DMA1_Channel6_IRQHandler(void) {
+  I2C1->CTLR2         &= ~I2C_CTLR2_DMAEN;        // disable DMA request
+  DMA1_Channel6->CFGR &= ~DMA_CFG6_EN;            // disable DMA channel
+  DMA1->INTFCR         = DMA_CGIF6;               // clear interrupt flags
   while(!(I2C1->STAR1 & I2C_STAR1_BTF));          // wait for last byte transmitted
-  I2C1->CTLR1 |= I2C_CTLR1_STOP;                  // set STOP condition
+  I2C1->CTLR1         |= I2C_CTLR1_STOP;          // set STOP condition
 }

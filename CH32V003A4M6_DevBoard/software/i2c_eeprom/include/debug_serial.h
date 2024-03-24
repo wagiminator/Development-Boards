@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 #include <stdio.h>
-#include "ch32v003.h"
+#include "system.h"
 
 // DEBUG parameters
 #define DEBUG_ENABLE      1                 // enable serial DEBUG (0:no, 1:yes)

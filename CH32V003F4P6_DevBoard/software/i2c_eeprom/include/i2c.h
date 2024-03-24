@@ -1,12 +1,13 @@
 // ===================================================================================
-// Basic I2C Master Functions (write only) for CH32V003                       * v1.2 *
+// Basic I2C Master Functions for CH32V003                                    * v1.0 *
 // ===================================================================================
 //
 // Functions available:
 // --------------------
-// I2C_init()               Init I2C with defined clock rate (400kHz)
+// I2C_init()               Init I2C with defined clock rate (see below)
 // I2C_start(addr)          I2C start transmission, addr must contain R/W bit
 // I2C_write(b)             I2C transmit one data byte via I2C
+// I2C_read(ack)            I2C receive one data byte (set ack=0 for last byte)
 // I2C_stop()               I2C stop transmission
 //
 // I2C pin mapping (set below in I2C parameters):
@@ -33,8 +34,9 @@ extern "C" {
 // I2C Functions
 void I2C_init(void);            // I2C init function
 void I2C_start(uint8_t addr);   // I2C start transmission, addr must contain R/W bit
-void I2C_write(uint8_t data);   // I2C transmit one data byte via I2C
 void I2C_stop(void);            // I2C stop transmission
+void I2C_write(uint8_t data);   // I2C transmit one data byte via I2C
+uint8_t I2C_read(uint8_t ack);  // I2C receive one data byte from the slave
 
 #ifdef __cplusplus
 };

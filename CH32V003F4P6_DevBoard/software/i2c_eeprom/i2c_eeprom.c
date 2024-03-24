@@ -30,7 +30,7 @@
 // ===================================================================================
 #include <system.h>                               // system functions
 #include <debug_serial.h>                         // serial debug functions
-#include <i2c_soft.h>                             // software I2C functions
+#include <i2c.h>                                  // I2C functions
 #include <eeprom_24c.h>                           // 24Cxx I2C EEPROM functions
 
 // ===================================================================================
