@@ -29,7 +29,7 @@ Development board for the CH32V003F4P6 ultra-cheap (10 cents) 32-bit RISC-V micr
 ## [CH32V003 F4P6 Development Board V-USB](https://github.com/wagiminator/Development-Boards/tree/main/CH32V003F4P6_DevBoard_VUSB)
 Development board for the CH32V003F4P6 ultra-low-cost 32-bit RISC-V microcontroller with support for software USB.
 
-![CH32V003F4P6_DevBoard_VUSB_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard_VUSB/documentation/CH32V003F4P6_DevBoard_VUSB_pic1.jpg)
+![CH32V003F4P6_DevBoard_VUSB_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard_VUSB/documentation/CH32V003F4P6_DevBoard_VUSB_pic2.jpg)
 
 ## [CH32V203 F6P6 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard)
 Development board for the CH32V203F6P6 low-cost 32-bit RISC-V microcontroller with native USB 2.0 and Arduino IDE support.
