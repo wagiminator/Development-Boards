@@ -1,5 +1,5 @@
 // ===================================================================================
-// Project:   Conways Game of Life for PY32F002A and SSD1306 128x64 Pixels I2C OLED
+// Project:   Conway's Game of Life for PY32F002A and SSD1306 128x64 Pixels I2C OLED
 // Version:   v1.0
 // Year:      2023
 // Author:    Stefan Wagner
@@ -46,6 +46,8 @@
 #include "system.h"               // system functions
 #include "i2c_dma_tx.h"           // I2C TX functions with DMA
 
+#define GAME_START    0xACE1DFEE  // define 32-bit game start code
+
 uint8_t page1[1024], page2[1024]; // double screen buffer
 uint8_t *src, *dst, *tmp;         // pointers to screen buffers
 
@@ -73,12 +75,8 @@ const uint8_t OLED_INIT_CMD[] = {
 // ===================================================================================
 // Pseudo Random Number Generator
 // ===================================================================================
-
-// Start value (any non-zero value will work)
-uint32_t rnval = 0xACE1DFEE;
-
-// Get random number in range 0 .. (max-1)
 uint32_t random(uint32_t max) {
+  static uint32_t rnval = GAME_START;
   rnval = rnval << 16 | (rnval << 1 ^ rnval << 2) >> 16;
   return(rnval % max);
 }
