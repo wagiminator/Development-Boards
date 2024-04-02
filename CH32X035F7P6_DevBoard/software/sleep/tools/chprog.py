@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ===================================================================================
 # Project:   chprog - USB Programming Tool for WCH Microcontrollers
-# Version:   v2.3
+# Version:   v2.4
 # Year:      2022
 # Author:    Stefan Wagner
 # Github:    https://github.com/wagiminator
@@ -85,6 +85,12 @@ class Programmer:
             self.dev = usb.core.find(idVendor = CH_USB_VENDOR_ID2, idProduct = CH_USB_PRODUCT_ID)
             if self.dev is None:
                 raise Exception('MCU not found. Check if device is in BOOT mode')
+
+        # Set configuration
+        try:
+            self.dev.set_configuration()
+        except:
+            raise Exception('Failed to access USB Device. Check permissions')
 
         # Clear USB receive buffer
         try:    self.dev.read(CH_USB_EP_IN, 1024, 1)
