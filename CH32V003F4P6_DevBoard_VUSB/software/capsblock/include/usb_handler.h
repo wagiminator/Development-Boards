@@ -1,22 +1,25 @@
-#ifndef _RV003USB_H
-#define _RV003USB_H
+// ===================================================================================
+// Software USB Handler for CH32V003                                          * v1.0 *
+// ===================================================================================
+//
+// This file contains a copy of rv003usb.h (https://github.com/cnlohr/rv003usb),
+// copyright (c) 2023 CNLohr (MIT License), with some minor changes by Stefan Wagner.
 
-#include "usb_config.h"
+#pragma once
 
-// Fallback and issue warning for users with the swapped pin assignments of previous versions
-#if defined(USB_DM) || defined(USB_DP)
-#warning "You usb_config.h is outdated. Please use USB_PIN_DP, USB_PIN_DM and USB_PIN_DPU instead with their respective signal (no swapping!)"
-#define USB_PIN_DM USB_DP
-#define USB_PIN_DP USB_DM
+#include "usb_descr.h"
+
+// USB handler checks
+#ifndef __ASSEMBLER__
+#include "system.h"
+#if SYS_USE_VECTORS == 0
+  #error Interrupt vector table must be enabled (SYS_USE_VECTORS in system.h)!
 #endif
-#if defined(USB_DPU)
-#define USB_PIN_DPU USB_DPU
+#if SYS_TICK_INIT == 0
+  #error SysTick must be enabled (SYS_TICK_INIT in system.h)!
 #endif
-/*
-#if !defined(FUNCONF_SYSTICK_USE_HCLK) || !FUNCONF_SYSTICK_USE_HCLK
-#error "RV003USB requires #define FUNCONF_SYSTICK_USE_HCLK 1; see funconfig.h"
 #endif
-*/
+
 #define LOCAL_CONCAT_BASE(A, B) A##B##_BASE
 #define LOCAL_EXP_BASE(A, B) LOCAL_CONCAT_BASE(A,B)
 
@@ -25,17 +28,12 @@
 // Public stuff:
 
 /* Here are your options:
-
 #define RV003USB_HANDLE_IN_REQUEST   0
 #define RV003USB_OTHER_CONTROL       0
 #define RV003USB_HANDLE_USER_DATA    0
 #define RV003USB_HID_FEATURES        0
 #define RV003USB_SUPPORT_CONTROL_OUT 0
-
-#define RV003USB_EVENT_DEBUGGING     0
-#define RV003USB_DEBUG_TIMING        0
 #define RV003USB_CUSTOM_C            0
-
 #define RV003USB_USER_DATA_HANDLES_TOKEN 0
 */
 
@@ -68,7 +66,6 @@ void usb_handle_user_data( struct usb_endpoint * e, int current_endpoint, uint8_
 // RV003USB_CUSTOM_C
 // This is mostly useful on things like bootloaders.
 
-
 // Note: This checks addr & endp to make sure they are valid.
 void usb_pid_handle_setup( uint32_t addr, uint8_t * data, uint32_t endp, uint32_t unused, struct rv003usb_internal * ist );
 void usb_pid_handle_in( uint32_t addr, uint8_t * data, uint32_t endp, uint32_t unused, struct rv003usb_internal * ist );
@@ -84,16 +81,10 @@ void usb_send_empty( uint32_t token );
 
 void usb_setup();
 
-
-#if RV003USB_EVENT_DEBUGGING
-void LogUEvent( uint32_t a, uint32_t b, uint32_t c, uint32_t d );
-uint32_t * GetUEvent();
-#else
 #define LogUEvent( a, b, c,  d )
 #define GetUEvent() 0
-#endif
 
-#endif
+#endif    // __ASSEMBLER__
 
 
 // Internal stuff.
@@ -137,17 +128,15 @@ uint32_t * GetUEvent();
 #define TURBO16TYPE uint16_t
 #endif
 
-
-struct usb_endpoint
-{
-	TURBO8TYPE count;	    // ack count / in count
-	TURBO8TYPE toggle_in;   // DATA0 or DATA1?
-	TURBO8TYPE toggle_out;  // Out PC->US
-	TURBO8TYPE custom;      // Anything nonzero will incur the custom call.
-	TURBO16TYPE max_len;
-	TURBO16TYPE reserved1;
-	uint32_t    reserved2; 
-	uint8_t *   opaque;      // For user.
+struct usb_endpoint {
+  TURBO8TYPE count;	      // ack count / in count
+  TURBO8TYPE toggle_in;   // DATA0 or DATA1?
+  TURBO8TYPE toggle_out;  // Out PC->US
+  TURBO8TYPE custom;      // Anything nonzero will incur the custom call.
+  TURBO16TYPE max_len;
+  TURBO16TYPE reserved1;
+  uint32_t    reserved2; 
+  uint8_t *   opaque;     // For user.
 };  // CAREFUL! sizeof pacekt 
 
 // Make the size of this a power of 2, otherwise it will be slow to access.
@@ -157,19 +146,17 @@ _Static_assert( (sizeof(struct usb_endpoint) == 32), "usb_endpoint must be pow2 
 _Static_assert( (sizeof(struct usb_endpoint) == 16), "usb_endpoint must be pow2 sized" );
 #endif
 
+struct rv003usb_internal {
+  TURBO8TYPE current_endpoint; // Can this be combined with setup_request?
+  TURBO8TYPE my_address;       // Will be 0 until set up.
+  TURBO8TYPE setup_request;    // 0 for non-setup request, 1 after setup token, is allowed to be 2 for control-out if RV003USB_SUPPORT_CONTROL_OUT is set.
+  TURBO8TYPE reserved;
+  uint32_t last_se0_cyccount;
+  int32_t delta_se0_cyccount;
+  uint32_t se0_windup;
+  // 5 bytes + 6 * ENDPOINTS
 
-struct rv003usb_internal
-{
-	TURBO8TYPE current_endpoint; // Can this be combined with setup_request?
-	TURBO8TYPE my_address;       // Will be 0 until set up.
-	TURBO8TYPE setup_request;    // 0 for non-setup request, 1 after setup token, is allowed to be 2 for control-out if RV003USB_SUPPORT_CONTROL_OUT is set.
-	TURBO8TYPE reserved;
-	uint32_t last_se0_cyccount;
-	int32_t delta_se0_cyccount;
-	uint32_t se0_windup;
-	// 5 bytes + 6 * ENDPOINTS
-
-	struct usb_endpoint eps[ENDPOINTS];
+  struct usb_endpoint eps[ENDPOINTS];
 };
 
 //Detailed analysis of some useful stuff and performance tweaking: http://naberius.de/2015/05/14/esp8266-gpio-output-performance/
@@ -178,18 +165,13 @@ struct rv003usb_internal
 // Neat stuff: http://www.usbmadesimple.co.uk/ums_3.htm
 // Neat stuff: http://www.beyondlogic.org/usbnutshell/usb1.shtml
 
-struct usb_urb
-{
-	uint16_t wRequestTypeLSBRequestMSB;
-	uint32_t lValueLSBIndexMSB;
-	uint16_t wLength;
+struct usb_urb {
+  uint16_t wRequestTypeLSBRequestMSB;
+  uint32_t lValueLSBIndexMSB;
+  uint16_t wLength;
 } __attribute__((packed));
 
 
 extern struct rv003usb_internal rv003usb_internal_data;
 
-
-#endif
-
-#endif
-
+#endif    // __ASSEMBLER__

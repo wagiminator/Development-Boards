@@ -1,7 +1,12 @@
-// Test
+// ===================================================================================
+// Software USB Handler for CH32V003                                          * v1.0 *
+// ===================================================================================
+//
+// This file contains a copy of rv003usb.S (https://github.com/cnlohr/rv003usb),
+// copyright (c) 2023 CNLohr (MIT License).
 
 #include "ch32v003.h"
-#include "rv003usb.h"
+#include "usb_handler.h"
 
 #define CFGLR_OFFSET 0
 #define INDR_OFFSET 8
@@ -885,5 +890,3 @@ always0:
 	.word 0x00
 
 #endif
-
-

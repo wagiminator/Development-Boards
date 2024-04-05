@@ -10,10 +10,9 @@
 //
 // Description:
 // ------------
-// Mouse Wiggler is a tool that simulates movements of the mouse pointer so that 
-// no screen saver is activated and the PC or notebook is not put to sleep. The
-// mouse pointer movements are imperceptibly small, so that you can continue to
-// work normally on your PC even with the function activated.
+// Tired of accidentally hitting the CAPS-LOCK key? It doesn't have to be. 
+// CAPS bLOCK identifies itself as a USB HID keyboard and constantly monitors the
+// state of CAPS LOCK. It immediately deactivates it if it has been activated.
 //
 // References:
 // -----------
@@ -30,15 +29,15 @@
 //
 // Operating Instructions:
 // -----------------------
-// - Connect the board via USB to your PC. It should be detected as a HID mouse.
-// - The wiggle function is automatically activated.
+// - Connect the board via USB to your PC. It should be detected as a HID keyboard.
+// - The blocking function is automatically activated.
 
 
 // ===================================================================================
 // Libraries, Definitions and Macros
 // ===================================================================================
 #include "system.h"                   // system functions
-#include "usb_mouse.h"                // USB HID mouse functions
+#include "usb_keyboard.h"             // USB HID keyboard functions
 
 // ===================================================================================
 // Main Function
@@ -46,13 +45,13 @@
 int main(void) {
   // Setup
   DLY_ms(1);                          // wait a bit for USB
-  MOUSE_init();                       // init USB HID mouse
-
+  KBD_init();                         // init USB HID keyboard
+  
   // Loop
   while(1) {
-    DLY_ms(30000);                    // wait half a minute
-    MOUSE_move( 1, 0);                // move mouse pointer just a tiny bit
-    DLY_ms(20);                       // wait for next poll
-    MOUSE_move(-1, 0);                // move pointer back to where it was
+    if(KBD_CAPS_LOCK_state) {         // CAPS LOCK was pressed?
+      KBD_type(KBD_KEY_CAPS_LOCK);    // press CAPS LOCK again to deactivate
+      DLY_ms(30);                     // wait a bit
+    }
   }
 }
