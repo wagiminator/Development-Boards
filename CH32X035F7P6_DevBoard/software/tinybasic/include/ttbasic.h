@@ -7,7 +7,7 @@
 #include "usb_cdc.h"
 
 // Define special keys
-#define KEY_ENTER     13      // ENTER key: CR
+#define KEY_ENTER     10      // ENTER key: LF
 #define KEY_ABORT     27      // ABORT key: ESC
 
 // TOYOSHIKI Tiny BASIC symbols

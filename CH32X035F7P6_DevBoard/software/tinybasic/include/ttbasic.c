@@ -1314,7 +1314,7 @@ void basic() {
   c_puts(" EDITION"); //「 EDITION」を表示
   newline(); //改行
   putnum(SIZE_LIST, 0);
-  c_puts(" bytes free.");
+  c_puts(" BYTES FREE");
   newline(); //改行
   error(); //「OK」またはエラーメッセージを表示してエラー番号をクリア
 
