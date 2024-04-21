@@ -13,9 +13,12 @@
 // OLED_drawHLine(x,y,w,c)        Draw horizontal line starting from (x,y), width (w), color (c)
 // OLED_drawLine(x0,y0,x1,y1,c)   Draw line from position (x0,y0) to (x1,y1) with color (c)
 //
-// OLED_drawCircle(x,y,r,c)       Draw circle, center at (x,y), radius (r), color (c)
+// OLED_drawCircle(x,y,r,c)       Draw circle, center at position (x,y), radius (r), color (c)
 // OLED_drawRect(x,y,w,h,c)       Draw rectangle starting from (x,y), width (w), height (h), color (c)
 // OLED_fillRect(x,y,w,h,c)       Draw filled rectangle starting from (x,y), width (w), height (h), color (c)
+//
+// OLED_print(x,y,st,c,sz)        Print string (st) at position (x,y), color (c), size (sz)
+// OLED_drawChar(x,y,ch,c,s)      Draw character (ch) at position (x,y), color (c), size (sz)
 //
 // I2C pin mapping (set below in I2C parameters):
 // ----------------------------------------------
@@ -56,6 +59,8 @@ void OLED_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color
 void OLED_drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color);
 void OLED_drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
 void OLED_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
+void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size);
+void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size);
 
 #ifdef __cplusplus
 };

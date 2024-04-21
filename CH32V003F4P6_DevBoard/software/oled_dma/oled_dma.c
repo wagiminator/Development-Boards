@@ -52,19 +52,27 @@ int main(void) {
     OLED_clear();
     for(uint16_t i = 200; i; i--) {
       OLED_drawCircle(random(128), random(64), random(16), 1);
-      DLY_ms(10);
+      DLY_ms(10); // we need to slow it down for our eyes to be able to follow
     }
 
     OLED_clear();
     for(uint16_t i = 200; i; i--) {
       OLED_drawRect(random(128), random(64), random(64), random(32), 1);
-      DLY_ms(10);
+      DLY_ms(10); // we need to slow it down for our eyes to be able to follow
     }
 
     OLED_clear();
     for(uint16_t i = 200; i; i--) {
       OLED_drawLine(random(128), random(64), random(128), random(64), 1);
-      DLY_ms(10);
+      DLY_ms(10); // we need to slow it down for our eyes to be able to follow
+    }
+
+    OLED_clear();
+    for(uint16_t i = 1000; i; i--) {
+      OLED_print(random(128), random(64), "Hello", 1, 1);
+      OLED_print(random(128), random(64), "World", 1, 2);
+      OLED_print(random(128), random(64), "Hello", 0, 2);
+      OLED_print(random(128), random(64), "World", 0, 1);
     }
   }
 }
