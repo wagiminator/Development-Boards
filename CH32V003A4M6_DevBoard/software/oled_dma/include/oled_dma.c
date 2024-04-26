@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 128x64 Pixels I2C OLED Continuous DMA Refresh Functions            * v0.1 *
+// SSD1306 128x64 Pixels I2C OLED Continuous DMA Refresh Functions            * v0.2 *
 // ===================================================================================
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -45,8 +45,7 @@ void I2C_init(void) {
   DMA1_Channel6->PADDR = (uint32_t)&I2C1->DATAR;  // peripheral address
   DMA1_Channel6->CFGR  = DMA_CFG6_MINC            // increment memory address
                        | DMA_CFG6_CIRC            // circular mode
-                       | DMA_CFG6_DIR             // memory to I2C
-                       | DMA_CFG6_TCIE;           // transfer complete interrupt enable
+                       | DMA_CFG6_DIR;            // memory to I2C
 }
 
 // Start I2C transmission (addr must contain R/W bit)
@@ -197,14 +196,13 @@ void OLED_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color
   int16_t dx, dy;
   dx = x1 - x0;
   dy = abs(y1 - y0);
-
-  int16_t err = dx / 2;
+  int16_t err = dx >> 1;
   int16_t ystep;
 
   if(y0 < y1) ystep = 1;
   else ystep = -1;
 
-  for(; x0<=x1; x0++) {
+  while(x0 <= x1) {
     if(steep) OLED_setPixel(y0, x0, color);
     else      OLED_setPixel(x0, y0, color);
     err -= dy;
@@ -212,31 +210,18 @@ void OLED_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color
       y0  += ystep;
       err += dx;
     }
+    x0++;
   }
 }
 
 void OLED_drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
-  int16_t ddF_y = -2 * r;
+  int16_t ddF_y = -(r << 1);
   int16_t x = 0;
   int16_t y = r;
 
-  OLED_setPixel(x0  , y0+r, color);
-  OLED_setPixel(x0  , y0-r, color);
-  OLED_setPixel(x0+r, y0  , color);
-  OLED_setPixel(x0-r, y0  , color);
-
-  while(x < y) {
-    if(f >= 0) {
-      y--;
-      ddF_y += 2;
-      f += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f += ddF_x;
-
+  while(x <= y) {
     OLED_setPixel(x0 + x, y0 + y, color);
     OLED_setPixel(x0 - x, y0 + y, color);
     OLED_setPixel(x0 + x, y0 - y, color);
@@ -245,6 +230,39 @@ void OLED_drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color) {
     OLED_setPixel(x0 - y, y0 + x, color);
     OLED_setPixel(x0 + y, y0 - x, color);
     OLED_setPixel(x0 - y, y0 - x, color);
+
+    if(f >= 0) {
+      y--;
+      ddF_y += 2;
+      f += ddF_y;
+    }
+    ddF_x += 2;
+    f += ddF_x;
+    x++;
+  }
+}
+
+void OLED_fillCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color) {
+  int16_t f = 1 - r;
+  int16_t ddF_x = 1;
+  int16_t ddF_y = -(r << 1);
+  int16_t x = 0;
+  int16_t y = r;
+
+  while(x <= y) {
+    OLED_drawVLine(x0 - x, y0 - y, (y << 1) + 1, color);
+    OLED_drawVLine(x0 + x, y0 - y, (y << 1) + 1, color);
+    OLED_drawVLine(x0 - y, y0 - x, (x << 1) + 1, color);
+    OLED_drawVLine(x0 + y, y0 - x, (x << 1) + 1, color);
+
+    if(f >= 0) {
+      y--;
+      ddF_y += 2;
+      f += ddF_y;
+    }
+    x++;
+    ddF_x += 2;
+    f += ddF_x;
   }
 }
 

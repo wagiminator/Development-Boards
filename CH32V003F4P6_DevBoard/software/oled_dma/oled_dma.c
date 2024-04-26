@@ -44,14 +44,9 @@ int main(void) {
 
   // Loop
   while(1) {
-    for(uint16_t i = 2000; i; i--) {
-      OLED_fillRect(random(128), random(64), random(64), random(32), 1);
-      OLED_fillRect(random(128), random(64), random(64), random(32), 0);
-    }
-
     OLED_clear();
     for(uint16_t i = 200; i; i--) {
-      OLED_drawCircle(random(128), random(64), random(16), 1);
+      OLED_drawLine(random(128), random(64), random(128), random(64), 1);
       DLY_ms(10); // we need to slow it down for our eyes to be able to follow
     }
 
@@ -63,12 +58,21 @@ int main(void) {
 
     OLED_clear();
     for(uint16_t i = 200; i; i--) {
-      OLED_drawLine(random(128), random(64), random(128), random(64), 1);
+      OLED_drawCircle(random(128), random(64), random(16), 1);
       DLY_ms(10); // we need to slow it down for our eyes to be able to follow
     }
 
-    OLED_clear();
-    for(uint16_t i = 1000; i; i--) {
+    for(uint16_t i = 2000; i; i--) {
+      OLED_fillRect(random(128), random(64), random(64), random(32), 1);
+      OLED_fillRect(random(128), random(64), random(64), random(32), 0);
+    }
+
+    for(uint16_t i = 2000; i; i--) {
+      OLED_fillCircle(random(128), random(64), random(16), 1);
+      OLED_fillCircle(random(128), random(64), random(16), 0);
+    }
+
+    for(uint16_t i = 500; i; i--) {
       OLED_print(random(128), random(64), "Hello", 1, 1);
       OLED_print(random(128), random(64), "World", 1, 2);
       OLED_print(random(128), random(64), "Hello", 0, 2);
