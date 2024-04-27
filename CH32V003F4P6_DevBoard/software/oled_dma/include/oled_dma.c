@@ -348,6 +348,23 @@ void OLED_smoothChar(int16_t x, int16_t y, char c, uint8_t color) {
   OLED_fillRect(x, y, 2, 16, !color);
 }
 
+// Draw character (c) at position (x,y), color, v-stretched
+void OLED_stretchChar(int16_t x, int16_t y, char c, uint8_t color) {
+  uint16_t ptr = c - 32;
+  ptr += ptr << 2;
+  for(uint8_t col=6; col; col--) {
+    uint8_t col0 = OLED_FONT[ptr++];
+    if(col == 1) col0 = 0;
+    if(!color) col0 = ~col0;
+    int16_t y1 = y;
+    for(uint8_t i=8; i; i--, col0>>=1) {
+      OLED_setPixel(x, y1++, col0 & 1);
+      OLED_setPixel(x, y1++, col0 & 1);
+    }
+    x++;
+  }
+}
+
 // Print string (str) at position (x,y), color, size
 void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size) {
   while(*str) {
@@ -356,10 +373,18 @@ void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size) {
   }
 }
 
-// Print string (str) at position (x,y), color, double-size smoothed
+// Print string (str) at position (x,y), color, double-size, smoothed
 void OLED_smoothPrint(int16_t x, int16_t y, char* str, uint8_t color) {
   while(*str) {
     OLED_smoothChar(x, y, *str++, color);
     x += 12;
+  }
+}
+
+// Print string (str) at position (x,y), color, v-stretched
+void OLED_stretchPrint(int16_t x, int16_t y, char* str, uint8_t color) {
+  while(*str) {
+    OLED_stretchChar(x, y, *str++, color);
+    x += 6;
   }
 }

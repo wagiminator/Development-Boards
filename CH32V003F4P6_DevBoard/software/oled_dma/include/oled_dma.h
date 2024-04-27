@@ -23,6 +23,8 @@
 // OLED_drawChar(x,y,ch,c,sz)     Draw character (ch) at position (x,y), color (c), size (sz)
 // OLED_smoothPrint(x,y,st,c)     Print string (st) at position (x,y), color (c), double-size smoothed
 // OLED_smoothChar(x,y,ch,c)      Draw character (ch) at position (x,y), color (c), double-size smoothed
+// OLED_stretchPrint(x,y,st,c)    Print string (st) at position (x,y), color (c), v-stretched
+// OLED_stretchChar(x,y,ch,c)     Draw character (ch) at position (x,y), color (c), v-stretched
 //
 // I2C pin mapping (set below in I2C parameters):
 // ----------------------------------------------
@@ -75,6 +77,8 @@ void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size);
 void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size);
 void OLED_smoothChar(int16_t x, int16_t y, char c, uint8_t color);
 void OLED_smoothPrint(int16_t x, int16_t y, char* str, uint8_t color);
+void OLED_stretchChar(int16_t x, int16_t y, char c, uint8_t color);
+void OLED_stretchPrint(int16_t x, int16_t y, char* str, uint8_t color);
 
 #ifdef __cplusplus
 };

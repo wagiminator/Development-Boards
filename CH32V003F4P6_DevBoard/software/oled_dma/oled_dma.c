@@ -47,7 +47,8 @@ int main(void) {
     OLED_clear();
     OLED_print(0, 0, "Hello World", 1, 1);
     OLED_print(0, 32, "TEST", 1, 4);
-    OLED_smoothPrint(5, 12, "1234567890", 1);
+    OLED_stretchPrint(0, 12, "1234567890", 1);
+    OLED_smoothPrint(64, 12, "12345", 1);
     DLY_ms(5000);
 
     OLED_clear();
