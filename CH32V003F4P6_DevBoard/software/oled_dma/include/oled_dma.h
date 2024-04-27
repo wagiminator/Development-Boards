@@ -1,11 +1,12 @@
 // ===================================================================================
-// SSD1306 128x64 Pixels I2C OLED Continuous DMA Refresh Functions            * v0.2 *
+// SSD1306 128x64 Pixels I2C OLED Continuous DMA Refresh Functions            * v0.3 *
 // ===================================================================================
 //
 // Functions available:
 // --------------------
 // OLED_init()                    Init OLED
 // OLED_clear(void)               Clear OLED screen
+//
 // OLED_getPixel(x,y)             Get pixel color at (x,y) (0: pixel cleared, 1: pixel set)
 // OLED_setPixel(x,y,c)           Set pixel color (c) at position (x,y)
 //
@@ -19,13 +20,22 @@
 // OLED_fillCircle(x,y,r,c)       Draw filled circle, center at position (x,y), radius (r), color (c)
 //
 // OLED_print(x,y,st,c,sz)        Print string (st) at position (x,y), color (c), size (sz)
-// OLED_drawChar(x,y,ch,c,s)      Draw character (ch) at position (x,y), color (c), size (sz)
+// OLED_drawChar(x,y,ch,c,sz)     Draw character (ch) at position (x,y), color (c), size (sz)
+// OLED_smoothPrint(x,y,st,c)     Print string (st) at position (x,y), color (c), double-size smoothed
+// OLED_smoothChar(x,y,ch,c)      Draw character (ch) at position (x,y), color (c), double-size smoothed
 //
 // I2C pin mapping (set below in I2C parameters):
 // ----------------------------------------------
 // I2C_MAP    0     1     2
 // SDA-pin   PC1   PD0   PC6
 // SCL-pin   PC2   PD1   PC5
+//
+// References:
+// -----------
+// - Neven Boyanov:         https://github.com/tinusaur/ssd1306xled
+// - Stephen Denne:         https://github.com/datacute/Tiny4kOLED
+// - David Johnson-Davies:  http://www.technoblogy.com/show?3AJ7
+// - OLED Font Editor:      http://sourpuss.net/projects/fontedit/
 //
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -50,10 +60,10 @@ extern "C" {
 #define OLED_HEIGHT       64        // OLED height in pixels
 
 // OLED Functions
-void OLED_init(void);               // init OLED
+void OLED_init(void);
 void OLED_clear(void);
-uint8_t OLED_getPixel(int16_t xpos, int16_t ypos);
-void OLED_setPixel(int16_t xpos, int16_t ypos, uint8_t color);
+uint8_t OLED_getPixel(int16_t x, int16_t y);
+void OLED_setPixel(int16_t x, int16_t y, uint8_t color);
 void OLED_drawVLine(int16_t x, int16_t y, int16_t h, uint8_t color);
 void OLED_drawHLine(int16_t x, int16_t y, int16_t w, uint8_t color);
 void OLED_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color);
@@ -63,6 +73,8 @@ void OLED_drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
 void OLED_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
 void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size);
 void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size);
+void OLED_smoothChar(int16_t x, int16_t y, char c, uint8_t color);
+void OLED_smoothPrint(int16_t x, int16_t y, char* str, uint8_t color);
 
 #ifdef __cplusplus
 };

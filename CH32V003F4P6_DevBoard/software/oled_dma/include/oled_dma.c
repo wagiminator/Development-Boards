@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 128x64 Pixels I2C OLED Continuous DMA Refresh Functions            * v0.2 *
+// SSD1306 128x64 Pixels I2C OLED Continuous DMA Refresh Functions            * v0.3 *
 // ===================================================================================
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -156,64 +156,78 @@ void OLED_init(void) {
 // Graphics Functions
 // ===================================================================================
 
+// Clear OLED screen
 void OLED_clear(void) {
   uint32_t* ptr = (uint32_t*)&OLED_buffer;
   uint32_t  cnt = sizeof(OLED_buffer) >> 2;
   while(cnt--) *ptr++ = (uint32_t)0;
 }
 
-uint8_t OLED_getPixel(int16_t xpos, int16_t ypos) {
-  if((xpos < 0) || (xpos >= OLED_WIDTH) || (ypos < 0) || (ypos >= OLED_HEIGHT)) return 0;
-  return((OLED_buffer[((uint16_t)ypos >> 3) * 128 + xpos] >> (ypos & 7)) & 1);
+// Get pixel color at (x,y) (0: pixel cleared, 1: pixel set)
+uint8_t OLED_getPixel(int16_t x, int16_t y) {
+  if((x < 0) || (x >= OLED_WIDTH) || (y < 0) || (y >= OLED_HEIGHT)) return 0;
+  return((OLED_buffer[((uint16_t)y >> 3) * OLED_WIDTH + x] >> (y & 7)) & 1);
 }
 
-void OLED_setPixel(int16_t xpos, int16_t ypos, uint8_t color) {
-  if((xpos < 0) || (xpos >= OLED_WIDTH) || (ypos < 0) || (ypos >= OLED_HEIGHT)) return;
-  if(color) OLED_buffer[((uint16_t)ypos >> 3) * 128 + xpos] |=  ((uint8_t)1 << (ypos & 7));
-  else      OLED_buffer[((uint16_t)ypos >> 3) * 128 + xpos] &= ~((uint8_t)1 << (ypos & 7));
+// Set pixel at position (x,y) with color (0: pixel cleared, 1: pixel set)
+void OLED_setPixel(int16_t x, int16_t y, uint8_t color) {
+  if((x < 0) || (x >= OLED_WIDTH) || (y < 0) || (y >= OLED_HEIGHT)) return;
+  if(color) OLED_buffer[((uint16_t)y >> 3) * OLED_WIDTH + x] |=  ((uint8_t)1 << (y & 7));
+  else      OLED_buffer[((uint16_t)y >> 3) * OLED_WIDTH + x] &= ~((uint8_t)1 << (y & 7));
 }
 
+// Draw vertical line starting from (x,y), height (h), color (0: cleared, 1: set)
 void OLED_drawVLine(int16_t x, int16_t y, int16_t h, uint8_t color) {
   for(int16_t i=y; i<y+h; i++) OLED_setPixel(x, i, color);
 }
 
+// Draw horizontal line starting from (x,y), width (w), color (0: cleared, 1: set)
 void OLED_drawHLine(int16_t x, int16_t y, int16_t w, uint8_t color) {
   for(int16_t i=x; i<x+w; i++) OLED_setPixel(i, y, color);
 }
 
+// Draw line from position (x0,y0) to (x1,y1) with color (0: cleared, 1: set)
+// (Bresenham's line algorithm)
 void OLED_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color) {
-  uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
-  if(steep) {
-    swap(x0, y0);
-    swap(x1, y1);
-  }
-
-  if(x0 > x1) {
-    swap(x0, x1);
-    swap(y0, y1);
-  }
-
-  int16_t dx, dy;
-  dx = x1 - x0;
-  dy = abs(y1 - y0);
-  int16_t err = dx >> 1;
-  int16_t ystep;
-
-  if(y0 < y1) ystep = 1;
-  else ystep = -1;
-
-  while(x0 <= x1) {
-    if(steep) OLED_setPixel(y0, x0, color);
-    else      OLED_setPixel(x0, y0, color);
-    err -= dy;
-    if(err < 0) {
-      y0  += ystep;
-      err += dx;
+  int16_t dx = abs(x1 - x0);
+  int16_t sx = x0 < x1 ? 1 : -1;
+  int16_t dy = -abs(y1 - y0);
+  int16_t sy = y0 < y1 ? 1 : -1;
+  int16_t error = dx + dy;
+    
+  while(1) {
+    OLED_setPixel(x0, y0, color);
+    if(x0 == x1 && y0 == y1) break;
+    int16_t e2 = error * 2;
+    if(e2 >= dy) {
+      if(x0 == x1) break;
+      error += dy;
+      x0 += sx;
     }
-    x0++;
+    if(e2 <= dx) {
+      if(y0 == y1) break;
+      error += dx;
+      y0 += sy;
+    }
   }
 }
 
+// Draw rectangle starting from (x,y), width (w), height (h), color (0: cleared, 1: set)
+void OLED_drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color) {
+  OLED_drawHLine(x    , y,     w, color);
+  OLED_drawHLine(x    , y+h-1, w, color);
+  OLED_drawVLine(x    , y,     h, color);
+  OLED_drawVLine(x+w-1, y,     h, color);
+}
+
+
+// Draw filled rectangle starting from (x,y), width (w), height (h), color
+void OLED_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color) {
+  for(int16_t i=x; i<x+w; i++) OLED_drawVLine(i, y, h, color);
+}
+
+// Draw circle, center at position (x0,y0), radius (r), color (0: cleared, 1: set)
+// (midpoint circle algorithm)
 void OLED_drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
@@ -242,6 +256,8 @@ void OLED_drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color) {
   }
 }
 
+// Draw filled circle, center at position (x0,y0), radius (r), color
+// (midpoint circle algorithm)
 void OLED_fillCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
@@ -266,25 +282,15 @@ void OLED_fillCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color) {
   }
 }
 
-void OLED_drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color) {
-  OLED_drawHLine(x    , y,     w, color);
-  OLED_drawHLine(x    , y+h-1, w, color);
-  OLED_drawVLine(x    , y,     h, color);
-  OLED_drawVLine(x+w-1, y,     h, color);
-}
-
-void OLED_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color) {
-  for(int16_t i=x; i<x+w; i++) OLED_drawVLine(i, y, h, color);
-}
-
+// Draw character (c) at position (x,y), color, size
 void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size) {
   uint16_t ptr = c - 32;
   ptr += ptr << 2;
   for(uint8_t i=6; i; i--) {
     uint8_t line, col;
     int16_t y1 = y;
+    line = OLED_FONT[ptr++];
     if(i == 1) line = 0;
-    else line = OLED_FONT[ptr++];
     for(uint8_t j=0; j<8; j++, line>>=1) {
       if(line & 1) col = color;
       else col = !color;
@@ -298,9 +304,62 @@ void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size) {
   }
 }
 
+// Converts bit pattern abcdefgh into aabbccddeeffgghh
+uint16_t OLED_stretch(uint16_t x) {
+  x = (x & 0xF0)<<4 | (x & 0x0F);
+  x = (x<<2 | x) & 0x3333;
+  x = (x<<1 | x) & 0x5555;
+  return x | x<<1;
+}
+
+// Draw character (c) at position (x,y), color, double-size, smoothed
+// (David Johnson-Davies' Smooth Big Text algorithm)
+void OLED_smoothChar(int16_t x, int16_t y, char c, uint8_t color) {
+  uint16_t ptr = c - 32;
+  ptr += ptr << 2;
+  uint16_t col0L, col0R, col1L, col1R;
+  uint8_t col0 = OLED_FONT[ptr++];
+  col0L = OLED_stretch(col0);
+  col0R = col0L;
+  for(uint8_t col=5; col; col--) {
+    uint8_t col1 = OLED_FONT[ptr++];
+    if(col == 1) col1 = 0;
+    col1L = OLED_stretch(col1);
+    col1R = col1L;    
+    for(int8_t i=6; i>=0; i--) {
+      for(int8_t j=1; j<3; j++) {
+        if(((col0>>i & 0b11) == (3 - j)) && ((col1>>i & 0b11) == j)) {
+          col0R = col0R | 1<<((i << 1) + j);
+          col1L = col1L | 1<<((i << 1) + 3 - j);
+        }
+      }
+    }
+    int16_t y1 = y;
+    if(!color) {
+      col0L = ~col0L;
+      col0R = ~col0R;
+    }
+    for(int8_t i=16; i; i--, col0L>>=1, col0R>>=1) {
+      OLED_setPixel(x,   y1,   col0L & 1);
+      OLED_setPixel(x+1, y1++, col0R & 1);
+    }
+    col0 = col1; col0L = col1L; col0R = col1R; x += 2;
+  }
+  OLED_fillRect(x, y, 2, 16, !color);
+}
+
+// Print string (str) at position (x,y), color, size
 void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size) {
   while(*str) {
     OLED_drawChar(x, y, *str++, color, size);
     x += ((size << 2) + (size << 1));
+  }
+}
+
+// Print string (str) at position (x,y), color, double-size smoothed
+void OLED_smoothPrint(int16_t x, int16_t y, char* str, uint8_t color) {
+  while(*str) {
+    OLED_smoothChar(x, y, *str++, color);
+    x += 12;
   }
 }

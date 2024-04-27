@@ -45,6 +45,22 @@ int main(void) {
   // Loop
   while(1) {
     OLED_clear();
+    OLED_print(0, 0, "Hello World", 1, 1);
+    OLED_print(0, 32, "TEST", 1, 4);
+    OLED_smoothPrint(5, 12, "1234567890", 1);
+    DLY_ms(5000);
+
+    OLED_clear();
+    OLED_fillCircle(32, 32, 30, 1);
+    OLED_drawCircle(64 + 32, 32, 30, 1);
+    DLY_ms(5000);
+
+    OLED_clear();
+    OLED_fillRect(0, 0, 60, 60, 1);
+    OLED_drawRect(64, 0, 60, 60, 1);
+    DLY_ms(5000);
+
+    OLED_clear();
     for(uint16_t i = 200; i; i--) {
       OLED_drawLine(random(128), random(64), random(128), random(64), 1);
       DLY_ms(10); // we need to slow it down for our eyes to be able to follow
