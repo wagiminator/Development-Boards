@@ -48,7 +48,7 @@
 
 #define GAME_START    0xACE1DFEE  // define 32-bit game start code
 
-uint8_t page1[1024], page2[1024]; // double screen buffer
+uint8_t __attribute__ ((aligned(4))) page1[1024], page2[1024]; // double screen buffer
 uint8_t *src, *dst, *tmp;         // pointers to screen buffers
 
 // ===================================================================================

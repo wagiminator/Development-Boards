@@ -50,7 +50,7 @@
 
 #define GAME_START    0xBEEFAFFE  // define 32-bit game start code
 
-uint8_t page1[1024], page2[896];  // double screen buffer
+uint8_t __attribute__ ((aligned(4))) page1[1024], page2[896];  // double screen buffer
 
 const uint8_t GAME_TEXT[] = {
   0x00, 0x3E, 0x41, 0x41, 0x41, 0x22, 0x00, 0x3E, 0x41, 0x41, 0x41, 0x3E,

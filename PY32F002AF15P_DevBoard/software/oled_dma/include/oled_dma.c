@@ -185,7 +185,8 @@ const uint8_t OLED_FONT[] = {
 // SSD1306 128x64 Pixels OLED Functions
 // ===================================================================================
 
-uint8_t OLED_buffer[OLED_WIDTH * OLED_HEIGHT / 8];// screen buffer
+// Screen buffer
+uint8_t __attribute__ ((aligned(4))) OLED_buffer[OLED_WIDTH * OLED_HEIGHT / 8];
 
 // OLED initialisation sequence
 const uint8_t OLED_INIT_CMD[] = {

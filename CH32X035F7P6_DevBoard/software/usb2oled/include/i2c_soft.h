@@ -33,7 +33,7 @@ extern "C" {
 #define PIN_SDA       PA11        // pin connected to serial data of the I2C bus
 #define PIN_SCL       PA10        // pin connected to serial clock of the I2C bus
 #endif
-#define I2C_CLKRATE   600000      // I2C bus clock rate in Hz
+#define I2C_CLKRATE   400000      // I2C bus clock rate in Hz
 
 // I2C Functions
 void I2C_init(void);              // I2C init function

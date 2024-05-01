@@ -13,8 +13,8 @@
 // ===================================================================================
 // I2C Delay
 // ===================================================================================
-#define I2C_DLY_TICKS_H   (((F_CPU *  9) / (I2C_CLKRATE * 25)) - 3)
-#define I2C_DLY_TICKS_L   (((F_CPU * 16) / (I2C_CLKRATE * 25)) - 22)
+#define I2C_DLY_TICKS_H   (((F_CPU *  9) / (I2C_CLKRATE * 25)) - 41)
+#define I2C_DLY_TICKS_L   (((F_CPU * 16) / (I2C_CLKRATE * 25)) - 76)
 
 #if I2C_DLY_TICKS_H >= 1
   #define I2C_DELAY_H()   DLY_ticks(I2C_DLY_TICKS_H)
