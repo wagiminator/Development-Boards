@@ -7,14 +7,14 @@
 //
 // References:
 // -----------
-// - Neven Boyanov: https://github.com/tinusaur/ssd1306xled
-// - Stephen Denne: https://github.com/datacute/Tiny4kOLED
-// - David Johnson-Davies: http://www.technoblogy.com/show?TV4
-// - TinyOLEDdemo: https://github.com/wagiminator/attiny13-tinyoleddemo
-// - TinyTerminal: https://github.com/wagiminator/ATtiny85-TinyTerminal
-// - USB2OLED: https://github.com/wagiminator/CH552-USB-OLED
+// - Neven Boyanov:         https://github.com/tinusaur/ssd1306xled
+// - Stephen Denne:         https://github.com/datacute/Tiny4kOLED
+// - David Johnson-Davies:  http://www.technoblogy.com/show?TV4
+// - TinyOLEDdemo:          https://github.com/wagiminator/attiny13-tinyoleddemo
+// - TinyTerminal:          https://github.com/wagiminator/ATtiny85-TinyTerminal
+// - OLED Font Editor:      http://sourpuss.net/projects/fontedit/
 //
-// 2022 by Stefan Wagner: https://github.com/wagiminator
+// 2022 by Stefan Wagner:   https://github.com/wagiminator
 
 #include "oled_term.h"
 
@@ -59,6 +59,8 @@ const uint8_t OLED_INIT_CMD[] = {
   OLED_MULTIPLEX,   0x3F,                 // set multiplex ratio  
   OLED_CHARGEPUMP,  0x14,                 // set DC-DC enable  
   OLED_MEMORYMODE,  0x02,                 // set page addressing mode
+  OLED_COLUMNS,     0x00, 0x7F,           // set start and end column
+  OLED_PAGES,       0x00, 0x3F,           // set start and end page
   OLED_COMPINS,     0x12,                 // set com pins
   OLED_XFLIP, OLED_YFLIP,                 // flip screen
   OLED_DISPLAY_ON                         // display on
@@ -110,6 +112,7 @@ void OLED_scrollDisplay(void) {
 void OLED_init(void) {
   uint8_t i;
   I2C_init();                             // initialize I2C first
+  DLY_ms(50);                             // wait for OLED to boot up
   I2C_start(OLED_ADDR);                   // start transmission to OLED
   I2C_write(OLED_CMD_MODE);               // set command mode
   for(i = 0; i < sizeof(OLED_INIT_CMD); i++)

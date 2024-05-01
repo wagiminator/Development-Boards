@@ -165,6 +165,7 @@ const uint8_t OLED_INIT_CMD[] = {
 int main(void) {
   // Init OLED
   I2C_init();                             // initialize I2C first
+  DLY_ms(50);                             // time for the OLED to boot up
   I2C_start(OLED_ADDR);                   // start transmission to OLED
   I2C_write(OLED_CMD_MODE);               // set command mode
   I2C_writeBuffer((uint8_t*)OLED_INIT_CMD, sizeof(OLED_INIT_CMD)); // send init sequence

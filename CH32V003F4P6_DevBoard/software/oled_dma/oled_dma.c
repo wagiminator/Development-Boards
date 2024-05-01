@@ -32,8 +32,16 @@
 // ===================================================================================
 // Libraries, Definitions and Macros
 // ===================================================================================
-#include <system.h>                               // system functions
 #include <oled_dma.h>                             // OLED functions
+
+// ===================================================================================
+// Pseudo Random Number Generator
+// ===================================================================================
+uint32_t random(uint32_t max) {
+  static uint32_t rnval = 0xACE1DFEE;
+  rnval = rnval << 16 | (rnval << 1 ^ rnval << 2) >> 16;
+  return(rnval % max);
+}
 
 // ===================================================================================
 // Main Function
@@ -49,17 +57,17 @@ int main(void) {
     OLED_print(0, 32, "TEST", 1, 4);
     OLED_stretchPrint(0, 12, "1234567890", 1);
     OLED_smoothPrint(64, 12, "12345", 1);
-    DLY_ms(5000);
+    DLY_ms(2000);
 
     OLED_clear();
     OLED_fillCircle(32, 32, 30, 1);
     OLED_drawCircle(64 + 32, 32, 30, 1);
-    DLY_ms(5000);
+    DLY_ms(2000);
 
     OLED_clear();
     OLED_fillRect(0, 0, 60, 60, 1);
     OLED_drawRect(64, 0, 60, 60, 1);
-    DLY_ms(5000);
+    DLY_ms(2000);
 
     OLED_clear();
     for(uint16_t i = 200; i; i--) {
@@ -79,12 +87,12 @@ int main(void) {
       DLY_ms(10); // we need to slow it down for our eyes to be able to follow
     }
 
-    for(uint16_t i = 2000; i; i--) {
+    for(uint16_t i = 1000; i; i--) {
       OLED_fillRect(random(128), random(64), random(64), random(32), 1);
       OLED_fillRect(random(128), random(64), random(64), random(32), 0);
     }
 
-    for(uint16_t i = 2000; i; i--) {
+    for(uint16_t i = 1000; i; i--) {
       OLED_fillCircle(random(128), random(64), random(16), 1);
       OLED_fillCircle(random(128), random(64), random(16), 0);
     }

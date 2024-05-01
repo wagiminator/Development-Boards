@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 I2C OLED Graphics Functions                                        * v1.0 *
+// SSD1306 I2C OLED Graphics Functions                                        * v1.1 *
 // ===================================================================================
 //
 // Functions available:
@@ -70,7 +70,7 @@ extern "C" {
 #endif
 
 #include "i2c_dma.h"
-#include "utils.h"
+#include "system.h"
 
 // OLED definitions
 #define OLED_WIDTH        128       // OLED width in pixels
@@ -95,6 +95,8 @@ extern "C" {
 #define OLED_CHARGEPUMP   0x8D      // (following byte - 0x14:enable, 0x10: disable)
 #define OLED_XFLIP_OFF    0xA0      // don't flip display horizontally
 #define OLED_XFLIP        0xA1      // flip display horizontally
+#define OLED_RESUME       0xA4      // display all on resume
+#define OLED_ALL_ON       0xA5      // display all on
 #define OLED_INVERT_OFF   0xA6      // set non-inverted display
 #define OLED_INVERT       0xA7      // set inverse display
 #define OLED_MULTIPLEX    0xA8      // set multiplex ratio (following byte)
@@ -107,6 +109,9 @@ extern "C" {
 #define OLED_CLOCK        0xD5      // set frequency (bits 7-4) and divider (bits 3-0)
 #define OLED_PRECHARGE    0xD9      // set pre-charge period (following byte)
 #define OLED_COMPINS      0xDA      // set COM pin config (following byte)
+#define OLED_VCOM_DETECT  0xDB      // set VCOM detect (following byte)
+
+#define OLED_abs(n)       (((n)>=0)?(n):(-(n))) // returns positive value of n
 
 // OLED Screen Buffer
 extern uint8_t OLED_buffer[];

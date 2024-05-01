@@ -102,8 +102,8 @@ uint8_t OLED_xpos;                            // x position on OLED
 // OLED init settings
 const uint8_t OLED_INIT_CMD[] = {
   0xA8, 0x1F,         // set multiplex (HEIGHT-1): 0x1F for 128x32, 0x3F for 128x64 
-  0x22, 0x00, 0x03,   // set min and max page
   0x20, 0x01,         // set vertical memory addressing mode
+  0x22, 0x00, 0x03,   // set min and max page
   0xDA, 0x02,         // set COM pins hardware configuration to sequential
   0x8D, 0x14,         // enable charge pump
   0xAF,               // switch on OLED
@@ -113,6 +113,7 @@ const uint8_t OLED_INIT_CMD[] = {
 // OLED init function
 void OLED_init(void) {
   I2C_init();                                 // init I2C
+  DLY_ms(50);                                 // time for the OLED to boot up
   I2C_start(OLED_ADDR);                       // start transmission to OLED
   I2C_write(OLED_CMD_MODE);                   // set command mode and send command bytes ...
   for(uint8_t i = 0; i < sizeof(OLED_INIT_CMD); i++) I2C_write(OLED_INIT_CMD[i]);

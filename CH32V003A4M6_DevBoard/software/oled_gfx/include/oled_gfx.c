@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 I2C OLED Graphics Functions                                        * v1.0 *
+// SSD1306 I2C OLED Graphics Functions                                        * v1.1 *
 // ===================================================================================
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -54,12 +54,16 @@ const uint8_t OLED_FONT[] = {
 
 // OLED initialisation sequence
 const uint8_t OLED_INIT_CMD[] = {
-  OLED_MULTIPLEX,  OLED_HEIGHT - 1,               // set multiplex ratio  
+  OLED_MULTIPLEX,  OLED_HEIGHT - 1,               // set multiplex ratio
   OLED_CHARGEPUMP, 0x14,                          // set DC-DC enable  
   OLED_MEMORYMODE, 0x00,                          // set horizontal addressing mode
   OLED_COLUMNS,    0, OLED_WIDTH - 1,             // set start and end column
   OLED_PAGES,      0, OLED_HEIGHT - 1,            // set start and end page
+  #if OLED_WIDTH == 128 && OLED_HEIGHT == 32
+  OLED_COMPINS,    0x02,                          // set com pins
+  #else
   OLED_COMPINS,    0x12,                          // set com pins
+  #endif
   OLED_XFLIP, OLED_YFLIP,                         // flip screen
   OLED_DISPLAY_ON                                 // display on
 };
@@ -67,6 +71,7 @@ const uint8_t OLED_INIT_CMD[] = {
 // Init OLED
 void OLED_init(void) {
   I2C_init();                                     // initialize I2C first
+  DLY_ms(50);                                     // time for the OLED to boot up
   I2C_start(OLED_ADDR);                           // start transmission to OLED
   I2C_write(OLED_CMD_MODE);                       // set command mode
   I2C_writeBuffer((uint8_t*)OLED_INIT_CMD, sizeof(OLED_INIT_CMD)); // send the command bytes
@@ -170,9 +175,9 @@ void OLED_drawHLine(int16_t x, int16_t y, int16_t w, uint8_t color) {
 // Draw line from position (x0,y0) to (x1,y1) with color (0: cleared, 1: set)
 // (Bresenham's line algorithm)
 void OLED_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color) {
-  int16_t dx = abs(x1 - x0);
+  int16_t dx = OLED_abs(x1 - x0);
   int16_t sx = x0 < x1 ? 1 : -1;
-  int16_t dy = -abs(y1 - y0);
+  int16_t dy = -OLED_abs(y1 - y0);
   int16_t sy = y0 < y1 ? 1 : -1;
   int16_t error = dx + dy;
     
