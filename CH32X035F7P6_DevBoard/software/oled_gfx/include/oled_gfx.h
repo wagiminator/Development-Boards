@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 I2C OLED Graphics Functions                                        * v1.2 *
+// SSD1306 I2C OLED Graphics Functions                                        * v1.3 *
 // ===================================================================================
 //
 // Functions available:
@@ -11,8 +11,8 @@
 // OLED_flip(xflip,yflip)         Flip display (0: flip off, 1: flip on)
 // OLED_vscroll(y)                Scroll display vertically
 // OLED_home(x,y)                 Set display home position for screen refresh (0,0)
-//
 // OLED_refresh()                 Refresh screen buffer (send buffer via I2C)
+//
 // OLED_clear()                   Clear OLED screen buffer
 // OLED_copy()                    Copy OLED screen buffer (for double-buffer mode)
 // OLED_getPixel(x,y)             Get pixel color at (x,y) (0: pixel cleared, 1: pixel set)
@@ -70,17 +70,21 @@
 extern "C" {
 #endif
 
-#include "i2c_soft.h"
+#include "i2c_soft.h"               // choose your I2C library
 #include "system.h"
 
-// OLED definitions
+// OLED parameters
 #define OLED_WIDTH        128       // OLED width in pixels
 #define OLED_HEIGHT       64        // OLED height in pixels
+#define OLED_BOOT_TIME    50        // OLED boot up time in milliseconds
+#define OLED_INIT_I2C     1         // 1: init I2C with OLED_init()
+#define OLED_FLIP_SCREEN  1         // 1: flip screen with OLED_init()
 #define OLED_PORTRAIT     0         // 1: use OLED in portrait mode
 #define OLED_DOUBLEBUF    0         // 1: use double buffer
 #define OLED_PRINT        0         // 1: include print functions (needs print.h)
 
-#define OLED_ADDR         0x78      // OLED write address (0x3C << 1)
+// OLED definitions
+#define OLED_ADDR         0x3C      // OLED I2C device address
 #define OLED_CMD_MODE     0x00      // set command mode
 #define OLED_DAT_MODE     0x40      // set data mode
 
@@ -132,9 +136,9 @@ void OLED_invert(uint8_t val);
 void OLED_flip(uint8_t xflip, uint8_t yflip);
 void OLED_vscroll(uint8_t y);
 void OLED_home(uint8_t x, uint8_t y);
+void OLED_refresh(void);
 
 // OLED Graphics Functions
-void OLED_refresh(void);
 void OLED_clear(void);
 void OLED_copy(void);
 uint8_t OLED_getPixel(int16_t x, int16_t y);
