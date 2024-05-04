@@ -1,11 +1,10 @@
 // ===================================================================================
-// SSD1306 I2C OLED Graphics Functions                                        * v1.1 *
+// SSD1306 I2C OLED Graphics Functions                                        * v1.2 *
 // ===================================================================================
 //
 // Functions available:
 // --------------------
 // OLED_init()                    Init OLED
-// OLED_refresh()                 Refresh screen buffer (send buffer via I2C)
 // OLED_display(v)                Switch display on/off (0: display off, 1: display on)
 // OLED_contrast(v)               Set OLED contrast (0-255)
 // OLED_invert(v)                 Invert display (0: inverse off, 1: inverse on)
@@ -13,7 +12,9 @@
 // OLED_vscroll(y)                Scroll display vertically
 // OLED_home(x,y)                 Set display home position for screen refresh (0,0)
 //
-// OLED_clear(void)               Clear OLED screen
+// OLED_refresh()                 Refresh screen buffer (send buffer via I2C)
+// OLED_clear()                   Clear OLED screen buffer
+// OLED_copy()                    Copy OLED screen buffer (for double-buffer mode)
 // OLED_getPixel(x,y)             Get pixel color at (x,y) (0: pixel cleared, 1: pixel set)
 // OLED_setPixel(x,y,c)           Set pixel color (c) at position (x,y)
 //
@@ -50,9 +51,9 @@
 //
 // Notes:
 // ------
-// - color: 0 means pixel cleared, 1 means pixel set
-// - size:  1 means normal 6x8 pixels, 2 means double size (12x16), ... , 8 means 8 times (48x64)
-//          9 means smoothed double size (12x16), 10 means v-stretched (6x16)
+// - color: 0: clear pixel (black), 1: set pixel (white), 2: invert pixel
+// - size:  1: normal 6x8 pixels, 2: double size (12x16), ... , 8: 8 times (48x64)
+//          9: smoothed double size (12x16), 10: v-stretched (6x16)
 //
 // References:
 // -----------
@@ -75,6 +76,8 @@ extern "C" {
 // OLED definitions
 #define OLED_WIDTH        128       // OLED width in pixels
 #define OLED_HEIGHT       64        // OLED height in pixels
+#define OLED_PORTRAIT     0         // 1: use OLED in portrait mode
+#define OLED_DOUBLEBUF    0         // 1: use double buffer
 #define OLED_PRINT        0         // 1: include print functions (needs print.h)
 
 #define OLED_ADDR         0x78      // OLED write address (0x3C << 1)
@@ -116,9 +119,13 @@ extern "C" {
 // OLED Screen Buffer
 extern uint8_t OLED_buffer[];
 
+#if OLED_DOUBLEBUF > 0
+extern uint8_t* OLED_drawbuffer;
+extern uint8_t* OLED_sendbuffer;
+#endif
+
 // OLED Control Functions
 void OLED_init(void);
-void OLED_refresh(void);
 void OLED_display(uint8_t val);
 void OLED_contrast(uint8_t val);
 void OLED_invert(uint8_t val);
@@ -127,7 +134,9 @@ void OLED_vscroll(uint8_t y);
 void OLED_home(uint8_t x, uint8_t y);
 
 // OLED Graphics Functions
+void OLED_refresh(void);
 void OLED_clear(void);
+void OLED_copy(void);
 uint8_t OLED_getPixel(int16_t x, int16_t y);
 void OLED_setPixel(int16_t x, int16_t y, uint8_t color);
 void OLED_drawVLine(int16_t x, int16_t y, int16_t h, uint8_t color);
