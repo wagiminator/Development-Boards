@@ -9,7 +9,6 @@
 // TFT_invert(v)                  Invert display (0: inverse off, 1: inverse on)
 //
 // TFT_clear()                    Clear TFT screen
-// TFT_getPixel(x,y)              Get pixel color at (x,y)
 // TFT_setPixel(x,y,c)            Set pixel color (c) at position (x,y)
 //
 // TFT_drawVLine(x,y,h,c)         Draw vertical line starting from (x,y), height (h), color (c)
@@ -70,7 +69,6 @@
 //
 // Notes:
 // ------
-// - This library utilizes the integrated software-SPI.
 // - Define TFT parameters down below!
 // - color: 16-bit color mode (5 bits red, 6 bits green, 5 bits blue) or
 //          12-bit color mode (4 bits red, 4 bits green, 4 bits blue)
@@ -91,10 +89,9 @@ extern "C" {
 #endif
 
 #include "gpio.h"
+#include "spi_tx.h"                 // choose your SPI library
 
 // TFT Pins
-#define TFT_PIN_SCL       PC5       // pin connected to SCL (clock) of TFT
-#define TFT_PIN_SDA       PC6       // pin connected to SDA (data) of TFT
 #define TFT_PIN_DC        PC3       // pin connected to DC (data/command) of TFT
 #define TFT_PIN_CS        PC4       // pin connected to CS (select) of TFT
 
@@ -113,6 +110,9 @@ extern "C" {
 #define TFT_YFLIP         1         // 1: flip TFT screen Y-direction
 #define TFT_PORTRAIT      0         // 1: use TFT in portrait mode
 #define TFT_PRINT         0         // 1: include print functions (needs print.h)
+
+#define TFT_INIT_SPI      1         // 1: init SPI with TFT_init()
+#define TFT_CS_CONTROL    0         // 1: active control of CS-line
 
 // Segment Digit Parameters
 #define TFT_SEG_FONT      1         // 0: unused, 1: 13x32 digits, 2: 5x16 digits
@@ -137,7 +137,6 @@ void TFT_sleep(uint8_t yes);
 
 // TFT Graphics Functions
 void TFT_clear(void);
-uint16_t TFT_getPixel(int16_t x, int16_t y);
 void TFT_setPixel(int16_t x, int16_t y, uint16_t color);
 void TFT_drawVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 void TFT_drawHLine(int16_t x, int16_t y, int16_t w, uint16_t color);

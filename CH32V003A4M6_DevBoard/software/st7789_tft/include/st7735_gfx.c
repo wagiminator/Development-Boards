@@ -3,7 +3,7 @@
 // ===================================================================================
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
-#include "st7735_gfx_soft.h"
+#include "st7735_gfx.h"
 
 // ===================================================================================
 // Standard ASCII 5x8 Font (chars 32 - 127)
@@ -112,8 +112,7 @@ const uint8_t TFT_FONT_SEG2[] = {
 // ===================================================================================
 // SPI Functions
 // ===================================================================================
-#define TFT_sendData      TFT_SPI_write
-#define TFT_readData      TFT_SPI_read
+#define TFT_sendData      SPI_write
 #define TFT_sendCommand   TFT_SPI_command
 #define TFT_sendCommand2  TFT_SPI_command2
 
@@ -121,27 +120,20 @@ const uint8_t TFT_FONT_SEG2[] = {
 void TFT_SPI_init(void) {
   PIN_high(TFT_PIN_CS);                           // setup control pins
   PIN_high(TFT_PIN_DC);
-  PIN_high(TFT_PIN_SCL);
   PIN_output(TFT_PIN_CS);
   PIN_output(TFT_PIN_DC);
-  PIN_output(TFT_PIN_SCL);
-  PIN_output(TFT_PIN_SDA);
-}
-
-// Transmit one data byte
-void TFT_SPI_write(uint8_t data) {
-  for(uint8_t i=8; i; i--, data <<= 1) {          // shift out 8 bits, MSB first
-    PIN_low(TFT_PIN_SCL);                         // SCL low -> prepare next bit
-    if(data & 0x80) PIN_high(TFT_PIN_SDA);        // set SDA according to data bit
-    else            PIN_low(TFT_PIN_SDA);
-    PIN_high(TFT_PIN_SCL);                        // SCL high -> shift bit out
-  }
+  #if TFT_INIT_SPI > 0
+  SPI_init();
+  SPI_setCPOL(1);
+  #endif
 }
 
 // Send a command to the display
 void TFT_SPI_command(uint8_t cmd) {
+  while(SPI_busy());
   PIN_low(TFT_PIN_DC);
   TFT_sendData(cmd);
+  while(SPI_busy());
   PIN_high(TFT_PIN_DC);
 }
 
@@ -176,21 +168,31 @@ void TFT_init(void) {
   DLY_ms(150);
   TFT_sendCommand(0x29);                          // turn on display
   DLY_ms(150);
+  #if TFT_CS_CONTROL > 0
   PIN_high(TFT_PIN_CS);
+  #endif
 }
 
 // Invert display
 void TFT_invert(uint8_t yes) {
+  #if TFT_CS_CONTROL > 0
   PIN_low(TFT_PIN_CS);
+  #endif
   TFT_sendCommand(0x20 + yes);
+  #if TFT_CS_CONTROL > 0
   PIN_high(TFT_PIN_CS);
+  #endif
 }
 
 // Put display into sleep mode
 void TFT_sleep(uint8_t yes) {
+  #if TFT_CS_CONTROL > 0
   PIN_low(TFT_PIN_CS);
+  #endif
   TFT_sendCommand(0x11 - yes);
+  #if TFT_CS_CONTROL > 0
   PIN_high(TFT_PIN_CS);
+  #endif
 }
 
 // ===================================================================================
@@ -199,22 +201,25 @@ void TFT_sleep(uint8_t yes) {
 
 // Clear screen
 void TFT_clear(void) {
+  #if TFT_CS_CONTROL > 0
   PIN_low(TFT_PIN_CS);
+  #endif
   TFT_sendCommand2(TFT_CASET, TFT_YOFF, TFT_YOFF + TFT_HEIGHT - 1); // column address set
   TFT_sendCommand2(TFT_RASET, TFT_XOFF, TFT_XOFF + TFT_WIDTH - 1);  // row address set
   #if TFT_COLORBITS == 16
   TFT_sendCommand(0x3A); TFT_sendData(0x03);                        // 12-bit color
   #endif
   TFT_sendCommand(TFT_RAMWR);                                       // write to RAM
-  PIN_low(TFT_PIN_SDA);
-  for(uint32_t i=TFT_WIDTH*TFT_HEIGHT*12; i; i--) {
-    PIN_high(TFT_PIN_SCL);
-    PIN_low(TFT_PIN_SCL);
+  for(uint32_t i=TFT_WIDTH*TFT_HEIGHT*12/8; i; i--) {
+    TFT_sendData(0);
   }
   #if TFT_COLORBITS == 16
   TFT_sendCommand(0x3A); TFT_sendData(0x05);                        // back to 16-bit color
   #endif
+  #if TFT_CS_CONTROL > 0
+  while(SPI_busy());
   PIN_high(TFT_PIN_CS);
+  #endif
 }
 
 // Set pixel at position (x,y) with color
@@ -246,58 +251,17 @@ void TFT_setPixel(int16_t x, int16_t y, uint16_t color) {
     #endif
   #endif
 
+  #if TFT_CS_CONTROL > 0
   PIN_low(TFT_PIN_CS);
+  #endif
   TFT_sendCommand2(TFT_CASET, column, column);    // column address set
   TFT_sendCommand2(TFT_RASET, row, row);          // row address set
   TFT_sendCommand(TFT_RAMWR);                     // write to RAM
   TFT_sendData(color >> 8); TFT_sendData(color);  // write pixel color
+  #if TFT_CS_CONTROL > 0
+  while(SPI_busy());
   PIN_high(TFT_PIN_CS);
-}
-
-// Get pixel color at (x,y)
-uint16_t TFT_getPixel(int16_t x, int16_t y) {
-  #if TFT_PORTRAIT == 0
-    if((x < 0) || (x >= TFT_WIDTH) || (y < 0) || (y >= TFT_HEIGHT)) return 0;
-    #if TFT_XFLIP > 0
-      uint16_t row    = (TFT_XOFF + TFT_WIDTH  - 1) - x;
-    #else
-      uint16_t row    = TFT_XOFF + x;
-    #endif
-    #if TFT_YFLIP > 0
-      uint16_t column = (TFT_YOFF + TFT_HEIGHT - 1) - y;
-    #else
-      uint16_t column = TFT_YOFF + y;
-    #endif
-
-  #else
-    if((x < 0) || (x >= TFT_HEIGHT) || (y < 0) || (y >= TFT_WIDTH)) return 0;
-    #if TFT_YFLIP > 0
-      uint16_t row    = (TFT_XOFF + TFT_WIDTH  - 1) - y;
-    #else
-      uint16_t row    = TFT_XOFF + y;
-    #endif
-    #if TFT_XFLIP > 0
-      uint16_t column = TFT_YOFF + x;
-    #else
-      uint16_t column = (TFT_YOFF + TFT_HEIGHT - 1) - x;
-    #endif
   #endif
-
-  PIN_low(TFT_PIN_CS);
-  TFT_sendCommand2(TFT_CASET, column, column);    // column address set
-  TFT_sendCommand2(TFT_RASET, row, row);          // row address set
-  TFT_sendCommand(TFT_RAMRD);                     // write to RAM
-  uint16_t color = 0;
-  PIN_input_PU(TFT_PIN_SDA);                      // data in
-  for(uint8_t i=17; i; i--) {                     // shift in dummy bit + 16 bits, MSB first
-    PIN_low(TFT_PIN_SCL);                         // SCL low -> shift bit in
-    color <<= 1;                                  // shift data byte
-    PIN_high(TFT_PIN_SCL);                        // SCL high -> prepare next bit
-    if(PIN_read(TFT_PIN_SDA)) color |= 1;         // set data bit according to SDA
-  }
-  PIN_output(TFT_PIN_SDA);                        // back to data out
-  PIN_high(TFT_PIN_CS);
-  return color;
 }
 
 // Draw vertical line starting from (x,y), height (h), color
