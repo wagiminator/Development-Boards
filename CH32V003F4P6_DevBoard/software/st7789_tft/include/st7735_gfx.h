@@ -163,9 +163,9 @@ void TFT_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t deci
 
 // TFT Color Presets
 #if TFT_COLORBITS == 16
-#define TFT_COLOR(r,g,b)      ((r & 0xf8) << 8 | (g & 0xfc) << 3 | b >> 3)      // 16-bit
+#define TFT_COLOR(r,g,b)      (((r) & 0xf8) << 8 | ((g) & 0xfc) << 3 | (b) >> 3)      // 16-bit
 #else
-#define TFT_COLOR(r,g,b)      ((r & 0xf0) << 8 | (g & 0xf0) << 4 | (b & 0xf0))  // 12-bit
+#define TFT_COLOR(r,g,b)      (((r) & 0xf0) << 8 | ((g) & 0xf0) << 4 | ((b) & 0xf0))  // 12-bit
 #endif
 
 #define TFT_BLACK             TFT_COLOR(  0,   0,   0)
