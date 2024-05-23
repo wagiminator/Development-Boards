@@ -1,5 +1,5 @@
 // ===================================================================================
-// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.0 *
+// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.1 *
 // ===================================================================================
 //
 // Functions available:
@@ -107,7 +107,7 @@ extern "C" {
 #define TFT_BOOT_TIME     0         // TFT boot up time in milliseconds
 #define TFT_COLORBITS     12        // color depth (12 or 16 bits)
 #define TFT_XFLIP         0         // 1: flip TFT screen X-direction
-#define TFT_YFLIP         1         // 1: flip TFT screen Y-direction
+#define TFT_YFLIP         0         // 1: flip TFT screen Y-direction
 #define TFT_PORTRAIT      0         // 1: use TFT in portrait mode
 #define TFT_PRINT         0         // 1: include print functions (needs print.h)
 
@@ -163,9 +163,9 @@ void TFT_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t deci
 
 // TFT Color Presets
 #if TFT_COLORBITS == 16
-#define TFT_COLOR(r,g,b)      ((r & 0xf8) << 8 | (g & 0xfc) << 3 | b >> 3)      // 16-bit
+#define TFT_COLOR(r,g,b)      (((r) & 0xf8) << 8 | ((g) & 0xfc) << 3 | (b) >> 3)      // 16-bit
 #else
-#define TFT_COLOR(r,g,b)      ((r & 0xf0) << 8 | (g & 0xf0) << 4 | (b & 0xf0))  // 12-bit
+#define TFT_COLOR(r,g,b)      (((r) & 0xf0) << 8 | ((g) & 0xf0) << 4 | ((b) & 0xf0))  // 12-bit
 #endif
 
 #define TFT_BLACK             TFT_COLOR(  0,   0,   0)

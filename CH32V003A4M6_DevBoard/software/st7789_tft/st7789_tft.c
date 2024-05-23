@@ -125,22 +125,37 @@ int main(void) {
     TFT_invert(1);
 
     TFT_clear();
-    for(i = 300; i; i--) {
+    for(i = 30000; i; i--) {
+      TFT_setPixel(random(TFT_WIDTH), random(TFT_HEIGHT), random(65536));
+    }
+
+    TFT_clear();
+    for(i = 1000; i; i--) {
       TFT_drawLine(random(TFT_WIDTH), random(TFT_HEIGHT), random(TFT_WIDTH), random(TFT_HEIGHT), random(65536));
     }
 
     TFT_clear();
-    for(i = 300; i; i--) {
+    for(i = 5000; i; i--) {
       TFT_drawRect(random(TFT_WIDTH), random(TFT_HEIGHT), random(TFT_WIDTH/2), random(TFT_HEIGHT/2), random(65536));
     }
 
     TFT_clear();
-    for(i = 300; i; i--) {
+    for(i = 1000; i; i--) {
       TFT_drawCircle(random(TFT_WIDTH), random(TFT_HEIGHT), random(32), random(65536));
     }
 
     TFT_clear();
-    for(i = 80; i; i--) {
+    for(i = 1000; i; i--) {
+      TFT_fillRect(random(TFT_WIDTH), random(TFT_HEIGHT), random(TFT_WIDTH/2), random(TFT_HEIGHT/2), random(65536));
+    }
+
+    TFT_clear();
+    for(i = 1000; i; i--) {
+      TFT_fillCircle(random(TFT_WIDTH), random(TFT_HEIGHT), random(32), random(65536));
+    }
+
+    TFT_clear();
+    for(i = 500; i; i--) {
       TFT_cursor(random(TFT_WIDTH), random(TFT_HEIGHT)); TFT_color(random(65536)); TFT_size(random(3) + 1); TFT_print("Hello");
       TFT_cursor(random(TFT_WIDTH), random(TFT_HEIGHT)); TFT_color(random(65536)); TFT_size(random(3) + 1); TFT_print("World");
     }
