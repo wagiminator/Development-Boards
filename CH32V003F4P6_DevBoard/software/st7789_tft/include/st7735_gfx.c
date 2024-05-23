@@ -143,6 +143,14 @@ void TFT_SPI_command2(uint8_t c, uint16_t d1, uint16_t d2) {
   TFT_sendData(d1>>8); TFT_sendData(d1); TFT_sendData(d2>>8); TFT_sendData(d2);
 }
 
+// Resync by toggling CS pin (for non-active control of CS-line mode)
+void TFT_resync(void) {
+  #if TFT_CS_CONTROL > 0
+  PIN_high(TFT_PIN_CS);
+  PIN_low(TFT_PIN_CS);
+  #endif
+}
+
 // ===================================================================================
 // TFT Control Functions
 // ===================================================================================
@@ -318,8 +326,9 @@ void TFT_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
       TFT_sendData(color >> 8); TFT_sendData(color);
     }
   #else
+    uint8_t c1 = color >> 8, c2 = (color & 0xf0) | (color >> 12), c3 = color >> 4;
     for(uint32_t i=((col2-col1+1)*(row2-row1+1)+1)>>1; i; i--) {
-      TFT_sendData(color >> 8); TFT_sendData(color | (color >> 12)); TFT_sendData(color >> 4);
+      TFT_sendData(c1); TFT_sendData(c2); TFT_sendData(c3);
     }
   #endif
 

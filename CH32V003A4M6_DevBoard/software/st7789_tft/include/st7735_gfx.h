@@ -7,6 +7,7 @@
 // TFT_init()                     Init TFT
 // TFT_sleep(v)                   Set display sleep mode (0: sleep off, 1: sleep on)
 // TFT_invert(v)                  Invert display (0: inverse off, 1: inverse on)
+// TFT_resync()                   Resync by toggling CS pin (for non-active control of CS-line mode)
 //
 // TFT_clear()                    Clear TFT screen
 // TFT_setPixel(x,y,c)            Set pixel color (c) at position (x,y)
@@ -134,6 +135,7 @@ extern "C" {
 void TFT_init(void);
 void TFT_invert(uint8_t yes);
 void TFT_sleep(uint8_t yes);
+void TFT_resync(void);
 
 // TFT Graphics Functions
 void TFT_clear(void);
