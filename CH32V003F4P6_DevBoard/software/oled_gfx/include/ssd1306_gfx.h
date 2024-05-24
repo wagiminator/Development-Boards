@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 I2C OLED Graphics Functions                                        * v1.3 *
+// SSD1306 I2C OLED Graphics Functions                                        * v1.4 *
 // ===================================================================================
 //
 // Functions available:
@@ -11,7 +11,8 @@
 // OLED_flip(xflip,yflip)         Flip display (0: flip off, 1: flip on)
 // OLED_vscroll(y)                Scroll display vertically
 // OLED_home(x,y)                 Set display home position for screen refresh (0,0)
-// OLED_refresh()                 Refresh screen buffer (send buffer via I2C)
+// OLED_refresh()                 Refresh (flush) screen buffer (send buffer via I2C)
+// OLED_flush()                   Refresh (flush) screen buffer (alias)
 //
 // OLED_clear()                   Clear OLED screen buffer
 // OLED_copy()                    Copy OLED screen buffer (for double-buffer mode)
@@ -45,7 +46,6 @@
 // OLED_printH(n)                 Print 16-bit hex half-word value
 // OLED_printB(n)                 Print  8-bit hex byte value
 // OLED_printS(s)                 Print string
-// OLED_print(s)                  Print string (alias)
 // OLED_println(s)                Print string with newline
 // OLED_newline()                 Send newline
 //
@@ -83,6 +83,10 @@ extern "C" {
 #define OLED_DOUBLEBUF    0         // 1: use double buffer
 #define OLED_PRINT        0         // 1: include print functions (needs print.h)
 
+// Segment Digit Parameters
+#define OLED_SEG_FONT     1         // 0: unused, 1: 13x32 digits, 2: 5x16 digits
+#define OLED_SEG_SPACE    3         // width of space between segment digits in pixels
+
 // OLED definitions
 #define OLED_ADDR         0x3C      // OLED I2C device address
 #define OLED_CMD_MODE     0x00      // set command mode
@@ -101,17 +105,17 @@ extern "C" {
 #define OLED_CONTRAST     0x81      // set display contrast (following byte, 0-255)
 #define OLED_CHARGEPUMP   0x8D      // (following byte - 0x14:enable, 0x10: disable)
 #define OLED_XFLIP_OFF    0xA0      // don't flip display horizontally
-#define OLED_XFLIP        0xA1      // flip display horizontally
+#define OLED_XFLIP_ON     0xA1      // flip display horizontally
 #define OLED_RESUME       0xA4      // display all on resume
 #define OLED_ALL_ON       0xA5      // display all on
 #define OLED_INVERT_OFF   0xA6      // set non-inverted display
-#define OLED_INVERT       0xA7      // set inverse display
+#define OLED_INVERT_ON    0xA7      // set inverse display
 #define OLED_MULTIPLEX    0xA8      // set multiplex ratio (following byte)
 #define OLED_DISPLAY_OFF  0xAE      // set display off (sleep mode)
 #define OLED_DISPLAY_ON   0xAF      // set display on
 #define OLED_PAGE         0xB0      // set start page (0xB0-0xB7 = 0-7)
 #define OLED_YFLIP_OFF    0xC0      // don't flip display vertically
-#define OLED_YFLIP        0xC8      // flip display vertically
+#define OLED_YFLIP_ON     0xC8      // flip display vertically
 #define OLED_OFFSET       0xD3      // set display offset (y-scroll: following byte)
 #define OLED_CLOCK        0xD5      // set frequency (bits 7-4) and divider (bits 3-0)
 #define OLED_PRECHARGE    0xD9      // set pre-charge period (following byte)
@@ -157,6 +161,12 @@ void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size);
 void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size);
 void OLED_smoothChar(int16_t x, int16_t y, char c, uint8_t color);
 void OLED_stretchChar(int16_t x, int16_t y, char c, uint8_t color);
+
+#if OLED_SEG_FONT > 0
+void OLED_printSegment(int16_t x, int16_t y, uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
+#endif
+
+#define OLED_flush  OLED_refresh
 
 // Additional print functions (if activated, see above)
 #if OLED_PRINT == 1

@@ -33,7 +33,7 @@
 // ===================================================================================
 // Libraries, Definitions and Macros
 // ===================================================================================
-#include <oled_gfx.h>                             // OLED graphics functions
+#include <ssd1306_gfx.h>                            // SSD1306 OLED graphics functions
 
 // ===================================================================================
 // Pseudo Random Number Generator
