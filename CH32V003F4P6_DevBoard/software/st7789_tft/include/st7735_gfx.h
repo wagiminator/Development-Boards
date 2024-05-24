@@ -1,10 +1,11 @@
 // ===================================================================================
-// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.1 *
+// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.2 *
 // ===================================================================================
 //
 // Functions available:
 // --------------------
 // TFT_init()                     Init TFT
+// TFT_power(v)                   Turn display on/off (0: display off, 1: display on)
 // TFT_sleep(v)                   Set display sleep mode (0: sleep off, 1: sleep on)
 // TFT_invert(v)                  Invert display (0: inverse off, 1: inverse on)
 // TFT_resync()                   Resync by toggling CS pin (for non-active control of CS-line mode)
@@ -44,29 +45,29 @@
 // TFT_println(s)                 Print string with newline
 // TFT_newline()                  Send newline
 //
-// TFT parameter settings:
-// -----------------------
-// Display                        DRIVER    WIDTH HEIGHT  XOFF  YOFF  INVERT  ROTATE  BGR
-// Adafruit   1.44" 128x128       ST7735R    128   128      2     1     0       3      1
-// AliExpress 1.44" 128x128       ST7735R    128   128      2     1     0       3      1
-// Adafruit   0.96" 160x80        ST7735     160    80      0    24     0       6      0
-// AliExpress 0.96" 160x80        ST7735     160    80      1    26     1       0      1
-// Adafruit   1.8"  160x128       ST7735R    160   128      0     0     0       0      1
-// AliExpress 1.8"  160x128 red   ST7735R    160   128      0     0     0       0      1
-// AliExpress 1.8"  160x128 blue  ST7735R    160   128      0     0     0       6      0
-// Adafruit   1.14" 240x135       ST7789     240   135     40    53     1       6      0
-// AliExpress 1.14" 240x135       ST7789     240   135     40    52     1       0      0
-// Adafruit   1.3"  240x240       ST7789     240   240      0    80     1       5      0
-// Adafruit   1.54" 240x240       ST7789     240   240      0    80     1       5      0
-// AliExpress 1.54" 240x240       ST7789     240   240      0    80     1       5      0
-// Adafruit   1.9"  320x170       ST7789     320   170      0    35     1       0      0
-// AliExpress 1.9"  320x170       ST7789     320   170      0    35     1       0      0
-// Adafruit   1.47" 320x172 round ST7789     320   172      0    34     1       0      0
-// AliExpress 1.47" 320x172 round ST7789     320   172      0    34     1       0      0
-// Adafruit   2.0"  320x240       ST7789     320   240      0     0     1       6      0
-// AliExpress 2.0"  320x240       ST7789V    320   240      0     0     1       0      0
-// Adafruit   2.2"  320x240       ILI9340C   320   240      0     0     0       4      1
-// AliExpress 2.4"  320x240       ILI9341    320   240      0     0     0       2      1
+// TFT parameter settings (needs to be checked):
+// ---------------------------------------------
+// Display                        DRIVER    WIDTH HEIGHT  XOFF  YOFF  INVERT BGR XORD YORD ROTATE
+// Adafruit   1.44" 128x128       ST7735R    128   128      2     1      0    1    0    0    1
+// AliExpress 1.44" 128x128       ST7735R    128   128      2     1      0    1    0    0    1
+// Adafruit   0.96" 160x80        ST7735     160    80      0    24      0    0    1    0    0
+// AliExpress 0.96" 160x80        ST7735     160    80      1    26      1    1    0    1    0
+// Adafruit   1.8"  160x128       ST7735R    160   128      0     0      0    1    0    1    0
+// AliExpress 1.8"  160x128 red   ST7735R    160   128      0     0      0    1    0    1    0
+// AliExpress 1.8"  160x128 blue  ST7735R    160   128      1     2      0    0    1    0    0
+// Adafruit   1.14" 240x135       ST7789     240   135     40    52      1    0    1    0    0     
+// AliExpress 1.14" 240x135       ST7789     240   135     40    53      1    0    0    1    0
+// Adafruit   1.3"  240x240       ST7789     240   240      0    80      1    0    1    1    1
+// Adafruit   1.54" 240x240       ST7789     240   240      0    80      1    0    1    1    1
+// AliExpress 1.54" 240x240       ST7789     240   240      0    80      1    0    1    1    1
+// Adafruit   1.9"  320x170       ST7789     320   170      0    36      1    0    0    1    0
+// AliExpress 1.9"  320x170       ST7789     320   170      0    36      1    0    0    1    0
+// Adafruit   1.47" 320x172 round ST7789     320   172      0    35      1    0    0    1    0
+// AliExpress 1.47" 320x172 round ST7789     320   172      0    35      1    0    0    1    0
+// Adafruit   2.0"  320x240       ST7789     320   240      0     0      1    0    1    0    0
+// AliExpress 2.0"  320x240       ST7789V    320   240      0     0      1    0    0    1    0
+// Adafruit   2.2"  320x240       ILI9340C   320   240      0     0      0    1    1    1    0
+// AliExpress 2.4"  320x240       ILI9341    320   240      0     0      0    1    0    0    0
 //
 // Notes:
 // ------
@@ -96,24 +97,30 @@ extern "C" {
 #define TFT_PIN_DC        PC3       // pin connected to DC (data/command) of TFT
 #define TFT_PIN_CS        PC4       // pin connected to CS (select) of TFT
 
-// TFT Parameters
+// TFT Hardware Parameters
 #define TFT_WIDTH         240       // TFT width in pixels
 #define TFT_HEIGHT        135       // TFT height in pixels
 #define TFT_XOFF          40        // offset in X-direction
-#define TFT_YOFF          52        // offset in Y-direction
-#define TFT_INVERT        1         // invert display
-#define TFT_ROTATE        0         // TFT Rotation (0, 3, 6 , 5)
-#define TFT_BGR           0         // color order
+#define TFT_YOFF          53        // offset in Y-direction
+#define TFT_INVERT        1         // 1: invert display
+#define TFT_BGR           0         // 1: color order blue-green-red
+#define TFT_XORDER        0         // 1: flip TFT screen X-direction
+#define TFT_YORDER        1         // 1: flip TFT screen Y-direction
+#define TFT_ROTATE        0         // 1: rotate TFT screen 90°
 
-#define TFT_BOOT_TIME     0         // TFT boot up time in milliseconds
-#define TFT_COLORBITS     12        // color depth (12 or 16 bits)
-#define TFT_XFLIP         0         // 1: flip TFT screen X-direction
-#define TFT_YFLIP         0         // 1: flip TFT screen Y-direction
-#define TFT_PORTRAIT      0         // 1: use TFT in portrait mode
-#define TFT_PRINT         0         // 1: include print functions (needs print.h)
-
+// TFT SPI and Timing Parameters
 #define TFT_INIT_SPI      1         // 1: init SPI with TFT_init()
 #define TFT_CS_CONTROL    0         // 1: active control of CS-line
+#define TFT_BOOT_TIME     0         // TFT boot up time in milliseconds
+#define TFT_RST_TIME      50        // time to wait after reset in milliseconds
+#define TFT_SLPOUT_TIME   150       // time to wait after sleep out in milliseconds
+
+// TFT Software Parameters
+#define TFT_COLORBITS     12        // color depth (12 or 16 bits)
+#define TFT_PORTRAIT      0         // 1: use TFT in portrait mode
+#define TFT_XFLIP         0         // 1: flip TFT screen X-direction
+#define TFT_YFLIP         0         // 1: flip TFT screen Y-direction
+#define TFT_PRINT         0         // 1: include print functions (needs print.h)
 
 // Segment Digit Parameters
 #define TFT_SEG_FONT      1         // 0: unused, 1: 13x32 digits, 2: 5x16 digits
@@ -124,17 +131,35 @@ extern "C" {
 #define TFT_STRETCH       10        // character size value for v-stretched
 
 // TFT Commands
-#define TFT_CASET         0x2A      // define column address
-#define TFT_RASET         0x2B      // define row address
-#define TFT_RAMWR         0x2C      // write to display RAM
-#define TFT_RAMRD         0x2E      // read from display RAM
+#define TFT_RESET         0x01      // Software Reset
+#define TFT_SLPIN         0x10      // Sleep IN
+#define TFT_SLPOUT        0x11      // Sleep Out
+#define TFT_PTLON         0x12      // Partial Display Mode On
+#define TFT_NORON         0x13      // Normal Display Mode On
+#define TFT_INVOFF        0x20      // Display Inversion Off
+#define TFT_INVON         0x21      // Display Inversion On
+#define TFT_GAMSET        0x26      // Gamma Set
+#define TFT_DISPOFF       0x28      // Display Off
+#define TFT_DISPON        0x29      // Display On
+#define TFT_CASET         0x2A      // Column Address Set
+#define TFT_RASET         0x2B      // Row Address Set
+#define TFT_RAMWR         0x2C      // Memory Write
+#define TFT_RAMRD         0x2E      // Memory Read
+#define TFT_PLTAR         0x30      // Partial Area
+#define TFT_TEOFF         0x34      // Tearing Effect Line Off
+#define TFT_TEON          0x35      // Tearing Effect Line On
+#define TFT_MADCTL        0x36      // Memory Data Access Control
+#define TFT_IDMOFF        0x38      // Idle Mode Off
+#define TFT_IDMON         0x39      // Idle Mode On
+#define TFT_COLMOD        0x3A      // Interface Pixel Format
 
 #define TFT_abs(n)        (((n)>=0)?(n):(-(n))) // returns positive value of n
 
 // TFT Control Functions
 void TFT_init(void);
-void TFT_invert(uint8_t yes);
+void TFT_power(uint8_t yes);
 void TFT_sleep(uint8_t yes);
+void TFT_invert(uint8_t yes);
 void TFT_resync(void);
 
 // TFT Graphics Functions
@@ -163,13 +188,14 @@ void TFT_stretchChar(char c);
 void TFT_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
 #endif
 
-// TFT Color Presets
+// TFT Color Calculation
 #if TFT_COLORBITS == 16
 #define TFT_COLOR(r,g,b)      (((r) & 0xf8) << 8 | ((g) & 0xfc) << 3 | (b) >> 3)      // 16-bit
 #else
 #define TFT_COLOR(r,g,b)      (((r) & 0xf0) << 8 | ((g) & 0xf0) << 4 | ((b) & 0xf0))  // 12-bit
 #endif
 
+// TFT Color Presets
 #define TFT_BLACK             TFT_COLOR(  0,   0,   0)
 #define TFT_WHITE             TFT_COLOR(255, 255, 255)
 #define TFT_RED               TFT_COLOR(255,   0,   0)

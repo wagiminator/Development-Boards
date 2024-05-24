@@ -89,10 +89,18 @@ int main(void) {
   // Loop
   while(1) {
     TFT_clear();
+    TFT_drawRect(0, 0, TFT_WIDTH, TFT_HEIGHT, TFT_YELLOW);
+    TFT_drawVLine(TFT_WIDTH/2, 0, TFT_HEIGHT, TFT_YELLOW);
+    TFT_drawHLine(0, TFT_HEIGHT/2, TFT_WIDTH, TFT_YELLOW);
+    TFT_cursor(2, 2); TFT_color(TFT_YELLOW); TFT_size(1); TFT_print("(0,0)");
+    TFT_cursor(2,10); TFT_print("upper left");
+    DLY_ms(3000);
+
+    TFT_clear();
     for(i=200; i; i--) TFT_setPixel(random(TFT_WIDTH), random(TFT_HEIGHT), TFT_WHITE);
     for(i=32; i; i--) TFT_drawCircle(100, 50, i, TFT_YELLOW);
     TFT_drawSprite(20, 10, 32, 16, UFO, TFT_MAGENTA);
-    TFT_cursor(150,  0); TFT_color(TFT_WHITE); TFT_size(1);           TFT_print("Hello World");
+    TFT_cursor(150,  2); TFT_color(TFT_WHITE); TFT_size(1);           TFT_print("Hello World");
     TFT_cursor(150, 12); TFT_color(TFT_RED);   TFT_size(TFT_STRETCH); TFT_print("1234567890");
     TFT_cursor(150, 36); TFT_color(TFT_WHITE); TFT_size(TFT_SMOOTH);  TFT_print("12345");
     TFT_cursor(150, 60); TFT_color(TFT_GREEN); TFT_size(4);           TFT_print("TEST");
@@ -120,9 +128,9 @@ int main(void) {
     TFT_fillRect(144, 60, 50, 50, TFT_WHITE);
     TFT_drawRect(144 + 55, 60, 50, 50, TFT_WHITE);
     DLY_ms(3000);
-    TFT_invert(0);
+    TFT_invert(!TFT_INVERT);
     DLY_ms(3000);
-    TFT_invert(1);
+    TFT_invert(TFT_INVERT);
 
     TFT_clear();
     for(i = 30000; i; i--) {
