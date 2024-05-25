@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 I2C OLED Graphics Functions                                        * v1.4 *
+// SSD1306/SH1106 I2C OLED Graphics Functions                                 * v1.5 *
 // ===================================================================================
 //
 // Functions available:
@@ -10,7 +10,6 @@
 // OLED_invert(v)                 Invert display (0: inverse off, 1: inverse on)
 // OLED_flip(xflip,yflip)         Flip display (0: flip off, 1: flip on)
 // OLED_vscroll(y)                Scroll display vertically
-// OLED_home(x,y)                 Set display home position for screen refresh (0,0)
 // OLED_refresh()                 Refresh (flush) screen buffer (send buffer via I2C)
 // OLED_flush()                   Refresh (flush) screen buffer (alias)
 //
@@ -55,6 +54,14 @@
 // - size:  1: normal 6x8 pixels, 2: double size (12x16), ... , 8: 8 times (48x64)
 //          9: smoothed double size (12x16), 10: v-stretched (6x16)
 //
+// Tested devices:
+// ---------------
+// - 1.3"  128x64 SH1106
+// - 0.96" 128x64 SSD1306
+// - 0.91" 128x32 SSD1306
+// - 0.49"  64x32 SSD1306
+// - 0.42"  72x40 SSD1306
+//
 // References:
 // -----------
 // - Neven Boyanov:         https://github.com/tinusaur/ssd1306xled
@@ -73,9 +80,12 @@ extern "C" {
 #include "i2c_dma.h"                // choose your I2C library
 #include "system.h"
 
-// OLED parameters
+// OLED Parameters
+#define OLED_ADDR         0x3C      // OLED I2C device address
 #define OLED_WIDTH        128       // OLED width in pixels
 #define OLED_HEIGHT       64        // OLED height in pixels
+#define OLED_SH1106       0         // OLED driver - 0: SSD1306, 1: SH1106
+
 #define OLED_BOOT_TIME    50        // OLED boot up time in milliseconds
 #define OLED_INIT_I2C     1         // 1: init I2C with OLED_init()
 #define OLED_FLIP_SCREEN  1         // 1: flip screen with OLED_init()
@@ -83,19 +93,17 @@ extern "C" {
 #define OLED_DOUBLEBUF    0         // 1: use double buffer
 #define OLED_PRINT        0         // 1: include print functions (needs print.h)
 
-// Segment Digit Parameters
+// Segment Font Settings
 #define OLED_SEG_FONT     1         // 0: unused, 1: 13x32 digits, 2: 5x16 digits
 #define OLED_SEG_SPACE    3         // width of space between segment digits in pixels
-
-// OLED definitions
-#define OLED_ADDR         0x3C      // OLED I2C device address
-#define OLED_CMD_MODE     0x00      // set command mode
-#define OLED_DAT_MODE     0x40      // set data mode
-
 #define OLED_SMOOTH       9         // character size value for double-size smoothed
 #define OLED_STRETCH      10        // character size value for v-stretched
 
-// OLED commands
+// OLED Modes
+#define OLED_CMD_MODE     0x00      // set command mode
+#define OLED_DAT_MODE     0x40      // set data mode
+
+// OLED Commands
 #define OLED_COLUMN_LOW   0x00      // set lower 4 bits of start column (0x00 - 0x0F)
 #define OLED_COLUMN_HIGH  0x10      // set higher 4 bits of start column (0x10 - 0x1F)
 #define OLED_MEMORYMODE   0x20      // set memory addressing mode (following byte)

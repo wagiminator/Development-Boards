@@ -66,7 +66,6 @@ int main(void) {
 
   // Loop
   while(1) {
-    OLED_home(0, 0);
     OLED_clear();
     for(i=200; i; i--) OLED_setPixel(random(128), random(64), 1);
     for(i=32; i; i--) OLED_drawCircle(100, 50, i, 1);

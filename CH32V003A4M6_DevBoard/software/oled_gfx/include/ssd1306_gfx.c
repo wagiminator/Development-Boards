@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306 I2C OLED Graphics Functions                                        * v1.4 *
+// SSD1306/SH1106 I2C OLED Graphics Functions                                 * v1.5 *
 // ===================================================================================
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -127,13 +127,23 @@ const uint8_t OLED_FONT_SEG2[] = {
 // OLED Control Functions
 // ===================================================================================
 
+// Screen offsets
+#if OLED_SH1106 == 1
+  #define OLED_XOFF ((128 - OLED_WIDTH) / 2) + 2
+#else
+  #define OLED_XOFF ((128 - OLED_WIDTH) / 2)
+#endif
+#define OLED_YOFF 0
+
 // OLED initialisation sequence
 const uint8_t OLED_INIT_CMD[] = {
   OLED_MULTIPLEX,  OLED_HEIGHT - 1,               // set multiplex ratio
   OLED_CHARGEPUMP, 0x14,                          // set DC-DC enable  
   OLED_MEMORYMODE, 0x00,                          // set horizontal addressing mode
-  OLED_COLUMNS,    0, OLED_WIDTH - 1,             // set start and end column
-  OLED_PAGES,      0, OLED_HEIGHT - 1,            // set start and end page
+  #if OLED_SH1106 == 0 && OLED_WIDTH != 64
+  OLED_COLUMNS, OLED_XOFF, OLED_XOFF + OLED_WIDTH  - 1, // set start and end column
+  OLED_PAGES,   OLED_YOFF, OLED_YOFF + OLED_HEIGHT - 1, // set start and end page
+  #endif
   #if OLED_WIDTH == 128 && OLED_HEIGHT == 32
   OLED_COMPINS,    0x02,                          // set com pins
   #else
@@ -202,7 +212,7 @@ void OLED_vscroll(uint8_t y) {
   I2C_stop();                                     // stop transmission
 }
 
-// Set home postition (should be 0,0)
+// Set home postition
 void OLED_home(uint8_t x, uint8_t y) {
   I2C_start(OLED_ADDR << 1);                      // start transmission to OLED
   I2C_write(OLED_CMD_MODE);                       // set command mode
@@ -220,9 +230,21 @@ void OLED_refresh(void) {
   OLED_sendbuffer = temp;
   #endif
 
+  #if OLED_SH1106 == 1 || OLED_WIDTH == 64
+  uint8_t* buffer = OLED_sendbuffer;
+  for(uint8_t y=0; y<OLED_HEIGHT; y+=8) {         // each page must be transmitted individually
+    OLED_home(OLED_XOFF, OLED_YOFF + y);          // set page
+    I2C_start(OLED_ADDR << 1);                    // start transmission to OLED
+    I2C_write(OLED_DAT_MODE);                     // set command mode
+    I2C_writeBuffer(buffer, OLED_WIDTH);          // transmit page
+    buffer += OLED_WIDTH;                         // increase buffer pointer
+  }
+  #else
+  OLED_home(OLED_XOFF, OLED_YOFF);                // set start address
   I2C_start(OLED_ADDR << 1);                      // start transmission to OLED
   I2C_write(OLED_DAT_MODE);                       // set command mode
   I2C_writeBuffer(OLED_sendbuffer, sizeof(OLED_buffer)); // send screen buffer using DMA
+  #endif
 }
 
 // ===================================================================================
