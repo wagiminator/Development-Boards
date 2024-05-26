@@ -288,27 +288,28 @@ void OLED_plotChar(char c) {
   #if OLED_BIGCHARS > 0
   if(OLED_sz == 0) {                              // normal character (5x8)
   #endif
+    if(OLED_x > OLED_WIDTH - 6) OLED_cursor(0, OLED_y + 1);
     I2C_start(OLED_ADDR << 1);                    // start transmission to OLED
     I2C_write(OLED_DAT_MODE);                     // set data mode
     I2C_write(OLED_i ? 0xff : 0x00);              // write space between characters
     for(uint8_t i=5; i; i--) I2C_write(OLED_i ? ~OLED_FONT[ptr++] : OLED_FONT[ptr++]);
     I2C_stop();
     OLED_x += 6;                                  // move cursor
-    if(OLED_x > OLED_WIDTH - 6) OLED_cursor(0, OLED_y + 1);
   #if OLED_BIGCHARS > 0
   }
   else if(OLED_sz == 1) {                         // v-stretched character (5x16)
+    if(OLED_x > OLED_WIDTH - 6) OLED_cursor(0, OLED_y + 2);
     for(uint8_t i=0; i<5; i++) {
       uint16_t ch = OLED_stretch(OLED_FONT[ptr++]);
       OLED_buf[i] = ch; OLED_buf[i+5] = ch >> 8;
     }
     OLED_drawBitmap(OLED_buf, 5, 2);
     OLED_clearRect(1, 2);
-    if(OLED_x > OLED_WIDTH - 6) OLED_cursor(0, OLED_y + 2);
   }
   else {                                          // double-sized smoothed character (10x16)
     uint16_t col0L, col0R, col1L, col1R;          // David Johnson-Davies' Smooth Big Text algorithm
     uint8_t col0 = OLED_FONT[ptr++];
+    if(OLED_x > OLED_WIDTH - 12) OLED_cursor(0, OLED_y + 2);
     col0L = OLED_stretch(col0);
     col0R = col0L;
     for(uint8_t col=0; col<10; col+=2) {
@@ -330,7 +331,6 @@ void OLED_plotChar(char c) {
     }
     OLED_drawBitmap(OLED_buf, 10, 2);
     OLED_clearRect(2, 2);
-    if(OLED_x > OLED_WIDTH - 12) OLED_cursor(0, OLED_y + 2);
   }
   #endif
 }

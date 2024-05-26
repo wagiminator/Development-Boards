@@ -545,14 +545,14 @@ void OLED_cursor(int16_t x, int16_t y) {
   OLED_cx = x; OLED_cy = y;
 }
 
-// Set text color
-void OLED_textcolor(uint8_t color) {
-  OLED_cc = color;
-}
-
 // Set text size
 void OLED_textsize(uint8_t size) {
   OLED_cs = size;
+}
+
+// OLED set text invert
+void OLED_textinvert(uint8_t yes) {
+  OLED_cc = !yes;
 }
 
 // Write a character
@@ -603,13 +603,14 @@ void OLED_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t dec
     }
     if(digits == decimal) leadflag++;             // end leading characters before decimal
     if(leadflag || !lead) {
-      uint16_t ptr = (uint16_t)digitval;          // character pointer
       #if OLED_SEG_FONT == 0
       OLED_write(digitval + '0');
       #elif OLED_SEG_FONT == 1
+      uint16_t ptr = (uint16_t)digitval;          // character pointer
       ptr = (ptr << 5) + (ptr << 4) + (ptr << 2); // -> ptr = c * 13 * 4;
       OLED_drawBitmap(OLED_cx, OLED_cy, 13, 32, (uint8_t*)&OLED_FONT_SEG[ptr]);
       #elif OLED_SEG_FONT == 2
+      uint16_t ptr = (uint16_t)digitval;          // character pointer
       ptr = (ptr << 3) + (ptr << 1);              // -> ptr = c * 5 * 2;
       OLED_drawBitmap(OLED_cx, OLED_cy, 5, 16, (uint8_t*)&OLED_FONT_SEG[ptr]);
       #endif

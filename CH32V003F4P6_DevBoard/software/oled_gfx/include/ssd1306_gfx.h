@@ -32,8 +32,8 @@
 // OLED_drawSprite(x,y,w,h,*p)    Draw sprite at (x,y), width (w), hight (h), pointer to bitmap (*p)
 //
 // OLED_cursor(x,y)               Set text cursor at position (x,y)
-// OLED_textcolor(c)              Set text color (c)
 // OLED_textsize(sz)              Set text size (sz)
+// OLED_textinvert(v)             Invert text (0: inverse off, 1: inverse on)
 // OLED_write(c)                  Write character at cursor position or handle control characters
 // OLED_print(str)                Print string (*str) at cursor position
 // OLED_printSegment(v,d,l,dp)    Print value (v) at cursor position using defined segment font
@@ -173,13 +173,14 @@ void OLED_drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t
 void OLED_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t* bmp);
 
 void OLED_cursor(int16_t x, int16_t y);
-void OLED_textcolor(uint8_t color);
 void OLED_textsize(uint8_t size);
+void OLED_textinvert(uint8_t yes);
 void OLED_write(char c);
 void OLED_print(char* str);
 void OLED_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
 
-#define OLED_flush  OLED_refresh
+#define OLED_flush            OLED_refresh
+#define OLED_textcolor(c)     OLED_textinvert(!(c))
 
 // Additional print functions (if activated, see above)
 #if OLED_PRINT == 1

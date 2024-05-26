@@ -36,6 +36,16 @@
 #include <ssd1306_txt.h>                            // SSD1306 OLED text functions
 
 // ===================================================================================
+// Bitmaps
+// ===================================================================================
+const uint8_t UFO[] = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x30, 0x08, 0x04, 0x3A, 0xFA, 0x39, 0x01,
+  0x01, 0x31, 0xF8, 0xFA, 0x12, 0x04, 0x18, 0xE0, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x0C, 0x3C, 0x7E, 0x7A, 0xF9, 0xFF, 0xFF, 0xCF, 0xC7, 0xCF, 0xFF, 0xFF, 0xFF, 0xFF, 0x9F, 0x8E,
+  0x8E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xCF, 0xCF, 0xFF, 0xFF, 0xFF, 0xFA, 0x7A, 0x7E, 0x3C, 0x08
+};
+
+// ===================================================================================
 // Main Function
 // ===================================================================================
 int main(void) {
@@ -49,7 +59,7 @@ int main(void) {
       OLED_cursor(0, 0);
       OLED_printSegment(i, 5, 1, 2);
     }
-    DLY_ms(3000);
+    DLY_ms(1000);
 
     OLED_clear();
     OLED_textsize(0);
@@ -61,6 +71,8 @@ int main(void) {
     OLED_print("Test 01234\n");
     OLED_textsize(2);
     OLED_print("Test 01234\n");
+    OLED_cursor(95, 0);
+    OLED_drawBitmap(UFO, 32, 2);
     DLY_ms(3000);
   }
 }

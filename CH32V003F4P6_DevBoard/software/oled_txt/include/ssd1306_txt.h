@@ -17,8 +17,8 @@
 // OLED_clearLine(y)            Clear line y
 //
 // OLED_cursor(x,y)             Set text cursor at position (x,y)
+// OLED_textsize(sz)            Set text size (0: 5x8, 1: 5x16, 2: 10x16), enable OLED_BIGCHARS
 // OLED_textinvert(v)           Invert text (0: inverse off, 1: inverse on)
-// OLED_textsize(sz);           Set text size (0: 5x8, 1: 5x16, 2: 10x16), enable OLED_BIGCHARS
 // OLED_write(c)                Write character at cursor position or handle control characters
 // OLED_print(str)              Print string (*str) at cursor position
 // OLED_printSegment(v,d,l,dp)  Print value (v) at cursor position using defined segment font
@@ -139,19 +139,21 @@ void OLED_drawBitmap(const uint8_t* bmp, uint8_t w, uint8_t h);
 void OLED_clearRect(uint8_t w, uint8_t h);
 void OLED_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
 
+#define OLED_textcolor(c)     OLED_textinvert(!(c))
+
 // OLED Cursor Position
 extern uint8_t OLED_x, OLED_y;
 
 // Additional print functions (if activated, see above)
 #if OLED_PRINT == 1
 #include "print.h"
-#define OLED_printD(n)    printD(OLED_write, n)   // print decimal as string
-#define OLED_printW(n)    printW(OLED_write, n)   // print word as string
-#define OLED_printH(n)    printH(OLED_write, n)   // print half-word as string
-#define OLED_printB(n)    printB(OLED_write, n)   // print byte as string
-#define OLED_printS(s)    printS(OLED_write, s)   // print string
-#define OLED_println(s)   println(OLED_write, s)  // print string with newline
-#define OLED_newline()    OLED_write('\n')        // send newline
+#define OLED_printD(n)        printD(OLED_write, n)   // print decimal as string
+#define OLED_printW(n)        printW(OLED_write, n)   // print word as string
+#define OLED_printH(n)        printH(OLED_write, n)   // print half-word as string
+#define OLED_printB(n)        printB(OLED_write, n)   // print byte as string
+#define OLED_printS(s)        printS(OLED_write, s)   // print string
+#define OLED_println(s)       println(OLED_write, s)  // print string with newline
+#define OLED_newline()        OLED_write('\n')        // send newline
 #define OLED_printf(f, ...)   printF(OLED_write, f, ##__VA_ARGS__)
 #endif
 
