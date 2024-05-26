@@ -156,10 +156,10 @@ int main(void) {
 
     for(i = 200; i; i--) {
       OLED_cursor(random(OLED_WIDTH), random(OLED_HEIGHT));
-      OLED_textcolor(random(2)); OLED_textsize(random(3) + 1);
+      OLED_textinvert(random(2)); OLED_textsize(random(3) + 1);
       OLED_print("Hello");
       OLED_refresh();
     }
-    OLED_textcolor(1);
+    OLED_textinvert(0);
   }
 }

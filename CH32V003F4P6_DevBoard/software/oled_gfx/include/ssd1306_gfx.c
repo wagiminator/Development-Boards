@@ -446,99 +446,12 @@ void OLED_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t
 }
 
 // ===================================================================================
-// OLED Character Functions
-// ===================================================================================
-
-// Draw character (c) at position (x,y), color, size
-void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size) {
-  uint16_t ptr = c - 32;
-  ptr += ptr << 2;
-  for(uint8_t i=6; i; i--) {
-    uint8_t line, col;
-    int16_t y1 = y;
-    line = OLED_FONT[ptr++];
-    if(i == 1) line = 0;
-    for(uint8_t j=0; j<8; j++, line>>=1) {
-      if(line & 1) col = color;
-      else col = !color;
-      if(size == 1) OLED_setPixel(x, y1++, col);
-      else {
-        OLED_fillRect(x, y1, size, size, col);
-        y1 += size;
-      }
-    }
-    x += size;
-  }
-}
-
-// Converts bit pattern abcdefgh into aabbccddeeffgghh
-uint16_t OLED_stretch(uint16_t x) {
-  x = (x & 0xF0)<<4 | (x & 0x0F);
-  x = (x<<2 | x) & 0x3333;
-  x = (x<<1 | x) & 0x5555;
-  return x | x<<1;
-}
-
-// Draw character (c) at position (x,y), color, double-size, smoothed
-// (David Johnson-Davies' Smooth Big Text algorithm)
-void OLED_smoothChar(int16_t x, int16_t y, char c, uint8_t color) {
-  uint16_t ptr = c - 32;
-  ptr += ptr << 2;
-  uint16_t col0L, col0R, col1L, col1R;
-  uint8_t col0 = OLED_FONT[ptr++];
-  col0L = OLED_stretch(col0);
-  col0R = col0L;
-  for(uint8_t col=5; col; col--) {
-    uint8_t col1 = OLED_FONT[ptr++];
-    if(col == 1) col1 = 0;
-    col1L = OLED_stretch(col1);
-    col1R = col1L;    
-    for(int8_t i=6; i>=0; i--) {
-      for(int8_t j=1; j<3; j++) {
-        if(((col0>>i & 0b11) == (3 - j)) && ((col1>>i & 0b11) == j)) {
-          col0R = col0R | 1<<((i << 1) + j);
-          col1L = col1L | 1<<((i << 1) + 3 - j);
-        }
-      }
-    }
-    int16_t y1 = y;
-    if(!color) {
-      col0L = ~col0L;
-      col0R = ~col0R;
-    }
-    for(int8_t i=16; i; i--, col0L>>=1, col0R>>=1) {
-      OLED_setPixel(x,   y1,   col0L & 1);
-      OLED_setPixel(x+1, y1++, col0R & 1);
-    }
-    col0 = col1; col0L = col1L; col0R = col1R; x += 2;
-  }
-  OLED_fillRect(x, y, 2, 16, !color);
-}
-
-// Draw character (c) at position (x,y), color, v-stretched
-void OLED_stretchChar(int16_t x, int16_t y, char c, uint8_t color) {
-  uint16_t ptr = c - 32;
-  ptr += ptr << 2;
-  for(uint8_t col=6; col; col--) {
-    uint8_t col0 = OLED_FONT[ptr++];
-    if(col == 1) col0 = 0;
-    if(!color) col0 = ~col0;
-    int16_t y1 = y;
-    for(uint8_t i=8; i; i--, col0>>=1) {
-      OLED_setPixel(x, y1++, col0 & 1);
-      OLED_setPixel(x, y1++, col0 & 1);
-    }
-    x++;
-  }
-}
-
-// ===================================================================================
 // OLED Text Functions
 // ===================================================================================
 
 // Variables
 int16_t OLED_cx, OLED_cy;                           // cursor position
-uint8_t OLED_cc = 1, OLED_cs = 1;                   // color and size
+uint8_t OLED_ci, OLED_cs = 1;                       // inversion and size
 
 // Set cursor position
 void OLED_cursor(int16_t x, int16_t y) {
@@ -552,32 +465,105 @@ void OLED_textsize(uint8_t size) {
 
 // OLED set text invert
 void OLED_textinvert(uint8_t yes) {
-  OLED_cc = !yes;
+  OLED_ci = yes;
+}
+
+// Converts bit pattern abcdefgh into aabbccddeeffgghh
+uint16_t OLED_stretch(uint16_t x) {
+  x = (x & 0xF0)<<4 | (x & 0x0F);
+  x = (x<<2 | x) & 0x3333;
+  x = (x<<1 | x) & 0x5555;
+  return x | x<<1;
 }
 
 // Write a character
 void OLED_write(char c) {
   c &= 0x7f;
   if(c >= 32) {
+    uint16_t ptr = c - 32;
+    ptr += ptr << 2;
+
+    // Standard character, if necessary enlarged
     if(OLED_cs <= 8) {
-      OLED_drawChar(OLED_cx, OLED_cy, c, OLED_cc, OLED_cs);
-      OLED_cx += ((OLED_cs << 2) + (OLED_cs << 1));
+      for(uint8_t i=6; i; i--) {
+        uint8_t line, col;
+        int16_t y1 = OLED_cy;
+        line = OLED_FONT[ptr++];
+        if(i == 1) line = 0;
+        if(OLED_ci) line = ~line;
+        for(uint8_t j=0; j<8; j++, line>>=1) {
+          col = line & 1;
+          if(OLED_cs == 1) OLED_setPixel(OLED_cx, y1++, col);
+          else {
+            OLED_fillRect(OLED_cx, y1, OLED_cs, OLED_cs, col);
+            y1 += OLED_cs;
+          }
+        }
+        OLED_cx += OLED_cs;
+      }
       return;
     }
+
+    // Double-sized, smoothed character (10x16, David Johnson-Davies' Smooth Big Text algorithm)
     if(OLED_cs == OLED_SMOOTH) {
-      OLED_smoothChar(OLED_cx, OLED_cy, c, OLED_cc);
-      OLED_cx += 12;
+      uint16_t col0L, col0R, col1L, col1R;
+      uint8_t col0 = OLED_FONT[ptr++];
+      col0L = OLED_stretch(col0);
+      col0R = col0L;
+      for(uint8_t col=5; col; col--) {
+        uint8_t col1 = OLED_FONT[ptr++];
+        if(col == 1) col1 = 0;
+        col1L = OLED_stretch(col1);
+        col1R = col1L;    
+        for(int8_t i=6; i>=0; i--) {
+          for(int8_t j=1; j<3; j++) {
+            if(((col0>>i & 0b11) == (3 - j)) && ((col1>>i & 0b11) == j)) {
+              col0R = col0R | 1<<((i << 1) + j);
+              col1L = col1L | 1<<((i << 1) + 3 - j);
+            }
+          }
+        }
+        int16_t y1 = OLED_cy;
+        if(OLED_ci) {
+          col0L = ~col0L;
+          col0R = ~col0R;
+        }
+        for(int8_t i=16; i; i--, col0L>>=1, col0R>>=1) {
+          OLED_setPixel(OLED_cx,   y1,   col0L & 1);
+          OLED_setPixel(OLED_cx+1, y1++, col0R & 1);
+        }
+        col0 = col1; col0L = col1L; col0R = col1R; OLED_cx += 2;
+      }
+      OLED_fillRect(OLED_cx, OLED_cy, 2, 16, OLED_ci);
+      OLED_cx += 2;
       return;
     }
-    OLED_stretchChar(OLED_cx, OLED_cy, c, OLED_cc);
-    OLED_cx += 6;
+
+    // V-stretched character (5x16)
+    for(uint8_t col=6; col; col--) {
+      uint8_t col0 = OLED_FONT[ptr++];
+      if(col == 1) col0 = 0;
+      if(OLED_ci) col0 = ~col0;
+      int16_t y1 = OLED_cy;
+      for(uint8_t i=8; i; i--, col0>>=1) {
+        OLED_setPixel(OLED_cx, y1++, col0 & 1);
+        OLED_setPixel(OLED_cx, y1++, col0 & 1);
+      }
+      OLED_cx++;
+    }
     return;
   }
+
+  // New line
   if(c == '\n') {
     OLED_cx = 0;
     if(OLED_cs <= 8) OLED_cy += OLED_cs << 3;
     else OLED_cy += 16;
+    return;
   }
+
+  // Carriage return
+  if(c == '\r') OLED_cx = 0;
 }
 
 // Print string (str)
