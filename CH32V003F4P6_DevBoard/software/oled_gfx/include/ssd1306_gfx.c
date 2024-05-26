@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306/SH1106 I2C OLED Graphics Functions                                 * v1.5 *
+// SSD1306/SH1106 I2C OLED Graphics Functions                                 * v1.6 *
 // ===================================================================================
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -61,7 +61,7 @@ const uint8_t OLED_FONT[] = {
 // 13x32 7-Segment Font (0 - 9)
 // ===================================================================================
 #if OLED_SEG_FONT == 1
-const uint8_t OLED_FONT_SEG1[] = {
+const uint8_t OLED_FONT_SEG[] = {
   0xFC, 0xF9, 0xF3, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0xF3, 0xF9, 0xFC, // 0
   0x7F, 0x3F, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F, 0x3F, 0x7F, 
   0xFF, 0xFE, 0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC, 0xFE, 0xFF, 
@@ -109,7 +109,7 @@ const uint8_t OLED_FONT_SEG1[] = {
 // 5x16 7-Segment Font (0 - 9)
 // ===================================================================================
 #if OLED_SEG_FONT == 2
-const uint8_t OLED_FONT_SEG2[] = {
+const uint8_t OLED_FONT_SEG[] = {
   0x7C, 0x02, 0x02, 0x02, 0x7C, 0x1F, 0x20, 0x20, 0x20, 0x1F, // 0  0
   0x00, 0x00, 0x00, 0x00, 0x7C, 0x00, 0x00, 0x00, 0x00, 0x1F, // 1  1
   0x00, 0x82, 0x82, 0x82, 0x7C, 0x1F, 0x20, 0x20, 0x20, 0x00, // 2  2
@@ -446,7 +446,7 @@ void OLED_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t
 }
 
 // ===================================================================================
-// OLED Text Functions
+// OLED Character Functions
 // ===================================================================================
 
 // Draw character (c) at position (x,y), color, size
@@ -532,86 +532,30 @@ void OLED_stretchChar(int16_t x, int16_t y, char c, uint8_t color) {
   }
 }
 
-// Print string (str) at position (x,y), color, size
-void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size) {
-  while(*str) {
-    if(size <= 8) {
-      OLED_drawChar(x, y, *str++, color, size);
-      x += ((size << 2) + (size << 1));
-      continue;
-    }
-    if(size == OLED_SMOOTH) {
-      OLED_smoothChar(x, y, *str++, color);
-      x += 12;
-      continue;
-    }
-    OLED_stretchChar(x, y, *str++, color);
-    x += 6;
-  }
-}
-
 // ===================================================================================
-// OLED 7-Segment Functions
+// OLED Text Functions
 // ===================================================================================
-
-// Print value as 7-segment digits (BCD conversion by substraction method)
-#if OLED_SEG_FONT > 0
-void OLED_printSegment(int16_t x, int16_t y, uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal) {
-  static const uint16_t DIVIDER[] = {1, 10, 100, 1000, 10000};
-  uint8_t leadflag = 0;                           // flag for leading spaces
-  while(digits--) {                               // for all digits digits
-    uint8_t digitval = 0;                         // start with digit value 0
-    uint16_t divider = DIVIDER[digits];           // read current divider
-    while(value >= divider) {                     // if current divider fits into the value
-      leadflag = 1;                               // end of leading spaces
-      digitval++;                                 // increase digit value
-      value -= divider;                           // decrease value by divider
-    }
-    if(digits == decimal) leadflag++;             // end leading characters before decimal
-    if(leadflag || !lead) {
-      uint16_t ptr = (uint16_t)digitval;          // character pointer
-      #if OLED_SEG_FONT == 1
-      ptr = (ptr << 5) + (ptr << 4) + (ptr << 2); // -> ptr = c * 13 * 4;
-      OLED_drawBitmap(x, y, 13, 32, (uint8_t*)&OLED_FONT_SEG1[ptr]);
-      #elif OLED_SEG_FONT == 2
-      ptr = (ptr << 3) + (ptr << 1);              // -> ptr = c * 5 * 2;
-      OLED_drawBitmap(x, y, 5, 16, (uint8_t*)&OLED_FONT_SEG2[ptr]);
-      #endif
-    }
-    #if OLED_SEG_FONT == 1
-    x += OLED_SEG_SPACE + 13;
-    #elif OLED_SEG_FONT == 2
-    x += OLED_SEG_SPACE + 5;
-    #endif
-    if(decimal && (digits == decimal)) {
-      #if OLED_SEG_FONT == 1
-      OLED_fillRect(x, y + 28, 3, 3, 1);          // print decimal point
-      x += OLED_SEG_SPACE + 3;
-      #elif OLED_SEG_FONT == 2
-      OLED_fillRect(x, y + 12, 2, 2, 1);          // print decimal point
-      x += OLED_SEG_SPACE + 2;
-      #endif
-    }
-  }
-}
-#endif  // OLED_SEG_FONT > 0
-
-// ===================================================================================
-// printf Extension
-// ===================================================================================
-
-#if OLED_PRINT == 1
 
 // Variables
 int16_t OLED_cx, OLED_cy;                           // cursor position
-uint8_t OLED_cc, OLED_cs;                           // color and size
+uint8_t OLED_cc = 1, OLED_cs = 1;                   // color and size
 
-// Set cursor position, color and size
-void OLED_cursor(int16_t x, int16_t y, uint8_t color, uint8_t size) {
-  OLED_cx = x; OLED_cy = y; OLED_cc = color; OLED_cs = size;
+// Set cursor position
+void OLED_cursor(int16_t x, int16_t y) {
+  OLED_cx = x; OLED_cy = y;
 }
 
-// Write a character (for printf)
+// Set text color
+void OLED_textcolor(uint8_t color) {
+  OLED_cc = color;
+}
+
+// Set text size
+void OLED_textsize(uint8_t size) {
+  OLED_cs = size;
+}
+
+// Write a character
 void OLED_write(char c) {
   c &= 0x7f;
   if(c >= 32) {
@@ -636,4 +580,57 @@ void OLED_write(char c) {
   }
 }
 
-#endif
+// Print string (str)
+void OLED_print(char* str) {
+  while(*str) OLED_write(*str++);
+}
+
+// ===================================================================================
+// OLED 7-Segment Functions
+// ===================================================================================
+
+// Print value as 7-segment digits (BCD conversion by substraction method)
+void OLED_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal) {
+  static const uint16_t DIVIDER[] = {1, 10, 100, 1000, 10000};
+  uint8_t leadflag = 0;                           // flag for leading spaces
+  while(digits--) {                               // for all digits digits
+    uint8_t digitval = 0;                         // start with digit value 0
+    uint16_t divider = DIVIDER[digits];           // read current divider
+    while(value >= divider) {                     // if current divider fits into the value
+      leadflag = 1;                               // end of leading spaces
+      digitval++;                                 // increase digit value
+      value -= divider;                           // decrease value by divider
+    }
+    if(digits == decimal) leadflag++;             // end leading characters before decimal
+    if(leadflag || !lead) {
+      uint16_t ptr = (uint16_t)digitval;          // character pointer
+      #if OLED_SEG_FONT == 0
+      OLED_write(digitval + '0');
+      #elif OLED_SEG_FONT == 1
+      ptr = (ptr << 5) + (ptr << 4) + (ptr << 2); // -> ptr = c * 13 * 4;
+      OLED_drawBitmap(OLED_cx, OLED_cy, 13, 32, (uint8_t*)&OLED_FONT_SEG[ptr]);
+      #elif OLED_SEG_FONT == 2
+      ptr = (ptr << 3) + (ptr << 1);              // -> ptr = c * 5 * 2;
+      OLED_drawBitmap(OLED_cx, OLED_cy, 5, 16, (uint8_t*)&OLED_FONT_SEG[ptr]);
+      #endif
+    }
+    #if OLED_SEG_FONT == 0
+    else OLED_write(' ');
+    #elif OLED_SEG_FONT == 1
+    OLED_cx += OLED_SEG_SPACE + 13;
+    #elif OLED_SEG_FONT == 2
+    OLED_cx += OLED_SEG_SPACE + 5;
+    #endif
+    if(decimal && (digits == decimal)) {
+      #if OLED_SEG_FONT == 0
+      OLED_write('.');
+      #elif OLED_SEG_FONT == 1
+      OLED_fillRect(OLED_cx, OLED_cy + 28, 3, 3, 1);  // print decimal point
+      OLED_cx += OLED_SEG_SPACE + 3;
+      #elif OLED_SEG_FONT == 2
+      OLED_fillRect(OLED_cx, OLED_cy + 12, 2, 2, 1);  // print decimal point
+      OLED_cx += OLED_SEG_SPACE + 2;
+      #endif
+    }
+  }
+}

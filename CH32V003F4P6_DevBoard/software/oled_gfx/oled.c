@@ -90,10 +90,10 @@ int main(void) {
     DLY_ms(2000);
 
     OLED_clear();
-    OLED_print(0, 0, "Hello World", 1, 1);
-    OLED_print(0, 32, "TEST", 1, 4);
-    OLED_print(0, 12, "1234567890", 1, OLED_STRETCH);
-    OLED_print(64, 12, "12345", 1, OLED_SMOOTH);
+    OLED_cursor( 0,  0); OLED_textsize(1);            OLED_print("Hello World");
+    OLED_cursor( 0, 32); OLED_textsize(4);            OLED_print("TEST");
+    OLED_cursor( 0, 12); OLED_textsize(OLED_STRETCH); OLED_print("1234567890");
+    OLED_cursor(64, 12); OLED_textsize(OLED_SMOOTH);  OLED_print("12345");
     OLED_refresh();
     DLY_ms(2000);
     for(i=0; i<=64; i++) {
@@ -105,16 +105,16 @@ int main(void) {
     uint8_t strength = 32;
     uint8_t volume = 10;
     OLED_clear();
-    OLED_print(0, 0, "FM Radio", 1, OLED_SMOOTH);
+    OLED_cursor(0, 0); OLED_print("FM Radio");
     OLED_drawBitmap(121, 0, 7, 16, BAT_OK);
-    OLED_printSegment(-10, 20, 10885, 5, 1, 2);
-    OLED_print(94, 36, "MHz", 1, OLED_SMOOTH);
+    OLED_cursor(-10, 20); OLED_printSegment(10885, 5, 1, 2);
+    OLED_cursor( 94, 36); OLED_print("MHz");
     OLED_drawBitmap(94, 20, 7, 8, ANT);
     OLED_drawRect(104, 20, 24, 7, 1);
     if(strength > 64) strength = 64;
     strength = (strength >> 2) + (strength >> 3);
     if(strength) OLED_fillRect(104, 20, strength, 7, 1);
-    OLED_print(0, 56, "Volume:", 1, 1);
+    OLED_cursor(0, 56); OLED_textsize(1); OLED_print("Volume:");
     OLED_drawRect(50, 56, 78, 7, 1);
     uint8_t xpos = 47;
     while(volume--) OLED_fillRect(xpos+=5, 58, 4, 3, 1);
@@ -155,11 +155,11 @@ int main(void) {
     }
 
     for(i = 200; i; i--) {
-      OLED_print(random(OLED_WIDTH), random(OLED_HEIGHT), "Hello", 1, 1);
-      OLED_print(random(OLED_WIDTH), random(OLED_HEIGHT), "World", 1, 2);
-      OLED_print(random(OLED_WIDTH), random(OLED_HEIGHT), "Hello", 0, 2);
-      OLED_print(random(OLED_WIDTH), random(OLED_HEIGHT), "World", 0, 1);
+      OLED_cursor(random(OLED_WIDTH), random(OLED_HEIGHT));
+      OLED_textcolor(random(2)); OLED_textsize(random(3) + 1);
+      OLED_print("Hello");
       OLED_refresh();
     }
+    OLED_textcolor(1);
   }
 }

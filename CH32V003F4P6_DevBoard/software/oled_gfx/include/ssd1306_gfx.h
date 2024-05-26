@@ -1,5 +1,5 @@
 // ===================================================================================
-// SSD1306/SH1106 I2C OLED Graphics Functions                                 * v1.5 *
+// SSD1306/SH1106 I2C OLED Graphics Functions                                 * v1.6 *
 // ===================================================================================
 //
 // Functions available:
@@ -31,10 +31,14 @@
 // OLED_drawBitmap(x,y,w,h,*p)    Draw bitmap at (x,y), width (w), hight (h), pointer to bitmap (*p)
 // OLED_drawSprite(x,y,w,h,*p)    Draw sprite at (x,y), width (w), hight (h), pointer to bitmap (*p)
 //
-// OLED_print(x,y,*st,c,sz)       Print string (*st) at position (x,y), color (c), size (sz)
-// OLED_drawChar(x,y,ch,c,sz)     Draw character (ch) at position (x,y), color (c), size (sz)
-// OLED_smoothChar(x,y,ch,c)      Draw character (ch) at position (x,y), color (c), double-size smoothed
-// OLED_stretchChar(x,y,ch,c)     Draw character (ch) at position (x,y), color (c), v-stretched
+// OLED_cursor(x,y)               Set text cursor at position (x,y)
+// OLED_textcolor(c)              Set text color (c)
+// OLED_textsize(sz)              Set text size (sz)
+// OLED_write(c)                  Write character at cursor position or handle control characters
+// OLED_print(str)                Print string (*str) at cursor position
+// OLED_printSegment(v,d,l,dp)    Print value (v) at cursor position using defined segment font
+//                                with (d) number of digits, (l) leading (0: space, 1: '0') and 
+//                                decimal point at position (dp) counted from the right
 //
 // If print functions are activated (see below, print.h must be included):
 // -----------------------------------------------------------------------
@@ -94,7 +98,7 @@ extern "C" {
 #define OLED_PRINT        0         // 1: include print functions (needs print.h)
 
 // Segment Font Settings
-#define OLED_SEG_FONT     1         // 0: unused, 1: 13x32 digits, 2: 5x16 digits
+#define OLED_SEG_FONT     1         // 0: standard font, 1: 13x32 digits, 2: 5x16 digits
 #define OLED_SEG_SPACE    3         // width of space between segment digits in pixels
 #define OLED_SMOOTH       9         // character size value for double-size smoothed
 #define OLED_STRETCH      10        // character size value for v-stretched
@@ -155,6 +159,7 @@ void OLED_clear(void);
 void OLED_copy(void);
 uint8_t OLED_getPixel(int16_t x, int16_t y);
 void OLED_setPixel(int16_t x, int16_t y, uint8_t color);
+
 void OLED_drawVLine(int16_t x, int16_t y, int16_t h, uint8_t color);
 void OLED_drawHLine(int16_t x, int16_t y, int16_t w, uint8_t color);
 void OLED_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color);
@@ -162,25 +167,23 @@ void OLED_drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color);
 void OLED_fillCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color);
 void OLED_drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
 void OLED_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
+
 void OLED_drawScreen(const uint8_t* bmp);
 void OLED_drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t* bmp);
 void OLED_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t* bmp);
-void OLED_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size);
-void OLED_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size);
-void OLED_smoothChar(int16_t x, int16_t y, char c, uint8_t color);
-void OLED_stretchChar(int16_t x, int16_t y, char c, uint8_t color);
 
-#if OLED_SEG_FONT > 0
-void OLED_printSegment(int16_t x, int16_t y, uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
-#endif
+void OLED_cursor(int16_t x, int16_t y);
+void OLED_textcolor(uint8_t color);
+void OLED_textsize(uint8_t size);
+void OLED_write(char c);
+void OLED_print(char* str);
+void OLED_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
 
 #define OLED_flush  OLED_refresh
 
 // Additional print functions (if activated, see above)
 #if OLED_PRINT == 1
 #include "print.h"
-void OLED_cursor(int16_t x, int16_t y, uint8_t color, uint8_t size);
-void OLED_write(char c);
 #define OLED_printD(n)        printD(OLED_write, n)   // print decimal as string
 #define OLED_printW(n)        printW(OLED_write, n)   // print word as string
 #define OLED_printH(n)        printH(OLED_write, n)   // print half-word as string
