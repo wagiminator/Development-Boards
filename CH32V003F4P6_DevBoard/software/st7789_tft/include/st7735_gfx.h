@@ -1,5 +1,5 @@
 // ===================================================================================
-// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.2 *
+// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.3 *
 // ===================================================================================
 //
 // Functions available:
@@ -11,6 +11,7 @@
 // TFT_resync()                   Resync by toggling CS pin (for non-active control of CS-line mode)
 //
 // TFT_clear()                    Clear TFT screen
+// TFT_fill(c)                    Fill screen with color (c)
 // TFT_setPixel(x,y,c)            Set pixel color (c) at position (x,y)
 //
 // TFT_drawVLine(x,y,h,c)         Draw vertical line starting from (x,y), height (h), color (c)
@@ -25,14 +26,14 @@
 // TFT_drawBitmap(x,y,w,h,*p)     Draw bitmap at (x,y), width (w), hight (h), pointer to bitmap (*p)
 // TFT_drawSprite(x,y,w,h,*p,c)   Draw sprite at (x,y), width (w), hight (h), pointer to bitmap (*p), color (c)
 //
-// TFT_cursor(x,y)                Set test cursor at position (x,y)
-// TFT_color(c)                   Set text color (c)
-// TFT_size(sz)                   Set text size (sz)
+// TFT_cursor(x,y)                Set text cursor at position (x,y)
+// TFT_textcolor(c)               Set text color (c)
+// TFT_textsize(sz)               Set text size (sz)
+// TFT_write(c)                   Write character at cursor position or handle control characters
 // TFT_print(*str)                Print string (*str) at cursor position and settings
-// TFT_drawChar(ch)               Draw character (ch) at cursor position and settings
-// TFT_smoothChar(ch)             Draw character (ch) at cursor position and color, double-size smoothed
-// TFT_stretchChar(ch)            Draw character (ch) at cursor position and color, v-stretched
-// TFT_printSegment(v,d,l,d)      Print value (v), number of digits (d), leading char (l), position of decimal (d)
+// TFT_printSegment(v,d,l,dp)     Print value (v) at cursor position using defined segment font
+//                                with (d) number of digits, (l) leading (0: space, 1: '0') and 
+//                                decimal point at position (dp) counted from the right
 //
 // If print functions are activated (see below, print.h must be included):
 // -----------------------------------------------------------------------
@@ -72,6 +73,7 @@
 // Notes:
 // ------
 // - Define TFT parameters down below!
+// - This library works without a screen buffer.
 // - color: 16-bit color mode (5 bits red, 6 bits green, 5 bits blue) or
 //          12-bit color mode (4 bits red, 4 bits green, 4 bits blue)
 // - size:  1: normal 6x8 pixels, 2: double size (12x16), ... , 8: 8 times (48x64)
@@ -120,13 +122,11 @@ extern "C" {
 #define TFT_PORTRAIT      0         // 1: use TFT in portrait mode
 #define TFT_XFLIP         0         // 1: flip TFT screen X-direction
 #define TFT_YFLIP         0         // 1: flip TFT screen Y-direction
+
+// TFT Text Parameters
 #define TFT_PRINT         0         // 1: include print functions (needs print.h)
-
-// Segment Digit Parameters
-#define TFT_SEG_FONT      1         // 0: unused, 1: 13x32 digits, 2: 5x16 digits
+#define TFT_SEG_FONT      1         // 0: standard font, 1: 13x32 digits, 2: 5x16 digits
 #define TFT_SEG_SPACE     3         // width of space between segment digits in pixels
-
-// TFT Definitions
 #define TFT_SMOOTH        9         // character size value for double-size smoothed
 #define TFT_STRETCH       10        // character size value for v-stretched
 
@@ -164,6 +164,7 @@ void TFT_resync(void);
 
 // TFT Graphics Functions
 void TFT_clear(void);
+void TFT_fill(uint16_t color);
 void TFT_setPixel(int16_t x, int16_t y, uint16_t color);
 void TFT_drawVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 void TFT_drawHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
@@ -177,12 +178,10 @@ void TFT_drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t
 void TFT_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t* bmp, uint16_t color);
 
 void TFT_cursor(int16_t x, int16_t y);
-void TFT_color(uint16_t color);
-void TFT_size(uint8_t size);
+void TFT_textcolor(uint16_t color);
+void TFT_textsize(uint8_t size);
+void TFT_write(char c);
 void TFT_print(char* str);
-void TFT_drawChar(char c);
-void TFT_smoothChar(char c);
-void TFT_stretchChar(char c);
 
 #if TFT_SEG_FONT > 0
 void TFT_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
@@ -205,10 +204,9 @@ void TFT_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t deci
 #define TFT_CYAN              TFT_COLOR(  0, 255, 255)
 #define TFT_MAGENTA           TFT_COLOR(255,   0, 255)
 
-// Additional print functions (if activated, see above)
+// Additional Print Functions (if activated, see above)
 #if TFT_PRINT == 1
 #include "print.h"
-void TFT_write(char c);
 #define TFT_printD(n)         printD(TFT_write, n)    // print decimal as string
 #define TFT_printW(n)         printW(TFT_write, n)    // print word as string
 #define TFT_printH(n)         printH(TFT_write, n)    // print half-word as string

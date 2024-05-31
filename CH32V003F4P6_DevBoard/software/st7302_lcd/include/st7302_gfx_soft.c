@@ -1,5 +1,5 @@
 // ===================================================================================
-// ST7302 250x122 Pixels Monochrome Low-Power LCD Graphics Functions          * v1.0 *
+// ST7302 250x122 Pixels Monochrome Low-Power LCD Graphics Functions          * v1.1 *
 // ===================================================================================
 // 2024 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -47,7 +47,7 @@ const uint8_t LCD_FONT[] = {
 // 13x32 7-Segment Font (0 - 9)
 // ===================================================================================
 #if LCD_SEG_FONT == 1
-const uint8_t LCD_FONT_SEG1[] = {
+const uint8_t LCD_FONT_SEG[] = {
   0xFC, 0xF9, 0xF3, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0xF3, 0xF9, 0xFC, // 0
   0x7F, 0x3F, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F, 0x3F, 0x7F, 
   0xFF, 0xFE, 0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC, 0xFE, 0xFF, 
@@ -95,7 +95,7 @@ const uint8_t LCD_FONT_SEG1[] = {
 // 5x16 7-Segment Font (0 - 9)
 // ===================================================================================
 #if LCD_SEG_FONT == 2
-const uint8_t LCD_FONT_SEG2[] = {
+const uint8_t LCD_FONT_SEG[] = {
   0x7C, 0x02, 0x02, 0x02, 0x7C, 0x1F, 0x20, 0x20, 0x20, 0x1F, // 0  0
   0x00, 0x00, 0x00, 0x00, 0x7C, 0x00, 0x00, 0x00, 0x00, 0x1F, // 1  1
   0x00, 0x82, 0x82, 0x82, 0x7C, 0x1F, 0x20, 0x20, 0x20, 0x00, // 2  2
@@ -162,8 +162,9 @@ void LCD_init(void) {
   #endif
 
   PIN_low(LCD_PIN_CS);
-  LCD_sendCommand(0x01);                          // Software reset
-  DLY_ms(250);                                    // delay 250 ms
+  LCD_sendCommand(LCD_RESET);                     // Software reset
+  DLY_ms(LCD_RST_TIME);                           // delay
+
   LCD_sendCommand(0xEB); LCD_sendData(0x02);      // Enable NVM
   LCD_sendCommand(0xD7); LCD_sendData(0x68);      // NVM Load Control
   LCD_sendCommand(0xD1); LCD_sendData(0x01);      // Booster enable
@@ -181,51 +182,69 @@ void LCD_init(void) {
   LCD_sendData(0xF1); LCD_sendData(0xFF);
   LCD_sendData(0xFF); LCD_sendData(0x4F);
   LCD_sendCommand(0xB0); LCD_sendData(0x64);      // Duty Setting
-  LCD_sendCommand(0x11);                          // Out of sleep mode
-  DLY_ms(100);
+
+  LCD_sendCommand(LCD_SLPOUT);                    // Out of sleep mode
+  DLY_ms(LCD_SLPOUT_TIME);
   LCD_sendCommand(0xC7); LCD_sendData(0xA6); LCD_sendData(0xE9);  // OSC Enable
   LCD_sendCommand(0x36); LCD_sendData(0x20);      // Memory Data Access Control
   LCD_sendCommand(0x3A); LCD_sendData(0x11);      // Data Format Select
   LCD_sendCommand(0xB8); LCD_sendData(0x09);      // Panel Setting
   LCD_sendCommand(0xD0); LCD_sendData(0x1F);      // Unknown command??
-  LCD_sendCommand(0x21);                          // Display Inversion On
-  LCD_sendCommand(0x29);                          // Display on
+  LCD_sendCommand(LCD_INVOFF + LCD_INVERT);       // Set Display Inversion
+  LCD_sendCommand(LCD_DISPON);                    // Display on
   LCD_sendCommand(0xB9); LCD_sendData(0xE3);      // Clear RAM
   DLY_ms(100);
   LCD_sendCommand(0xB9); LCD_sendData(0x23);      // Source Setting Off
   LCD_sendCommand(0x72); LCD_sendData(0x00);      // Destress Off??
   LCD_sendCommand(0x39);                          // Low Power Mode ON
   DLY_ms(100);
+  #if LCD_CS_CONTROL > 0
   PIN_high(LCD_PIN_CS);
+  #endif
 }
 
 // Invert display
 void LCD_invert(uint8_t yes) {
+  #if LCD_CS_CONTROL > 0
   PIN_low(LCD_PIN_CS);
-  LCD_sendCommand(0x20 + yes);
+  #endif
+  LCD_sendCommand(LCD_INVOFF + yes);
+  #if LCD_CS_CONTROL > 0
   PIN_high(LCD_PIN_CS);
+  #endif
 }
 
 // Put display into sleep mode
 void LCD_sleep(uint8_t yes) {
+  #if LCD_CS_CONTROL > 0
   PIN_low(LCD_PIN_CS);
-  LCD_sendCommand(0x11 - yes);
+  #endif
+  LCD_sendCommand(LCD_SLPOUT - yes);
+  DLY_ms(LCD_SLPOUT_TIME);
+  #if LCD_CS_CONTROL > 0
   PIN_high(LCD_PIN_CS);
+  #endif
 }
 
 // Plot a 12x2 block at row, col
 void LCD_writeBlock(uint8_t row, uint8_t column, uint32_t block) {
+  #if LCD_CS_CONTROL > 0
   PIN_low(LCD_PIN_CS);
+  #endif
   LCD_sendCommand2(LCD_CASET, LCD_YOFF + column, LCD_YOFF + column);
   LCD_sendCommand2(LCD_RASET, LCD_XOFF + row, LCD_XOFF + row);
   LCD_sendCommand(LCD_RAMWR);
   LCD_sendData(block >> 16); LCD_sendData(block >> 8); LCD_sendData(block);
+  #if LCD_CS_CONTROL > 0
   PIN_high(LCD_PIN_CS);
+  #endif
 }
 
 // Read a 12x2 block at row, col
 uint32_t LCD_readBlock(uint8_t row, uint8_t column) {
+  #if LCD_CS_CONTROL > 0
   PIN_low(LCD_PIN_CS);
+  #endif
   LCD_sendCommand2(LCD_CASET, LCD_YOFF + column, LCD_YOFF + column);
   LCD_sendCommand2(LCD_RASET, LCD_XOFF + row, LCD_XOFF + row);
   LCD_sendCommand(LCD_RAMRD);
@@ -239,6 +258,9 @@ uint32_t LCD_readBlock(uint8_t row, uint8_t column) {
   }
   PIN_output(LCD_PIN_SDA);                        // back to data out
   PIN_high(LCD_PIN_CS);
+  #if LCD_CS_CONTROL == 0
+  PIN_low(LCD_PIN_CS);
+  #endif
   return block;
 }
 
@@ -252,7 +274,9 @@ uint32_t block;
 
 // Clear screen
 void LCD_clear(void) {
+  #if LCD_CS_CONTROL > 0
   PIN_low(LCD_PIN_CS);
+  #endif
   LCD_sendCommand2(LCD_CASET, LCD_YOFF, LCD_YOFF + ((LCD_HEIGHT - 1) / 12));  // Column Address Set
   LCD_sendCommand2(LCD_RASET, LCD_XOFF, LCD_XOFF + ((LCD_WIDTH - 1) >> 1));   // Row Address Set
   LCD_sendCommand(LCD_RAMWR);                     // Write to RAM
@@ -261,7 +285,9 @@ void LCD_clear(void) {
     PIN_low(LCD_PIN_SCL);
     PIN_high(LCD_PIN_SCL);
   }
+  #if LCD_CS_CONTROL > 0
   PIN_high(LCD_PIN_CS);
+  #endif
   row0 = 255 >> 1; column0 = 0;
 }
 
@@ -465,26 +491,23 @@ void LCD_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t*
 // LCD Text Functions
 // ===================================================================================
 
-// Draw character (c) at position (x,y), color, size
-void LCD_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size) {
-  uint16_t ptr = c - 32;
-  ptr += ptr << 2;
-  for(uint8_t i=6; i; i--) {
-    uint8_t line, col;
-    int16_t y1 = y;
-    line = LCD_FONT[ptr++];
-    if(i == 1) line = 0;
-    for(uint8_t j=0; j<8; j++, line>>=1) {
-      if(line & 1) col = color;
-      else col = !color;
-      if(size == 1) LCD_setPixel(x, y1++, col);
-      else {
-        LCD_fillRect(x, y1, size, size, col);
-        y1 += size;
-      }
-    }
-    x += size;
-  }
+// Variables
+int16_t LCD_cx, LCD_cy;                           // cursor position
+uint8_t LCD_ci, LCD_cs = 1;                       // inversion and size
+
+// Set cursor position
+void LCD_cursor(int16_t x, int16_t y) {
+  LCD_cx = x; LCD_cy = y;
+}
+
+// Set text size
+void LCD_textsize(uint8_t size) {
+  LCD_cs = size;
+}
+
+// LCD set text invert
+void LCD_textinvert(uint8_t yes) {
+  LCD_ci = yes;
 }
 
 // Converts bit pattern abcdefgh into aabbccddeeffgghh
@@ -495,75 +518,97 @@ uint16_t LCD_stretch(uint16_t x) {
   return x | x<<1;
 }
 
-// Draw character (c) at position (x,y), color, double-size, smoothed
-// (David Johnson-Davies' Smooth Big Text algorithm)
-void LCD_smoothChar(int16_t x, int16_t y, char c, uint8_t color) {
-  uint16_t ptr = c - 32;
-  ptr += ptr << 2;
-  uint16_t col0L, col0R, col1L, col1R;
-  uint8_t col0 = LCD_FONT[ptr++];
-  col0L = LCD_stretch(col0);
-  col0R = col0L;
-  for(uint8_t col=5; col; col--) {
-    uint8_t col1 = LCD_FONT[ptr++];
-    if(col == 1) col1 = 0;
-    col1L = LCD_stretch(col1);
-    col1R = col1L;    
-    for(int8_t i=6; i>=0; i--) {
-      for(int8_t j=1; j<3; j++) {
-        if(((col0>>i & 0b11) == (3 - j)) && ((col1>>i & 0b11) == j)) {
-          col0R = col0R | 1<<((i << 1) + j);
-          col1L = col1L | 1<<((i << 1) + 3 - j);
+// Write a character
+void LCD_write(char c) {
+  c &= 0x7f;
+  if(c >= 32) {
+    uint16_t ptr = c - 32;
+    ptr += ptr << 2;
+
+    // Standard character, if necessary enlarged
+    if(LCD_cs <= 8) {
+      for(uint8_t i=6; i; i--) {
+        uint8_t line, col;
+        int16_t y1 = LCD_cy;
+        line = LCD_FONT[ptr++];
+        if(i == 1) line = 0;
+        if(LCD_ci) line = ~line;
+        for(uint8_t j=0; j<8; j++, line>>=1) {
+          col = line & 1;
+          if(LCD_cs == 1) LCD_setPixel(LCD_cx, y1++, col);
+          else {
+            LCD_fillRect(LCD_cx, y1, LCD_cs, LCD_cs, col);
+            y1 += LCD_cs;
+          }
         }
+        LCD_cx += LCD_cs;
       }
     }
-    int16_t y1 = y;
-    if(!color) {
-      col0L = ~col0L;
-      col0R = ~col0R;
+
+    // Double-sized, smoothed character (10x16, David Johnson-Davies' Smooth Big Text algorithm)
+    else if(LCD_cs == LCD_SMOOTH) {
+      uint16_t col0L, col0R, col1L, col1R;
+      uint8_t col0 = LCD_FONT[ptr++];
+      col0L = LCD_stretch(col0);
+      col0R = col0L;
+      for(uint8_t col=5; col; col--) {
+        uint8_t col1 = LCD_FONT[ptr++];
+        if(col == 1) col1 = 0;
+        col1L = LCD_stretch(col1);
+        col1R = col1L;    
+        for(int8_t i=6; i>=0; i--) {
+          for(int8_t j=1; j<3; j++) {
+            if(((col0>>i & 0b11) == (3 - j)) && ((col1>>i & 0b11) == j)) {
+              col0R = col0R | 1<<((i << 1) + j);
+              col1L = col1L | 1<<((i << 1) + 3 - j);
+            }
+          }
+        }
+        int16_t y1 = LCD_cy;
+        if(LCD_ci) {
+          col0L = ~col0L;
+          col0R = ~col0R;
+        }
+        for(int8_t i=16; i; i--, col0L>>=1, col0R>>=1) {
+          LCD_setPixel(LCD_cx,   y1,   col0L & 1);
+          LCD_setPixel(LCD_cx+1, y1++, col0R & 1);
+        }
+        col0 = col1; col0L = col1L; col0R = col1R; LCD_cx += 2;
+      }
+      LCD_fillRect(LCD_cx, LCD_cy, 2, 16, LCD_ci);
+      LCD_cx += 2;
     }
-    for(int8_t i=16; i; i--, col0L>>=1, col0R>>=1) {
-      LCD_setPixel(x,   y1,   col0L & 1);
-      LCD_setPixel(x+1, y1++, col0R & 1);
+
+    // V-stretched character (5x16)
+    else {
+      for(uint8_t col=6; col; col--) {
+        uint8_t col0 = LCD_FONT[ptr++];
+        if(col == 1) col0 = 0;
+        if(LCD_ci) col0 = ~col0;
+        int16_t y1 = LCD_cy;
+        for(uint8_t i=8; i; i--, col0>>=1) {
+          LCD_setPixel(LCD_cx, y1++, col0 & 1);
+          LCD_setPixel(LCD_cx, y1++, col0 & 1);
+        }
+        LCD_cx++;
+      }
     }
-    col0 = col1; col0L = col1L; col0R = col1R; x += 2;
   }
-  LCD_fillRect(x, y, 2, 16, !color);
+
+  // New line
+  else if(c == '\n') {
+    LCD_cx = 0;
+    if(LCD_cs <= 8) LCD_cy += LCD_cs << 3;
+    else LCD_cy += 16;
+  }
+
+  // Carriage return
+  else if(c == '\r') LCD_cx = 0;
 }
 
-// Draw character (c) at position (x,y), color, v-stretched
-void LCD_stretchChar(int16_t x, int16_t y, char c, uint8_t color) {
-  uint16_t ptr = c - 32;
-  ptr += ptr << 2;
-  for(uint8_t col=6; col; col--) {
-    uint8_t col0 = LCD_FONT[ptr++];
-    if(col == 1) col0 = 0;
-    if(!color) col0 = ~col0;
-    int16_t y1 = y;
-    for(uint8_t i=8; i; i--, col0>>=1) {
-      LCD_setPixel(x, y1++, col0 & 1);
-      LCD_setPixel(x, y1++, col0 & 1);
-    }
-    x++;
-  }
-}
-
-// Print string (str) at position (x,y), color, size
-void LCD_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size) {
-  while(*str) {
-    if(size <= 8) {
-      LCD_drawChar(x, y, *str++, color, size);
-      x += ((size << 2) + (size << 1));
-      continue;
-    }
-    if(size == LCD_SMOOTH) {
-      LCD_smoothChar(x, y, *str++, color);
-      x += 12;
-      continue;
-    }
-    LCD_stretchChar(x, y, *str++, color);
-    x += 6;
-  }
+// Print string (str)
+void LCD_print(char* str) {
+  while(*str) LCD_write(*str++);
 }
 
 // ===================================================================================
@@ -571,8 +616,7 @@ void LCD_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size) {
 // ===================================================================================
 
 // Print value as 7-segment digits (BCD conversion by substraction method)
-#if LCD_SEG_FONT > 0
-void LCD_printSegment(int16_t x, int16_t y, uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal) {
+void LCD_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal) {
   static const uint16_t DIVIDER[] = {1, 10, 100, 1000, 10000};
   uint8_t leadflag = 0;                           // flag for leading spaces
   while(digits--) {                               // for all digits digits
@@ -585,71 +629,35 @@ void LCD_printSegment(int16_t x, int16_t y, uint16_t value, uint8_t digits, uint
     }
     if(digits == decimal) leadflag++;             // end leading characters before decimal
     if(leadflag || !lead) {
+      #if LCD_SEG_FONT == 0
+      LCD_write(digitval + '0');
+      #elif LCD_SEG_FONT == 1
       uint16_t ptr = (uint16_t)digitval;          // character pointer
-      #if LCD_SEG_FONT == 1
       ptr = (ptr << 5) + (ptr << 4) + (ptr << 2); // -> ptr = c * 13 * 4;
-      LCD_drawBitmap(x, y, 13, 32, (uint8_t*)&LCD_FONT_SEG1[ptr]);
+      LCD_drawBitmap(LCD_cx, LCD_cy, 13, 32, (uint8_t*)&LCD_FONT_SEG[ptr]);
       #elif LCD_SEG_FONT == 2
+      uint16_t ptr = (uint16_t)digitval;          // character pointer
       ptr = (ptr << 3) + (ptr << 1);              // -> ptr = c * 5 * 2;
-      LCD_drawBitmap(x, y, 5, 16, (uint8_t*)&LCD_FONT_SEG2[ptr]);
+      LCD_drawBitmap(LCD_cx, LCD_cy, 5, 16, (uint8_t*)&LCD_FONT_SEG[ptr]);
       #endif
     }
-    #if LCD_SEG_FONT == 1
-    x += LCD_SEG_SPACE + 13;
+    #if LCD_SEG_FONT == 0
+    else LCD_write(' ');
+    #elif LCD_SEG_FONT == 1
+    LCD_cx += LCD_SEG_SPACE + 13;
     #elif LCD_SEG_FONT == 2
-    x += LCD_SEG_SPACE + 5;
+    LCD_cx += LCD_SEG_SPACE + 5;
     #endif
     if(decimal && (digits == decimal)) {
-      #if LCD_SEG_FONT == 1
-      LCD_fillRect(x, y + 28, 3, 3, 1);          // print decimal point
-      x += LCD_SEG_SPACE + 3;
+      #if LCD_SEG_FONT == 0
+      LCD_write('.');
+      #elif LCD_SEG_FONT == 1
+      LCD_fillRect(LCD_cx, LCD_cy + 28, 3, 3, 1);  // print decimal point
+      LCD_cx += LCD_SEG_SPACE + 3;
       #elif LCD_SEG_FONT == 2
-      LCD_fillRect(x, y + 12, 2, 2, 1);          // print decimal point
-      x += LCD_SEG_SPACE + 2;
+      LCD_fillRect(LCD_cx, LCD_cy + 12, 2, 2, 1);  // print decimal point
+      LCD_cx += LCD_SEG_SPACE + 2;
       #endif
     }
   }
 }
-#endif  // LCD_SEG_FONT > 0
-
-// ===================================================================================
-// printf Extension
-// ===================================================================================
-
-#if LCD_PRINT == 1
-
-// Variables
-int16_t LCD_cx, LCD_cy;                           // cursor position
-uint8_t LCD_cc, LCD_cs;                           // color and size
-
-// Set cursor position, color and size
-void LCD_cursor(int16_t x, int16_t y, uint8_t color, uint8_t size) {
-  LCD_cx = x; LCD_cy = y; LCD_cc = color; LCD_cs = size;
-}
-
-// Write a character (for printf)
-void LCD_write(char c) {
-  c &= 0x7f;
-  if(c >= 32) {
-    if(LCD_cs <= 8) {
-      LCD_drawChar(LCD_cx, LCD_cy, c, LCD_cc, LCD_cs);
-      LCD_cx += ((LCD_cs << 2) + (LCD_cs << 1));
-      return;
-    }
-    if(LCD_cs == LCD_SMOOTH) {
-      LCD_smoothChar(LCD_cx, LCD_cy, c, LCD_cc);
-      LCD_cx += 12;
-      return;
-    }
-    LCD_stretchChar(LCD_cx, LCD_cy, c, LCD_cc);
-    LCD_cx += 6;
-    return;
-  }
-  if(c == '\n') {
-    LCD_cx = 0;
-    if(LCD_cs <= 8) LCD_cy += LCD_cs << 3;
-    else LCD_cy += 16;
-  }
-}
-
-#endif

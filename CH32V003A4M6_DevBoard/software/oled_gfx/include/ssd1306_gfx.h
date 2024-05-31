@@ -92,12 +92,14 @@ extern "C" {
 
 #define OLED_BOOT_TIME    50        // OLED boot up time in milliseconds
 #define OLED_INIT_I2C     1         // 1: init I2C with OLED_init()
-#define OLED_FLIP_SCREEN  1         // 1: flip screen with OLED_init()
+#define OLED_XFLIP        1         // 1: flip screen in X-direction with OLED_init()
+#define OLED_YFLIP        1         // 1: flip screen in Y-direction with OLED_init()
+#define OLED_INVERT       0         // 1: invert screen with OLED_init()
 #define OLED_PORTRAIT     0         // 1: use OLED in portrait mode
 #define OLED_DOUBLEBUF    0         // 1: use double buffer
-#define OLED_PRINT        0         // 1: include print functions (needs print.h)
 
-// Segment Font Settings
+// OLED Text Settings
+#define OLED_PRINT        0         // 1: include print functions (needs print.h)
 #define OLED_SEG_FONT     1         // 0: standard font, 1: 13x32 digits, 2: 5x16 digits
 #define OLED_SEG_SPACE    3         // width of space between segment digits in pixels
 #define OLED_SMOOTH       9         // character size value for double-size smoothed
@@ -106,6 +108,8 @@ extern "C" {
 // OLED Modes
 #define OLED_CMD_MODE     0x00      // set command mode
 #define OLED_DAT_MODE     0x40      // set data mode
+#define OLED_CMD_ONCE     0x80      // send one command byte
+#define OLED_DAT_ONCE     0xC0      // send one data byte
 
 // OLED Commands
 #define OLED_COLUMN_LOW   0x00      // set lower 4 bits of start column (0x00 - 0x0F)

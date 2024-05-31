@@ -68,10 +68,6 @@ const uint8_t BAT_WEAK[] = {
   0x34, 0x64, 0xC7, 0x81, 0xC7, 0x64, 0x34, 0x58, 0x4C, 0x46, 0x43, 0x46, 0x4C, 0x58
 };
 
-const uint8_t ANT_BIG[] = {
-  0x03, 0x0C, 0x30, 0xFF, 0x30, 0x0C, 0x03, 0x00, 0x00, 0x00, 0x7F, 0x00, 0x00, 0x00
-};
-
 const uint8_t ANT[] = {
   0x01, 0x02, 0x04, 0x7F, 0x04, 0x02, 0x01
 };
@@ -92,7 +88,7 @@ int main(void) {
     TFT_drawRect(0, 0, TFT_WIDTH, TFT_HEIGHT, TFT_YELLOW);
     TFT_drawVLine(TFT_WIDTH/2, 0, TFT_HEIGHT, TFT_YELLOW);
     TFT_drawHLine(0, TFT_HEIGHT/2, TFT_WIDTH, TFT_YELLOW);
-    TFT_cursor(2, 2); TFT_color(TFT_YELLOW); TFT_size(1); TFT_print("(0,0)");
+    TFT_cursor(2, 2); TFT_textcolor(TFT_YELLOW); TFT_textsize(1); TFT_print("(0,0)");
     TFT_cursor(2,10); TFT_print("upper left");
     DLY_ms(3000);
 
@@ -100,25 +96,25 @@ int main(void) {
     for(i=200; i; i--) TFT_setPixel(random(TFT_WIDTH), random(TFT_HEIGHT), TFT_WHITE);
     for(i=32; i; i--) TFT_drawCircle(100, 50, i, TFT_YELLOW);
     TFT_drawSprite(20, 10, 32, 16, UFO, TFT_MAGENTA);
-    TFT_cursor(150,  2); TFT_color(TFT_WHITE); TFT_size(1);           TFT_print("Hello World");
-    TFT_cursor(150, 12); TFT_color(TFT_RED);   TFT_size(TFT_STRETCH); TFT_print("1234567890");
-    TFT_cursor(150, 36); TFT_color(TFT_WHITE); TFT_size(TFT_SMOOTH);  TFT_print("12345");
-    TFT_cursor(150, 60); TFT_color(TFT_GREEN); TFT_size(4);           TFT_print("TEST");
+    TFT_cursor(150,  2); TFT_textcolor(TFT_WHITE); TFT_textsize(1);           TFT_print("Hello World");
+    TFT_cursor(150, 12); TFT_textcolor(TFT_RED);   TFT_textsize(TFT_STRETCH); TFT_print("1234567890");
+    TFT_cursor(150, 36); TFT_textcolor(TFT_WHITE); TFT_textsize(TFT_SMOOTH);  TFT_print("12345");
+    TFT_cursor(150, 60); TFT_textcolor(TFT_GREEN); TFT_textsize(4);           TFT_print("TEST");
     DLY_ms(3000);
 
     uint8_t strength = 32;
     uint8_t volume = 6;
     TFT_clear();
-    TFT_cursor(0, 0); TFT_color(TFT_YELLOW); TFT_size(TFT_SMOOTH); TFT_print("FM Radio");
+    TFT_cursor(0, 0); TFT_textcolor(TFT_YELLOW); TFT_textsize(TFT_SMOOTH); TFT_print("FM Radio");
     TFT_drawSprite(121, 0, 7, 16, BAT_OK, TFT_YELLOW);
-    TFT_cursor(-10, 20); TFT_color(TFT_WHITE); TFT_printSegment(10885, 5, 1, 2);
+    TFT_cursor(-10, 20); TFT_textcolor(TFT_WHITE); TFT_printSegment(10885, 5, 1, 2);
     TFT_cursor(94, 36); TFT_print("MHz");
     TFT_drawSprite(94, 20, 7, 8, ANT, TFT_WHITE);
     TFT_drawRect(104, 20, 24, 7, TFT_WHITE);
     if(strength > 64) strength = 64;
     strength = (strength >> 2) + (strength >> 3);
     if(strength) TFT_fillRect(104, 20, strength, 7, TFT_WHITE);
-    TFT_cursor(0, 56); TFT_size(1); TFT_print("Volume:");
+    TFT_cursor(0, 56); TFT_textsize(1); TFT_print("Volume:");
     TFT_drawRect(50, 56, 78, 7, TFT_WHITE);
     uint8_t xpos = 47;
     while(volume--) TFT_fillRect(xpos+=5, 58, 4, 3, TFT_WHITE);
@@ -164,8 +160,10 @@ int main(void) {
 
     TFT_clear();
     for(i = 500; i; i--) {
-      TFT_cursor(random(TFT_WIDTH), random(TFT_HEIGHT)); TFT_color(random(65536)); TFT_size(random(3) + 1); TFT_print("Hello");
-      TFT_cursor(random(TFT_WIDTH), random(TFT_HEIGHT)); TFT_color(random(65536)); TFT_size(random(3) + 1); TFT_print("World");
+      TFT_cursor(random(TFT_WIDTH), random(TFT_HEIGHT)); 
+      TFT_textcolor(random(65536)); TFT_textsize(random(3) + 1); TFT_print("Hello");
+      TFT_cursor(random(TFT_WIDTH), random(TFT_HEIGHT)); 
+      TFT_textcolor(random(65536)); TFT_textsize(random(3) + 1); TFT_print("World");
     }
   }
 }

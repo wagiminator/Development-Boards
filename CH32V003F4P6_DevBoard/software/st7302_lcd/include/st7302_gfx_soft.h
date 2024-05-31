@@ -1,5 +1,5 @@
 // ===================================================================================
-// ST7302 250x122 Pixels Monochrome Low-Power LCD Graphics Functions          * v1.0 *
+// ST7302 250x122 Pixels Monochrome Low-Power LCD Graphics Functions          * v1.1 *
 // ===================================================================================
 //
 // Functions available:
@@ -25,10 +25,14 @@
 // LCD_drawBitmap(x,y,w,h,*p)     Draw bitmap at (x,y), width (w), hight (h), pointer to bitmap (*p)
 // LCD_drawSprite(x,y,w,h,*p)     Draw sprite at (x,y), width (w), hight (h), pointer to bitmap (*p)
 //
-// LCD_print(x,y,*st,c,sz)        Print string (*st) at position (x,y), color (c), size (sz)
-// LCD_drawChar(x,y,ch,c,sz)      Draw character (ch) at position (x,y), color (c), size (sz)
-// LCD_smoothChar(x,y,ch,c)       Draw character (ch) at position (x,y), color (c), double-size smoothed
-// LCD_stretchChar(x,y,ch,c)      Draw character (ch) at position (x,y), color (c), v-stretched
+// LCD_cursor(x,y)                Set text cursor at position (x,y)
+// LCD_textsize(sz)               Set text size (sz)
+// LCD_textinvert(v)              Invert text (0: inverse off, 1: inverse on)
+// LCD_write(c)                   Write character at cursor position or handle control characters
+// LCD_print(str)                 Print string (*str) at cursor position
+// LCD_printSegment(v,d,l,dp)     Print value (v) at cursor position using defined segment font
+//                                with (d) number of digits, (l) leading (0: space, 1: '0') and 
+//                                decimal point at position (dp) counted from the right
 //
 // If print functions are activated (see below, print.h must be included):
 // -----------------------------------------------------------------------
@@ -44,7 +48,7 @@
 //
 // Notes:
 // ------
-// - This library utilizes the integrated software-SPI.
+// - This library utilizes the integrated software-SPI and works without a screen buffer.
 // - color: 0: clear pixel (black), 1: set pixel (white), 2: invert pixel
 // - size:  1: normal 6x8 pixels, 2: double size (12x16), ... , 8: 8 times (48x64)
 //          9: smoothed double size (12x16), 10: v-stretched (6x16)
@@ -75,24 +79,36 @@ extern "C" {
 #define LCD_HEIGHT        122       // LCD height in pixels
 #define LCD_XOFF          0         // offset in X-direction
 #define LCD_YOFF          25        // offset in Y-direction
+#define LCD_INVERT        1         // 1: invert display
+
 #define LCD_BOOT_TIME     0         // LCD boot up time in milliseconds
+#define LCD_RST_TIME      250       // time to wait after reset in milliseconds
+#define LCD_SLPOUT_TIME   100       // time to wait after sleep out in milliseconds
+
+#define LCD_CS_CONTROL    0         // 1: active control of CS-line
 #define LCD_FLIP          0         // 1: flip LCD screen
 #define LCD_PORTRAIT      0         // 1: use LCD in portrait mode
+
+// LCD Text Settings
 #define LCD_PRINT         0         // 1: include print functions (needs print.h)
-
-// Segment Digit Parameters
-#define LCD_SEG_FONT      1         // 0: unused, 1: 13x32 digits, 2: 5x16 digits
+#define LCD_SEG_FONT      1         // 0: standard font, 1: 13x32 digits, 2: 5x16 digits
 #define LCD_SEG_SPACE     3         // width of space between segment digits in pixels
-
-// LCD Definitions
 #define LCD_SMOOTH        9         // character size value for double-size smoothed
 #define LCD_STRETCH       10        // character size value for v-stretched
 
 // LCD Commands
-#define LCD_CASET         0x2A      // define column address
-#define LCD_RASET         0x2B      // define row address
-#define LCD_RAMWR         0x2C      // write to display RAM
-#define LCD_RAMRD         0x2E      // read from display RAM
+#define LCD_RESET         0x01      // Software Reset
+#define LCD_SLPIN         0x10      // Sleep IN
+#define LCD_SLPOUT        0x11      // Sleep Out
+#define LCD_INVOFF        0x20      // Display Inversion Off
+#define LCD_INVON         0x21      // Display Inversion On
+#define LCD_DISPOFF       0x28      // Display Off
+#define LCD_DISPON        0x29      // Display On
+#define LCD_CASET         0x2A      // Column Address Set
+#define LCD_RASET         0x2B      // Row Address Set
+#define LCD_RAMWR         0x2C      // Memory Write
+#define LCD_RAMRD         0x2E      // Memory Read
+#define LCD_MADCTL        0x36      // Memory Data Access Control
 
 #define LCD_abs(n)        (((n)>=0)?(n):(-(n))) // returns positive value of n
 
@@ -103,9 +119,10 @@ void LCD_sleep(uint8_t yes);
 
 // LCD Graphics Functions
 void LCD_clear(void);
+void LCD_flush(void);
+
 uint8_t LCD_getPixel(int16_t x, int16_t y);
 void LCD_setPixel(int16_t x, int16_t y, uint8_t color);
-void LCD_flush(void);
 void LCD_drawVLine(int16_t x, int16_t y, int16_t h, uint8_t color);
 void LCD_drawHLine(int16_t x, int16_t y, int16_t w, uint8_t color);
 void LCD_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color);
@@ -113,22 +130,23 @@ void LCD_drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color);
 void LCD_fillCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color);
 void LCD_drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
 void LCD_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
+
 void LCD_drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t* bmp);
 void LCD_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t* bmp);
-void LCD_print(int16_t x, int16_t y, char* str, uint8_t color, uint8_t size);
-void LCD_drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t size);
-void LCD_smoothChar(int16_t x, int16_t y, char c, uint8_t color);
-void LCD_stretchChar(int16_t x, int16_t y, char c, uint8_t color);
 
-#if LCD_SEG_FONT > 0
-void LCD_printSegment(int16_t x, int16_t y, uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
-#endif
+void LCD_cursor(int16_t x, int16_t y);
+void LCD_textsize(uint8_t size);
+void LCD_textinvert(uint8_t yes);
+void LCD_write(char c);
+void LCD_print(char* str);
+void LCD_printSegment(uint16_t value, uint8_t digits, uint8_t lead, uint8_t decimal);
+
+#define LCD_refresh         LCD_flush
+#define LCD_textcolor(c)    LCD_textinvert(!(c))
 
 // Additional print functions (if activated, see above)
 #if LCD_PRINT == 1
 #include "print.h"
-void LCD_cursor(int16_t x, int16_t y, uint8_t color, uint8_t size);
-void LCD_write(char c);
 #define LCD_printD(n)        printD(LCD_write, n)   // print decimal as string
 #define LCD_printW(n)        printW(LCD_write, n)   // print word as string
 #define LCD_printH(n)        printH(LCD_write, n)   // print half-word as string

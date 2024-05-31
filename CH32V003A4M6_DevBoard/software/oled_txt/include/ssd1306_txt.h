@@ -3,7 +3,7 @@
 // ===================================================================================
 //
 // Collection of the most necessary functions for controlling an SSD1306/SH1106 I2C 
-// OLED for the display of simple text.
+// OLED for the display of simple text, working without a screen buffer.
 //
 // Functions available:
 // --------------------
@@ -75,10 +75,12 @@ extern "C" {
 
 #define OLED_BOOT_TIME    50        // OLED boot up time in milliseconds
 #define OLED_INIT_I2C     1         // 1: init I2C with OLED_init()
-#define OLED_FLIP_SCREEN  1         // 1: flip screen with OLED_init()
-#define OLED_PRINT        0         // 1: include print functions (needs print.h)
+#define OLED_XFLIP        1         // 1: flip screen in X-direction with OLED_init()
+#define OLED_YFLIP        1         // 1: flip screen in Y-direction with OLED_init()
+#define OLED_INVERT       0         // 1: invert screen with OLED_init()
 
-// OLED Font Settings
+// OLED Text Settings
+#define OLED_PRINT        0         // 1: include print functions (needs print.h)
 #define OLED_BIGCHARS     1         // 1: use big fonts (OLED_textsize())
 #define OLED_SEG_FONT     1         // 0: standard font, 1: 13x32 digits, 2: 5x16 digits
 #define OLED_SEG_SPACE    3         // width of space between segment digits in pixels
@@ -86,8 +88,10 @@ extern "C" {
 // OLED Modes
 #define OLED_CMD_MODE     0x00      // set command mode
 #define OLED_DAT_MODE     0x40      // set data mode
+#define OLED_CMD_ONCE     0x80      // send one command byte
+#define OLED_DAT_ONCE     0xC0      // send one data byte
 
-// OLED commands
+// OLED Commands
 #define OLED_COLUMN_LOW   0x00      // set lower 4 bits of start column (0x00 - 0x0F)
 #define OLED_COLUMN_HIGH  0x10      // set higher 4 bits of start column (0x10 - 0x1F)
 #define OLED_MEMORYMODE   0x20      // set memory addressing mode (following byte)

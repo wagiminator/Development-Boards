@@ -92,26 +92,26 @@ int main(void) {
     for(i=200; i; i--) LCD_setPixel(random(LCD_WIDTH), random(LCD_HEIGHT), 1);
     for(i=32; i; i--) LCD_drawCircle(100, 50, i, 1);
     LCD_drawSprite(20, 10, 32, 16, UFO);
-    LCD_print(150, 0, "Hello World", 1, 1);
-    LCD_print(150, 12, "1234567890", 1, LCD_STRETCH);
-    LCD_print(150, 36, "12345", 1, LCD_SMOOTH);
-    LCD_print(150, 60, "TEST", 1, 4);
+    LCD_cursor(150,  0); LCD_textsize(1);           LCD_print("Hello World");
+    LCD_cursor(150, 12); LCD_textsize(LCD_STRETCH); LCD_print("1234567890");
+    LCD_cursor(150, 36); LCD_textsize(LCD_SMOOTH);  LCD_print("12345");
+    LCD_cursor(150, 60); LCD_textsize(4);           LCD_print("TEST");
     LCD_flush();
     DLY_ms(3000);
 
     uint8_t strength = 32;
-    uint8_t volume = 15;
+    uint8_t volume = 10;
     LCD_clear();
-    LCD_print(0, 0, "FM Radio", 1, LCD_SMOOTH);
+    LCD_cursor(0, 0); LCD_textsize(LCD_SMOOTH); LCD_print("FM Radio");
     LCD_drawBitmap(121, 0, 7, 16, BAT_OK);
-    LCD_printSegment(-10, 20, 10885, 5, 1, 2);
-    LCD_print(94, 36, "MHz", 1, LCD_SMOOTH);
+    LCD_cursor(-10, 20); LCD_printSegment(10885, 5, 1, 2);
+    LCD_cursor(94, 36); LCD_print("MHz");
     LCD_drawBitmap(94, 20, 7, 8, ANT);
     LCD_drawRect(104, 20, 24, 7, 1);
     if(strength > 64) strength = 64;
     strength = (strength >> 2) + (strength >> 3);
     if(strength) LCD_fillRect(104, 20, strength, 7, 1);
-    LCD_print(0, 56, "Volume:", 1, 1);
+    LCD_cursor(0, 56); LCD_textsize(1); LCD_print("Volume:");
     LCD_drawRect(50, 56, 78, 7, 1);
     uint8_t xpos = 47;
     while(volume--) LCD_fillRect(xpos+=5, 58, 4, 3, 1);
@@ -122,9 +122,9 @@ int main(void) {
     LCD_drawRect(144 + 55, 60, 50, 50, 1);
     LCD_flush();
     DLY_ms(3000);
-    LCD_invert(0);
+    LCD_invert(!LCD_INVERT);
     DLY_ms(3000);
-    LCD_invert(1);
+    LCD_invert(LCD_INVERT);
 
     LCD_clear();
     for(i = 300; i; i--) {
@@ -133,7 +133,7 @@ int main(void) {
 
     LCD_clear();
     for(i = 300; i; i--) {
-      LCD_drawRect(random(LCD_WIDTH), random(LCD_HEIGHT), random(LCD_HEIGHT), random(LCD_HEIGHT/2), 1);
+      LCD_drawRect(random(LCD_WIDTH), random(LCD_HEIGHT), random(LCD_WIDTH/2), random(LCD_HEIGHT/2), 1);
     }
 
     LCD_clear();
@@ -141,9 +141,12 @@ int main(void) {
       LCD_drawCircle(random(LCD_WIDTH), random(LCD_HEIGHT), random(16), 1);
     }
 
-    for(i = 50; i; i--) {
-      LCD_print(random(LCD_WIDTH), random(LCD_HEIGHT), "Hello", 1, random(3) + 1);
-      LCD_print(random(LCD_WIDTH), random(LCD_HEIGHT), "World", 1, random(3) + 1);
+    for(i = 100; i; i--) {
+      LCD_cursor(random(LCD_WIDTH), random(LCD_HEIGHT));
+      LCD_textsize(random(3) + 1);
+      LCD_textinvert(random(2));
+      LCD_print("Hello");
     }
+    LCD_textinvert(0);
   }
 }

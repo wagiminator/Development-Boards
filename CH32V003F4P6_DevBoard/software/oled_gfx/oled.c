@@ -125,8 +125,8 @@ int main(void) {
     OLED_fillCircle(32, 32, 30, 1);
     OLED_drawCircle(64 + 32, 32, 30, 1);
     OLED_refresh();
-    DLY_ms(2000); OLED_invert(1);
-    DLY_ms(2000); OLED_invert(0);
+    DLY_ms(2000); OLED_invert(!OLED_INVERT);
+    DLY_ms(2000); OLED_invert( OLED_INVERT);
     DLY_ms(2000); OLED_flip(0, 1);
     DLY_ms(2000); OLED_flip(1, 1);
 
