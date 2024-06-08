@@ -31,7 +31,7 @@
 // LCD_write(c)                   Write character at cursor position or handle control characters
 // LCD_print(str)                 Print string (*str) at cursor position
 // LCD_printSegment(v,d,l,dp)     Print value (v) at cursor position using defined segment font
-//                                with (d) number of digits, (l) leading (0: space, 1: '0') and 
+//                                with (d) number of digits, (l) leading (0: '0', 1: space) and 
 //                                decimal point at position (dp) counted from the right
 //
 // If print functions are activated (see below, print.h must be included):

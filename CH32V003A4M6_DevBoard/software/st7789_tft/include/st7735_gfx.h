@@ -1,5 +1,5 @@
 // ===================================================================================
-// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.3 *
+// ST7735/ST7789/ILI9340/ILI9341 Color TFT Graphics Functions                 * v1.4 *
 // ===================================================================================
 //
 // Functions available:
@@ -25,14 +25,16 @@
 //
 // TFT_drawBitmap(x,y,w,h,*p)     Draw bitmap at (x,y), width (w), hight (h), pointer to bitmap (*p)
 // TFT_drawSprite(x,y,w,h,*p,c)   Draw sprite at (x,y), width (w), hight (h), pointer to bitmap (*p), color (c)
+// TFT_printBitmap(w,h,*p)        Print bitmap at cursor position with foreground and background color
 //
 // TFT_cursor(x,y)                Set text cursor at position (x,y)
 // TFT_textcolor(c)               Set text color (c)
+// TFT_textbackground(c)          Set text background color (c)
 // TFT_textsize(sz)               Set text size (sz)
 // TFT_write(c)                   Write character at cursor position or handle control characters
 // TFT_print(*str)                Print string (*str) at cursor position and settings
 // TFT_printSegment(v,d,l,dp)     Print value (v) at cursor position using defined segment font
-//                                with (d) number of digits, (l) leading (0: space, 1: '0') and 
+//                                with (d) number of digits, (l) leading (0: '0', 1: space) and 
 //                                decimal point at position (dp) counted from the right
 //
 // If print functions are activated (see below, print.h must be included):
@@ -109,6 +111,7 @@ extern "C" {
 #define TFT_XORDER        0         // 1: flip TFT screen X-direction
 #define TFT_YORDER        1         // 1: flip TFT screen Y-direction
 #define TFT_ROTATE        0         // 1: rotate TFT screen 90°
+#define TFT_COLORBITS     12        // color depth (12 or 16 bits)
 
 // TFT SPI and Timing Parameters
 #define TFT_INIT_SPI      1         // 1: init SPI with TFT_init()
@@ -116,12 +119,6 @@ extern "C" {
 #define TFT_BOOT_TIME     0         // TFT boot up time in milliseconds
 #define TFT_RST_TIME      50        // time to wait after reset in milliseconds
 #define TFT_SLPOUT_TIME   150       // time to wait after sleep out in milliseconds
-
-// TFT Software Parameters
-#define TFT_COLORBITS     12        // color depth (12 or 16 bits)
-#define TFT_PORTRAIT      0         // 1: use TFT in portrait mode
-#define TFT_XFLIP         0         // 1: flip TFT screen X-direction
-#define TFT_YFLIP         0         // 1: flip TFT screen Y-direction
 
 // TFT Text Parameters
 #define TFT_PRINT         0         // 1: include print functions (needs print.h)
@@ -176,9 +173,11 @@ void TFT_fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 
 void TFT_drawBitmap(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint16_t* bmp);
 void TFT_drawSprite(int16_t x0, int16_t y0, int16_t w, int16_t h, const uint8_t* bmp, uint16_t color);
+void TFT_printBitmap(uint16_t w, uint16_t h, const uint8_t* bmp);
 
 void TFT_cursor(int16_t x, int16_t y);
 void TFT_textcolor(uint16_t color);
+void TFT_textbackground(uint16_t color);
 void TFT_textsize(uint8_t size);
 void TFT_write(char c);
 void TFT_print(char* str);

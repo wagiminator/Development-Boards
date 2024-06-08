@@ -107,8 +107,7 @@ int main(void) {
     TFT_clear();
     TFT_cursor(0, 0); TFT_textcolor(TFT_YELLOW); TFT_textsize(TFT_SMOOTH); TFT_print("FM Radio");
     TFT_drawSprite(121, 0, 7, 16, BAT_OK, TFT_YELLOW);
-    TFT_cursor(-10, 20); TFT_textcolor(TFT_WHITE); TFT_printSegment(10885, 5, 1, 2);
-    TFT_cursor(94, 36); TFT_print("MHz");
+    TFT_cursor(94, 36); TFT_textcolor(TFT_WHITE); TFT_print("MHz");
     TFT_drawSprite(94, 20, 7, 8, ANT, TFT_WHITE);
     TFT_drawRect(104, 20, 24, 7, TFT_WHITE);
     if(strength > 64) strength = 64;
@@ -123,6 +122,12 @@ int main(void) {
     TFT_drawCircle(144 + 55 + 25, 25, 25, TFT_WHITE);
     TFT_fillRect(144, 60, 50, 50, TFT_WHITE);
     TFT_drawRect(144 + 55, 60, 50, 50, TFT_WHITE);
+
+    for(i=9800; i<10280; i++) {
+      TFT_cursor(0, 20);
+      TFT_printSegment(i, 5, 1, 2);
+    }
+
     DLY_ms(3000);
     TFT_invert(!TFT_INVERT);
     DLY_ms(3000);
