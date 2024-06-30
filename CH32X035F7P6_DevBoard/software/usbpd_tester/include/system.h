@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for CH32X035/X034/X033                              * v1.0 *
+// Basic System Functions for CH32X035/X034/X033                              * v1.1 *
 // ===================================================================================
 //
 // This file must be included!!! The system configuration and the system clock are 
@@ -25,8 +25,9 @@
 // DLY_us(n)                delay n microseconds
 // DLY_ms(n)                delay n milliseconds
 //
-// Reset (RST) functions available:
-// --------------------------------
+// Reset (RST) and Bootloader (BOOT) functions available:
+// ------------------------------------------------------
+// BOOT_now()               conduct software reset and jump to bootloader
 // RST_now()                conduct software reset
 // RST_clearFlags()         clear all reset flags
 // RST_wasLowPower()        check if last reset was caused by low power
@@ -70,6 +71,15 @@
 // SLEEP_ms(n)              put device into SLEEP for n milliseconds (uses AWU)
 // STOP_ms(n)               put device into STOP for n milliseconds (uses AWU)
 // STDBY_ms(n)              put device into STANDBY for n milliseconds (uses AWU)
+//
+// Programmable Voltage Detector (PVD) functions available:
+// --------------------------------------------------------
+// PVD_enable()             enable PVD (power module clock)
+// PVD_set_2V1()            set detection level to 2.1V
+// PVD_set_2V3()            set detection level to 2.3V
+// PVD_set_3V0()            set detection level to 3.0V
+// PVD_set_4V0()            set detection level to 4.0V
+// PVD_isLow()              check if VDD is below detection level
 //
 // Interrupt (INT) functions available:
 // ------------------------------------
@@ -183,6 +193,11 @@ void DLY_ticks(uint32_t n);                             // delay n system ticks
 #define RST_wasOPA()      (RCC->RSTSCKR & RCC_OPARSTF)
 
 // ===================================================================================
+// Bootloader (BOOT) Functions
+// ===================================================================================
+void BOOT_now(void);        // perform software reset and jump to bootloader
+
+// ===================================================================================
 // Independent Watchdog Timer (IWDG) Functions
 // ===================================================================================
 void IWDG_start_t(uint16_t ticks);                        // start IWDG with n ticks
@@ -242,6 +257,25 @@ void STDBY_WFE_now(void);   // put device into standby (deep sleep), wake up eve
 #define SLEEP_ms(n)           {AWU_start(n); SLEEP_WFE_now(); AWU_stop();}
 #define STOP_ms(n)            {AWU_start(n); STOP_WFE_now();  AWU_stop();}
 #define STDBY_ms(n)           {AWU_start(n); STDBY_WFE_now(); AWU_stop();}
+
+// ===================================================================================
+// Programmable Voltage Detector (PVD) Functions
+// ===================================================================================
+#define PVD_enable()          RCC->APB1PCENR |= RCC_PWREN
+#define PVD_set_2V1()         PWR->CTLR &= ~PWR_CTLR_PLS
+#define PVD_set_2V3()         PWR->CTLR  = (PWR->CTLR & ~PWR_CTLR_PLS) | PWR_CTLR_PLS_2V3
+#define PVD_set_3V0()         PWR->CTLR  = (PWR->CTLR & ~PWR_CTLR_PLS) | PWR_CTLR_PLS_3V0
+#define PVD_set_4V0()         PWR->CTLR |=  PWR_CTLR_PLS
+#define PVD_isLow()           (PWR->CSR & PWR_CSR_PVDO)
+
+#define PVD_RT_enable()       EXTI->RTENR  |=  ((uint32_t)1 << 26)
+#define PVD_RT_disable()      EXTI->RTENR  &= ~((uint32_t)1 << 26)
+#define PVD_FT_enable()       EXTI->FTENR  |=  ((uint32_t)1 << 26)
+#define PVD_FT_disable()      EXTI->FTENR  &= ~((uint32_t)1 << 26)
+#define PVD_EV_enable()       EXTI->EVENR  |=  ((uint32_t)1 << 26)
+#define PVD_EV_disable()      EXTI->EVENR  &= ~((uint32_t)1 << 26)
+#define PVD_INT_enable()      EXTI->INTENR |=  ((uint32_t)1 << 26)
+#define PVD_INT_disable()     EXTI->INTENR &= ~((uint32_t)1 << 26)
 
 // ===================================================================================
 // Interrupt (INT) Functions

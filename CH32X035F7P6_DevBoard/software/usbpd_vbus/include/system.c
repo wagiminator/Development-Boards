@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic System Functions for CH32X035/X034/X033                              * v1.0 *
+// Basic System Functions for CH32X035/X034/X033                              * v1.1 *
 // ===================================================================================
 //
 // This file must be included!!!!
@@ -69,6 +69,22 @@ void DLY_ticks(uint32_t n) {
 }
 
 // ===================================================================================
+// Bootloader (BOOT) Functions
+// ===================================================================================
+
+// Perform software reset and jump to bootloader
+void BOOT_now(void) {
+  FLASH->KEYR = FLASH_KEY1;
+  FLASH->KEYR = FLASH_KEY2;
+  FLASH->BOOT_MODEKEYR = FLASH_KEY1;
+  FLASH->BOOT_MODEKEYR = FLASH_KEY2;      // unlock flash
+  FLASH->STATR |= FLASH_STATR_BOOT_MODE;  // start bootloader after software reset
+  FLASH->CTLR  |= FLASH_CTLR_LOCK;        // lock flash
+  RCC->RSTSCKR |= RCC_RMVF;               // clear reset flags
+  NVIC->CFGR = NVIC_RESETSYS | NVIC_KEY3; // perform software reset
+}
+
+// ===================================================================================
 // Independent Watchdog Timer (IWDG) Functions
 // ===================================================================================
 
@@ -77,21 +93,21 @@ void DLY_ticks(uint32_t n) {
 // long, max ticks is 4095 = 5591ms.
 // Once the IWDG has been started, it cannot be disabled, only reloaded (feed).
 void IWDG_start_t(uint16_t ticks) {
-  IWDG->CTLR = 0x5555;                  // allow register modification
-  while(IWDG->STATR & IWDG_PVU);        // wait for clock register to be ready
-  IWDG->PSCR = 0b100;                   // set clock prescaler 64
-  while(IWDG->STATR & IWDG_RVU);        // wait for reload register to be ready
-  IWDG->RLDR = ticks;                   // set watchdog counter reload value
-  IWDG->CTLR = 0xAAAA;                  // load reload value into watchdog counter
-  IWDG->CTLR = 0xCCCC;                  // enable IWDG
+  IWDG->CTLR = 0x5555;                    // allow register modification
+  while(IWDG->STATR & IWDG_PVU);          // wait for clock register to be ready
+  IWDG->PSCR = 0b100;                     // set clock prescaler 64
+  while(IWDG->STATR & IWDG_RVU);          // wait for reload register to be ready
+  IWDG->RLDR = ticks;                     // set watchdog counter reload value
+  IWDG->CTLR = 0xAAAA;                    // load reload value into watchdog counter
+  IWDG->CTLR = 0xCCCC;                    // enable IWDG
 }
 
 // Reload watchdog counter with n ticks, n<=4095
 void IWDG_reload_t(uint16_t ticks) {
-  IWDG->CTLR = 0x5555;                  // allow register modification
-  while(IWDG->STATR & IWDG_RVU);        // wait for reload register to be ready
-  IWDG->RLDR = ticks;                   // set watchdog counter reload value
-  IWDG->CTLR = 0xAAAA;                  // load reload value into watchdog counter
+  IWDG->CTLR = 0x5555;                    // allow register modification
+  while(IWDG->STATR & IWDG_RVU);          // wait for reload register to be ready
+  IWDG->RLDR = ticks;                     // set watchdog counter reload value
+  IWDG->CTLR = 0xAAAA;                    // load reload value into watchdog counter
 }
 
 // ===================================================================================
@@ -100,16 +116,16 @@ void IWDG_reload_t(uint16_t ticks) {
 
 // Init and start automatic wake-up timer
 void AWU_init(void) {
-  AWU->CSR = 0x02;                      // enable automatic wake-up timer
-  EXTI->EVENR |= ((uint32_t)1<<27);     // enable AWU event
-  EXTI->RTENR |= ((uint32_t)1<<27);     // enable AWU rising edge triggering
+  AWU->CSR = 0x02;                        // enable automatic wake-up timer
+  EXTI->EVENR |= ((uint32_t)1<<27);       // enable AWU event
+  EXTI->RTENR |= ((uint32_t)1<<27);       // enable AWU rising edge triggering
 }
 
 // Stop automatic wake-up timer
 void AWU_stop(void) {
-  AWU->CSR = 0x00;                      // disable automatic wake-up timer
-  EXTI->EVENR &= ~((uint32_t)1<<27);    // disable AWU event
-  EXTI->RTENR &= ~((uint32_t)1<<27);    // disable AWU rising edge triggering
+  AWU->CSR = 0x00;                        // disable automatic wake-up timer
+  EXTI->EVENR &= ~((uint32_t)1<<27);      // disable AWU event
+  EXTI->RTENR &= ~((uint32_t)1<<27);      // disable AWU rising edge triggering
 }
 
 // ===================================================================================
@@ -118,44 +134,44 @@ void AWU_stop(void) {
 
 // Put device into sleep, wake up by interrupt
 void SLEEP_WFI_now(void) {
-  PWR->CTLR   &= ~PWR_CTLR_PDDS;        // set power-down mode to SLEEP
-  PFIC->SCTLR &= ~PFIC_SLEEPDEEP;
-  __WFI();                              // wait for interrupt
+  PFIC->SCTLR &= ~PFIC_SLEEPDEEP;         // set power-down mode to SLEEP
+  __WFI();                                // wait for interrupt
 }
 
 // Put device into sleep, wake up by event
 void SLEEP_WFE_now(void) {
-  PWR->CTLR   &= ~PWR_CTLR_PDDS;        // set power-down mode to SLEEP
-  PFIC->SCTLR &= ~PFIC_SLEEPDEEP;
-  __WFE();                              // wait for event
+  PFIC->SCTLR &= ~PFIC_SLEEPDEEP;         // set power-down mode to SLEEP
+  __WFE();                                // wait for event
 }
 
 // Put device into stop, wake up interrupt
 void STOP_WFI_now(void) {
-  PWR->CTLR   &= ~PWR_CTLR_PDDS;        // set power-down mode to STOP
-  PFIC->SCTLR |= PFIC_SLEEPDEEP;
-  __WFI();                              // wait for interrupt
+  PFIC->SCTLR |= PFIC_SLEEPDEEP;          // set power-down mode to STOP
+  __WFI();                                // wait for interrupt
 }
 
 // Put device into stop, wake up event
 void STOP_WFE_now(void) {
-  PWR->CTLR   &= ~PWR_CTLR_PDDS;        // set power-down mode to STOP
-  PFIC->SCTLR |= PFIC_SLEEPDEEP;
-  __WFE();                              // wait for event
+  PFIC->SCTLR |= PFIC_SLEEPDEEP;          // set power-down mode to STOP
+  __WFE();                                // wait for event
 }
 
 // Put device into standby (deep sleep), wake up interrupt
 void STDBY_WFI_now(void) {
-  PWR->CTLR   |= PWR_CTLR_PDDS;         // set power-down mode to STANDBY
-  PFIC->SCTLR |= PFIC_SLEEPDEEP;
-  __WFI();                              // wait for interrupt
+  RCC->APB1PCENR |= RCC_PWREN;            // enable power module
+  PWR->CTLR      |= PWR_CTLR_PDDS;        // set power-down mode to STANDBY
+  PFIC->SCTLR    |= PFIC_SLEEPDEEP;
+  __WFI();                                // wait for interrupt
+  PWR->CTLR      &= ~PWR_CTLR_PDDS;       // reset power-down mode
 }
 
 // Put device into standby (deep sleep), wake up event
 void STDBY_WFE_now(void) {
-  PWR->CTLR   |= PWR_CTLR_PDDS;         // set power-down mode to STANDBY
-  PFIC->SCTLR |= PFIC_SLEEPDEEP;
-  __WFE();                              // wait for event
+  RCC->APB1PCENR |= RCC_PWREN;            // enable power module
+  PWR->CTLR      |= PWR_CTLR_PDDS;        // set power-down mode to STANDBY
+  PFIC->SCTLR    |= PFIC_SLEEPDEEP;
+  __WFE();                                // wait for event
+  PWR->CTLR      &= ~PWR_CTLR_PDDS;       // reset power-down mode
 }
 
 // ===================================================================================

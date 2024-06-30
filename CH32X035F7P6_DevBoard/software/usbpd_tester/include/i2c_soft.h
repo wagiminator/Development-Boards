@@ -1,5 +1,5 @@
 // ===================================================================================
-// Software I2C Master Functions for CH32X035/X034/X033                       * v1.0 *
+// Software I2C Master Functions for CH32X035/X034/X033                       * v1.1 *
 // ===================================================================================
 //
 // Simple I2C bitbanging. ACK bit of the slave is ignored. Clock stretching by the 
@@ -13,6 +13,9 @@
 // I2C_stop()               I2C stop transmission
 // I2C_write(data)          I2C transmit one data byte to the slave
 // I2C_read(ack)            I2C receive one data byte (set ack=0 for last byte)
+//
+// I2C_writeBuffer(buf,len) Send buffer (*buf) with length (len) via I2C and stop
+// I2C_readBuffer(buf,len)  Read buffer (*buf) with length (len) via I2C and stop
 //
 // Define SDA/SCL pin and clock rate below!
 //
@@ -31,10 +34,10 @@ extern "C" {
 
 // I2C parameters
 #ifndef PIN_SDA
-#define PIN_SDA       PA11        // pin connected to serial data of the I2C bus
-#define PIN_SCL       PA10        // pin connected to serial clock of the I2C bus
+#define PIN_SDA       PA6         // pin connected to serial data of the I2C bus
+#define PIN_SCL       PA5         // pin connected to serial clock of the I2C bus
 #endif
-#define I2C_CLKRATE   600000      // I2C bus clock rate in Hz
+#define I2C_CLKRATE   400000      // I2C bus clock rate in Hz
 
 // I2C Functions
 void I2C_init(void);              // I2C init function
@@ -43,6 +46,9 @@ void I2C_restart(uint8_t addr);   // I2C restart transmission
 void I2C_stop(void);              // I2C stop transmission
 void I2C_write(uint8_t data);     // I2C transmit one data byte to the slave
 uint8_t I2C_read(uint8_t ack);    // I2C receive one data byte from the slave
+
+void I2C_writeBuffer(uint8_t* buf, uint16_t len);
+void I2C_readBuffer(uint8_t* buf, uint16_t len);
 
 #ifdef __cplusplus
 };

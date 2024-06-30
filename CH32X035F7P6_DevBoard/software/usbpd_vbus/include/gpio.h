@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic GPIO Functions for CH32X035/X034/X033                                * v0.2 *
+// Basic GPIO Functions for CH32X035/X034/X033                                * v0.4 *
 // ===================================================================================
 //
 // Pins must be defined as PA0, PA1, .., PB0, PB1, .. - e.g.:
@@ -19,6 +19,18 @@
 // PIN_toggle(PIN)          TOGGLE PIN output value
 // PIN_read(PIN)            read PIN input value
 // PIN_write(PIN, val)      write PIN output value (0 = LOW / 1 = HIGH)
+//
+// PIN interrupt and event functions available:
+// --------------------------------------------
+// PIN_EVT_set(PIN,TYPE)    Setup PIN event TYPE:
+//                          PIN_EVT_OFF, PIN_EVT_RISING, PIN_EVT_FALLING, PIN_EVT_BOTH
+// PIN_INT_set(PIN,TYPE)    Setup PIN interrupt TYPE:
+//                          PIN_INT_OFF, PIN_INT_RISING, PIN_INT_FALLING, PIN_INT_BOTH
+// PIN_INT_enable()         Enable PIN interrupts
+// PIN_INT_disable()        Disable PIN interrupts
+// PIN_INTFLAG_read(PIN)    Read interrupt flag of PIN
+// PIN_INTFLAG_clear(PIN)   Clear interrupt flag of PIN
+// PIN_INT_ISR { }          Pin interrupt service routine
 //
 // PORT functions available:
 // -------------------------
@@ -40,8 +52,8 @@
 // ADC_enable()             enable ADC (power-up)
 // ADC_disable()            disable ADC (power-down) (*)
 // ADC_fast()               set fast mode   (fast speed, least accurate)
-// ADC_slow()               set slow mode   (slow speed, most accurate)
-// ADC_medium()             set medium mode (medium speed, medium accurate) (*)
+// ADC_slow()               set slow mode   (slow speed, most accurate) (*)
+// ADC_medium()             set medium mode (medium speed, medium accurate)
 //
 // ADC_input(PIN)           set PIN as ADC input
 // ADC_input_VREF()         set internal voltage referece (Vref) as ADC input
@@ -84,9 +96,17 @@
 // ------------------------------------------------
 // not yet implemented
 //
+// Touch Key (TK) functions available:
+// -----------------------------------
+// TK_init()                init and enable touch key functions (must be called first)
+// TK_input(PIN)            set PIN as touch key input
+// TK_read()                returns TRUE if touch key is pressed
+//
 // Notes:
 // ------
 // - (*) default state
+// - For interrupts and events: Each PIN number can only be used once simultaneously.
+//   (For example, PA1 and PC1 cannot be used simultaneously, but PA1 and PC2).
 // - Pins used for ADC must be set with PIN_input_AN beforehand. ADC input pins are:
 //   PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, PB0, PB1, PC0, PC1, PC2, PC3.
 //
@@ -363,6 +383,88 @@ enum{
 #define PIN_write(PIN, val) (val)?(PIN_high(PIN)):(PIN_low(PIN))
 
 // ===================================================================================
+// Setup PIN interrupt
+// ===================================================================================
+enum{PIN_INT_OFF, PIN_INT_RISING, PIN_INT_FALLING, PIN_INT_BOTH};
+
+#define EXTICR1 EXTICR[0]
+#define EXTICR2 EXTICR[1]
+
+#define PIN_INT_set(PIN, TYPE) { \
+  ((PIN>=PA0 )&&(PIN<=PA15) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPAEN;             \
+                                AFIO->EXTICR1  &= ~((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PA16)&&(PIN<=PA23) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPAEN;             \
+                                AFIO->EXTICR2  &= ~((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PB0 )&&(PIN<=PB15) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPBEN;             \
+                                AFIO->EXTICR1   =  (AFIO->EXTICR1                       \
+                                                & ~((uint32_t)3<<(((PIN)&15)<<1)))      \
+                                                |  ((uint32_t)2<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PB16)&&(PIN<=PB23) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPBEN;             \
+                                AFIO->EXTICR2   =  (AFIO->EXTICR2                       \
+                                                & ~((uint32_t)3<<(((PIN)&15)<<1)))      \
+                                                |  ((uint32_t)2<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PC0 )&&(PIN<=PC15) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPCEN;             \
+                                AFIO->EXTICR1  |=  ((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PC16)&&(PIN<=PC23) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPCEN;             \
+                                AFIO->EXTICR2  |=  ((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  (0))))))); \
+  (TYPE & 3) ? (EXTI->INTENR |=   (uint32_t)1<<((PIN)&31)) : \
+               (EXTI->INTENR &= ~((uint32_t)1<<((PIN)&31))); \
+  (TYPE & 1) ? (EXTI->RTENR  |=   (uint32_t)1<<((PIN)&31)) : \
+               (EXTI->RTENR  &= ~((uint32_t)1<<((PIN)&31))); \
+  (TYPE & 2) ? (EXTI->FTENR  |=   (uint32_t)1<<((PIN)&31)) : \
+               (EXTI->FTENR  &= ~((uint32_t)1<<((PIN)&31))); \
+}
+
+#define PIN_INT_enable()        {NVIC_EnableIRQ(EXTI7_0_IRQn);   \
+                                 NVIC_EnableIRQ(EXTI15_8_IRQn);  \
+                                 NVIC_EnableIRQ(EXTI25_16_IRQn); }
+#define PIN_INT_disable()       {NVIC_DisableIRQ(EXTI7_0_IRQn);  \
+                                 NVIC_DisableIRQ(EXTI15_8_IRQn); \
+                                 NVIC_DisableIRQ(EXTI25_16_IRQn);}
+
+#define PIN_INTFLAG_read(PIN)   (EXTI->INTFR & ((uint32_t)1 << ((PIN) & 31)))
+#define PIN_INTFLAG_clear(PIN)  EXTI->INTFR = ((uint32_t)1 << ((PIN) & 31))
+
+#define PIN_INT_ISR \
+  void PIN_INT_IRQHandler(void)   __attribute__((interrupt)); \
+  void EXTI7_0_IRQHandler(void)   __attribute__((alias("PIN_INT_IRQHandler"))); \
+  void EXTI15_8_IRQHandler(void)  __attribute__((alias("PIN_INT_IRQHandler"))); \
+  void EXTI25_16_IRQHandler(void) __attribute__((alias("PIN_INT_IRQHandler"))); \
+  void PIN_INT_IRQHandler(void)
+
+// ===================================================================================
+// Setup PIN event
+// ===================================================================================
+enum{PIN_EVT_OFF, PIN_EVT_RISING, PIN_EVT_FALLING, PIN_EVT_BOTH};
+
+#define PIN_EVT_set(PIN, TYPE) { \
+  ((PIN>=PA0 )&&(PIN<=PA15) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPAEN;             \
+                                AFIO->EXTICR1  &= ~((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PA16)&&(PIN<=PA23) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPAEN;             \
+                                AFIO->EXTICR2  &= ~((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PB0 )&&(PIN<=PB15) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPBEN;             \
+                                AFIO->EXTICR1   =  (AFIO->EXTICR1                       \
+                                                & ~((uint32_t)3<<(((PIN)&15)<<1)))      \
+                                                |  ((uint32_t)2<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PB16)&&(PIN<=PB23) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPBEN;             \
+                                AFIO->EXTICR2   =  (AFIO->EXTICR2                       \
+                                                & ~((uint32_t)3<<(((PIN)&15)<<1)))      \
+                                                |  ((uint32_t)2<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PC0 )&&(PIN<=PC15) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPCEN;             \
+                                AFIO->EXTICR1  |=  ((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  ((PIN>=PC16)&&(PIN<=PC23) ? ({RCC->APB2PCENR |=  RCC_AFIOEN | RCC_IOPCEN;             \
+                                AFIO->EXTICR2  |=  ((uint32_t)3<<(((PIN)&15)<<1)); }) : \
+  (0))))))); \
+  (TYPE & 3) ? (EXTI->EVENR |=   (uint32_t)1<<((PIN)&31)) : \
+               (EXTI->EVENR &= ~((uint32_t)1<<((PIN)&31))); \
+  (TYPE & 1) ? (EXTI->RTENR |=   (uint32_t)1<<((PIN)&31)) : \
+               (EXTI->RTENR &= ~((uint32_t)1<<((PIN)&31))); \
+  (TYPE & 2) ? (EXTI->FTENR |=   (uint32_t)1<<((PIN)&31)) : \
+               (EXTI->FTENR &= ~((uint32_t)1<<((PIN)&31))); \
+}
+
+// ===================================================================================
 // Enable GPIO PORTS
 // ===================================================================================
 #define PORTA_enable()    RCC->APB2PCENR |= RCC_IOPAEN;
@@ -391,7 +493,7 @@ enum{
 (0))))
 
 // ===================================================================================
-// ADC Functions
+// Analog-to-Digital Converter (ADC) Functions
 // ===================================================================================
 #define ADC_enable()        ADC1->CTLR2  |=  ADC_ADON
 #define ADC_disable()       ADC1->CTLR2  &= ~ADC_ADON
@@ -399,10 +501,10 @@ enum{
 #define ADC_fast()          { ADC1->CTLR3   = 0b00000000000000000000000000000101; \
                               ADC1->SAMPTR1 = 0b00000000000000000000000000000000; \
                               ADC1->SAMPTR2 = 0b00000000000000000000000000000000; }
-#define ADC_slow()          { ADC1->CTLR3   = 0b00000000000000000000000000001111; \
+#define ADC_slow()          { ADC1->CTLR3   = 0b00000000000000000000000000001011; \
                               ADC1->SAMPTR1 = 0b00111111111111111111111111111111; \
                               ADC1->SAMPTR2 = 0b00111111111111111111111111111111; }
-#define ADC_medium()        { ADC1->CTLR3   = 0b00000000000000000000000000001011; \
+#define ADC_medium()        { ADC1->CTLR3   = 0b00000000000000000000000000001000; \
                               ADC1->SAMPTR1 = 0b00011011011011011011011011011011; \
                               ADC1->SAMPTR2 = 0b00011011011011011011011011011011; }
 
@@ -416,7 +518,7 @@ enum{
 
 static inline void ADC_init(void) {
   RCC->APB2PCENR |= RCC_ADC1EN | RCC_AFIOEN;    // enable ADC and AFIO
-  ADC_medium();                                 // set medium speed as default
+  ADC_slow();                                   // set slow speed as default
   ADC1->CTLR2  = ADC_ADON                       // turn on ADC
                | ADC_EXTSEL;                    // software triggering
 }
@@ -434,7 +536,7 @@ static inline uint16_t ADC_read_VDD(void) {
 }
 
 // ===================================================================================
-// CMP Functions
+// Analog Comparator (CMP) Functions
 // ===================================================================================
 #define CMP_lock()          OPA->CTLR2 |= OPA_CTLR2_CMP_LOCK
 #define CMP_unlock()        {CMP->KEY = CMP_KEY1; CMP->KEY = CMP_KEY2;}
@@ -473,9 +575,34 @@ static inline uint16_t ADC_read_VDD(void) {
 #define CMP3_POS_PA13()     OPA->CTLR2 &= ~OPA_CTLR2_PSEL3
 
 // ===================================================================================
-// OPA Functions
+// Operational Amplifier (OPA) Functions
 // ===================================================================================
 // not yet implemented
+
+// ===================================================================================
+// Touch Key (TK) Functions
+// ===================================================================================
+#define TK_input(PIN)       ADC_input(PIN)
+
+static inline void TK_init(void) {
+  ADC_init();                       // init ADC
+  ADC1->CTLR1  |= ADC_TKENABLE;     // enable touch key
+  ADC1->IDATAR1 = 0x80;             // TKEY1->CHGOFFSET = 0x80;
+}
+
+static inline uint8_t TK_read(void) {
+  uint8_t  result;
+  uint16_t value;
+  ADC_enable();                     // (re-)enable ADC
+  ADC1->RDATAR = 0x08;              // (TKEY1->ACT_DCG) set discharge time and start
+  while(!(ADC1->STATR & ADC_EOC));  // wait until sampling completed
+  value = ADC1->RDATAR;             // read sampling value
+  result = (value == 2047);         // 2047 if pressed
+  ADC1->RDATAR = 0x08;              // second sampling (blind)
+  while(!(ADC1->STATR & ADC_EOC));
+  value = ADC1->RDATAR;
+  return result;
+}
 
 #ifdef __cplusplus
 };

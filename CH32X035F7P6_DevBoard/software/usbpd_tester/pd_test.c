@@ -29,7 +29,7 @@
 // Libraries, Definitions and Macros
 // ===================================================================================
 #include <config.h>                       // user configurations
-#include <oled_text.h>                    // OLED text functions
+#include <ssd1306_txt.h>                  // OLED text functions
 #include <usbpd_sink.h>                   // USB PD sink functions
 
 // ===================================================================================
@@ -41,6 +41,7 @@ int main(void) {
 
   // Setup
   OLED_init();                            // init OLED
+  OLED_clear();                           // clear screen
   OLED_printf("Connecting...");
   if(!PD_connect()) {                     // init USB PD
     OLED_printf("FAILED");

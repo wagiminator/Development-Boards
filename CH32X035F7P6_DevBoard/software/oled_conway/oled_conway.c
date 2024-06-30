@@ -137,6 +137,6 @@ int main(void) {
     calculate();                          // calculate next game step
     I2C_start(OLED_ADDR);                 // start transmission to OLED
     I2C_write(OLED_DAT_MODE);             // set data mode
-    I2C_writeBuffer(dst, 1024);           // send screen buffer using DMA
+    I2C_writeBuffer(dst, 1024);           // send screen buffer
   }
 }
