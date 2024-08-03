@@ -1,6 +1,10 @@
 // ===================================================================================
-// User configurations
+// I2C EEPROM User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Transfers content of 24Cxx I2C EEPROM via USB-CDC.
 
 #pragma once
 

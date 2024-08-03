@@ -1,6 +1,10 @@
 // ===================================================================================
-// User configurations
+// TM1650 Demo User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Displays supply voltage on a 4-digit 8-segment LED Display via TM1650 and I2C.
 
 #pragma once
 

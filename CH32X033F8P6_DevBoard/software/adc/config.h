@@ -1,6 +1,10 @@
 // ===================================================================================
-// User configurations
+// ADC Demo User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Samples PA0 and VDD with ADC and sends values via USB CDC.
 
 #pragma once
 

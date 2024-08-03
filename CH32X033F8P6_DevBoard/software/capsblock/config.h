@@ -1,6 +1,17 @@
 // ===================================================================================
-// User configurations
+// CapsBlock User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Tired of accidentally hitting the CAPS-LOCK key? It doesn't have to be. 
+// CAPS bLOCK identifies itself as a USB HID keyboard and constantly monitors the
+// state of CAPS LOCK. It immediately deactivates it if it has been activated.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect the board via USB to your PC. It should be detected as a HID keyboard.
+// - The blocking function is automatically activated.
 
 #pragma once
 

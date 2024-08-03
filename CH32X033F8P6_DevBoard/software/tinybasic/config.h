@@ -1,6 +1,16 @@
 // ===================================================================================
-// User configurations
+// TOYOSHIKI Tiny BASIC User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// A simple BASIC interpreter based on TOYOSHIKI Tiny BASIC using USB CDC as terminal.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect the device via USB to your PC.
+// - Open a serial terminal and select the proper COM port.
+// - Write and execute your BASIC program.
 
 #pragma once
 

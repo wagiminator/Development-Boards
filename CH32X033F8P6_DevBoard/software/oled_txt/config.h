@@ -1,6 +1,11 @@
 // ===================================================================================
-// User configurations
+// OLED Text Demo User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// SSD1306 128x64 Pixels I2C OLED text demo. 
+// Connect an SSD1306 128x64 Pixels I2C OLED to the MCU pins defined below.
 
 #pragma once
 

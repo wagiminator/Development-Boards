@@ -1,6 +1,17 @@
 // ===================================================================================
-// User Configurations
+// Volume Knob User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Controls PC volume via rotary encoder.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect a rotary encoder to the MCU pins defined below (active low).
+// - Connect the board via USB to your PC. It should be detected as a HID device.
+// - Turn the rotary encoder to increase/decrease volume.
+// - Press rotary encoder button to mute/unmute.
 
 #pragma once
 

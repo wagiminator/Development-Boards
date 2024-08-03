@@ -1,6 +1,17 @@
 // ===================================================================================
-// User Configurations
+// Rubber Ducky User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Identifies itself as a USB HID keyboard and types a message on button press.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect a push button to the MCU pin defined below (active low).
+// - Connect the board via USB to your PC. It should be detected as a HID keyboard.
+// - Open a text editor and place the cursor inside the text box.
+// - Press the button and you can see a message typed in by the device.
 
 #pragma once
 

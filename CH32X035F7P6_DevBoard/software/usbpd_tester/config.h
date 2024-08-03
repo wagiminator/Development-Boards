@@ -1,6 +1,10 @@
 // ===================================================================================
-// User configurations
+// USB PD Tester User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Displays source capabilities of the connected USB PD power supply on an OLED.
 
 #pragma once
 

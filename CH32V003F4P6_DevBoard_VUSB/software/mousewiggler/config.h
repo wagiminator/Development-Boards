@@ -1,6 +1,18 @@
 // ===================================================================================
-// User Configurations
+// Mouse Wiggler User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Mouse Wiggler is a tool that simulates movements of the mouse pointer so that 
+// no screen saver is activated and the PC or notebook is not put to sleep. The
+// mouse pointer movements are imperceptibly small, so that you can continue to
+// work normally on your PC even with the function activated.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect the board via USB to your PC. It should be detected as a HID mouse.
+// - The wiggle function is automatically activated.
 
 #pragma once
 

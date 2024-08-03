@@ -1,6 +1,21 @@
 // ===================================================================================
-// User configurations
+// USB CDC to OLED Adapter User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// The code implements a simple USB controlled 128x64 pixels I2C OLED display.
+// The CH32X03x builds a USB communication device class (CDC) for serial communication
+// via USB. Text messages of all kinds can be sent via the USB interface and shown
+// on the OLED display.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect the I2C OLED to the board (define pins below).
+// - Connect the board via USB to your PC. It should be detected as a CDC device.
+// - Open a serial monitor and select the correct serial port (BAUD rate doesn't 
+//   matter).
+// - Send a text message, it should be displayed on the OLED.
 
 #pragma once
 

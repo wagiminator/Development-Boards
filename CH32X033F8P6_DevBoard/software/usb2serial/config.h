@@ -1,6 +1,16 @@
 // ===================================================================================
-// User configurations
+// USB to Serial Converter User Configurations
 // ===================================================================================
+//
+// Description:
+// ------------
+// Simple USB-to-Serial Converter.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect the board via USB to your PC. It should be detected as a CDC device.
+// - Open a serial monitor and select the correct serial port.
+// - Serial port:  DTR: PA0, RTS: PA1, TXD: PA2, RXD: PA3
 
 #pragma once
 
