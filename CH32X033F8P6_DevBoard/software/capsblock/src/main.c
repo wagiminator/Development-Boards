@@ -20,8 +20,9 @@
 //
 // Compilation Instructions:
 // -------------------------
-// - Make sure GCC toolchain (gcc-riscv64-unknown-elf, newlib) and Python3 with PyUSB
-//   is installed. In addition, Linux requires access rights to the USB bootloader.
+// - Make sure GCC toolchain (gcc-riscv64-unknown-elf, newlib) and Python3 with
+//   chprog (via pip) are installed. In addition, Linux requires access rights to
+//   the USB bootloader.
 // - Press the BOOT button on the MCU board and keep it pressed while connecting it
 //   via USB to your PC.
 // - Run 'make flash'.

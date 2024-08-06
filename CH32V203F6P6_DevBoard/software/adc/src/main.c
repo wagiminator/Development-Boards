@@ -15,6 +15,15 @@
 // References:
 // -----------
 // - WCH Nanjing Qinheng Microelectronics: http://wch.cn
+//
+// Compilation Instructions:
+// -------------------------
+// - Make sure GCC toolchain (gcc-riscv64-unknown-elf, newlib) and Python3 with
+//   chprog and rvprog (via pip) are installed. In addition, Linux requires access
+//   rights to the USB bootloader.
+// - Press the BOOT0 button on the MCU board and keep it pressed while connecting it
+//   via USB to your PC.
+// - Run 'make flash'.
 
 
 // ===================================================================================

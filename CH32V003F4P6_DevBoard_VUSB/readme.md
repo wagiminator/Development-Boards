@@ -36,7 +36,7 @@ The CH32V003 series is a collection of industrial-grade general-purpose microcon
 ## WCH-LinkE
 To program the CH32V003 microcontroller, you will need a special programming device which utilizes the proprietary single-wire serial debug interface (SDI). The [WCH-LinkE](http://www.wch-ic.com/products/WCH-Link.html) (pay attention to the "E" in the name) is a suitable device for this purpose and can be purchased commercially for around $4. This debugging tool is not only compatible with the CH32V003 but also with other WCH RISC-V and ARM-based microcontrollers. WCH offers free but closed-source software options for the PC side, such as [MounRiver Studio](http://www.mounriver.com/) and [WCH-LinkUtility](https://www.wch.cn/downloads/WCH-LinkUtility_ZIP.html).
 
-You can also use the Python tool rvprog.py for flashing the CH32V003 microcontroller with the WCH-LinkE. It is provided with the examples in the software folder. Alternatively, there is a platform-independent open-source tool called minichlink developed by Charles Lohr (CNLohr), which can be found [here](https://github.com/cnlohr/ch32v003fun/tree/master/minichlink). Additionally, a customized version of [OpenOCD](https://github.com/karlp/openocd-hacks) can be used for uploading firmware. More information can be found [here](https://github.com/wuxx/nanoCH32V003).
+You can also use the Python tool [rvprog](https://pypi.org/project/rvprog/) for flashing the CH32V003 microcontroller with the WCH-LinkE. Alternatively, there is a platform-independent open-source tool called minichlink developed by Charles Lohr (CNLohr), which can be found [here](https://github.com/cnlohr/ch32v003fun/tree/master/minichlink). Additionally, a customized version of [OpenOCD](https://github.com/karlp/openocd-hacks) can be used for uploading firmware. More information can be found [here](https://github.com/wuxx/nanoCH32V003).
 
 ![CH32V003_wch-linke.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003_wch-linke.jpg)
 
@@ -46,6 +46,8 @@ echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="8010", MODE="6
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="8012", MODE="666"' | sudo tee -a /etc/udev/rules.d/99-WCH-LinkE.rules
 sudo udevadm control --reload-rules
 ```
+
+On Windows, if you need to you can install the WinUSB driver over the WCH interface 1 using the [Zadig](https://zadig.akeo.ie/) tool.
 
 To upload firmware and perform debugging, you need to ensure that the development board is disconnected from any power sources. Then, you should make the following connections to the WCH-LinkE:
 
@@ -59,7 +61,7 @@ WCH-LinkE      DevBoard
 ```
 
 If the blue LED on the WCH-LinkE remains illuminated once it is connected to the USB port, it means that the device is currently in ARM mode and must be switched to RISC-V mode initially. There are a few ways to accomplish this:
-- You can utilize the Python tool rvmode.py (with -v option), which is provided with the examples in the software folder.
+- You can utilize the Python tool [rvprog](https://pypi.org/project/rvprog/) (with -v option).
 - Alternatively, you can select "WCH-LinkRV" in the software provided by WCH, such as MounRiver Studio or WCH-LinkUtility.
 - Another option is to hold down the ModeS button on the device while plugging it into the USB port.
 
@@ -80,7 +82,7 @@ To install the toolchain on Linux, you can use the following commands:
 ```
 sudo apt install build-essential libnewlib-dev gcc-riscv64-unknown-elf
 sudo apt install python3 python3-pip
-python3 -m pip install pyusb
+pip install rvprog
 ```
 
 You can also use the [ch32003fun SDK](https://github.com/cnlohr/ch32v003fun) by CNLohr. Follow the instructions on the Github page to install the toolchain. For software USB support visit [rv003usb](https://github.com/cnlohr/rv003usb).
