@@ -56,26 +56,62 @@ sudo apt install build-essential gcc-arm-none-eabi
 ```
 
 ## Factory built-in UART Bootlader
-The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial adapter integrated into the board. The Python tool [puyaisp.py](https://github.com/wagiminator/MCU-Flash-Tools) included with the example software can be used for this purpose. In order for this tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [PySerial](https://github.com/pyserial/pyserial) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
+The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial adapter integrated into the board. The open-source platform-independent Python tool [puyaisp](https://pypi.org/project/puyaisp/) can be used for this purpose. In order for this tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
 sudo apt install python3 python3-pip
-python3 -m pip install pyserial
+pip install puyaisp
 ```
 
 To upload firmware via the USB port, the MCU must first be put into boot mode using ONE of the following methods:
 - Disconnect your board from all power supplies, press and hold the BOOT button, then connect the board to your USB port. The BOOT button can be released now.
 - Connect your board to your USB port. Press and hold the BOOT button, then press and release the RESET button and then release the BOOT button.
 
+The run the following command to upload your firmware (example):
+
+```
+puyaisp -f firmware.bin
+```
+
 ## Serial Wire Debug Interface (SWD)
 The MCU can also be programmed via the SWD interface and corresponding software (OpenOCD, PyOCD, J-Link), if necessary with modifications. Further information on this can be found [here](https://github.com/IOsetting/py32f0-template), among others.
+
+In order to use [PyOCD](https://pyocd.io/) for uploading and debugging, install it via
+
+```
+pip install pyocd
+```
+
+Then install the Puya.PY32F0xx_DFP pack:
+
+```
+pyocd pack install PY32F002Ax5
+```
+
+In order to list all supported MCUs of the PY32F0xx series, run:
+
+```
+pyocd pack find py32f0
+```
+
+Upload firmware with the following command (example):
+
+```
+pyocd load firmware.bin -t py32f002ax5
+```
+
+If you want to erase the chip, run:
+
+```
+pyocd erase -t py32f002ax5 --chip
+```
 
 ## Arduino IDE Support
 An Arduino core for the PY32F0 series can be found [here](https://github.com/py32duino/Arduino-PY32).
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
-- [PUYA Product Page](https://www.puyasemi.com/cpzx3/info_267_aid_242_kid_235.html)
+- [PUYA Product Page](https://www.puyasemi.com/py32_xilie.html)
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 - [Arduino Support](https://github.com/py32duino/Arduino-PY32)
