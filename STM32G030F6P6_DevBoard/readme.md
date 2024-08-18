@@ -55,21 +55,57 @@ sudo apt install build-essential gcc-arm-none-eabi
 ```
 
 ## Factory built-in UART Bootlader
-The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial adapter integrated into the board. The Python tool [stm32isp.py](https://github.com/wagiminator/MCU-Flash-Tools) included with the example software can be used for this purpose. In order for this tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [PySerial](https://github.com/pyserial/pyserial) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
+The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial adapter integrated into the board. The open-source platform-independent Python tool [stm32isp](https://pypi.org/project/stm32isp/) can be used for this purpose. In order for this tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
 sudo apt install python3 python3-pip
-python3 -m pip install pyserial
+pip install stm32isp
 ```
 
 To upload firmware via the USB port, the MCU must first be put into boot mode using ONE of the following methods:
 - Disconnect your board from all power supplies, press and hold the BOOT button, then connect the board to your USB port. The BOOT button can be released now.
 - Connect your board to your USB port. Press and hold the BOOT button, then press and release the RESET button and then release the BOOT button.
 
+Then run the following command to upload your firmware (example):
+
+```
+stm32isp -f firmware.bin
+```
+
 On STM32G030 microcontrollers, the BOOT0 pin is initially disabled. When the chip is brand new or the main flash memory is erased, this isn't an issue as the embedded bootloader automatically kicks in. By using the stm32isp.py tool, the BOOT0 pin will then be activated for subsequent use. However, if the chip has been previously programmed using a different software tool, the bootloader might not be accessible through the BOOT0 pin (or BOOT button) anymore. In such cases, the nBOOT_SEL bit in the User Option Bytes must be cleared (set to 0) using an SWD programmer like ST-Link and the appropriate software.
 
 ## Serial Wire Debug Interface (SWD)
 The MCU can also be programmed via the SWD interface with corresponding hardware (ST-Link, DAPLink) and software (STM32CubeProg, OpenOCD, PyOCD, J-Link).
+
+In order to use [PyOCD](https://pyocd.io/) for uploading and debugging, install it via
+
+```
+pip install pyocd
+```
+
+Then install the Keil.STM32G0xx_DFP pack:
+
+```
+pyocd pack install STM32G030F6Px
+```
+
+In order to list all supported MCUs of the PY32F0xx series, run:
+
+```
+pyocd pack find stm32g0
+```
+
+Connect an SWD debug probe (e.g. [ST-Link V2](https://aliexpress.com/w/wholesale-st%2525252dlink-v2.html)) to your board. Upload firmware with the following command (example):
+
+```
+pyocd load firmware.bin -t stm32g030f6px
+```
+
+If you want to erase the chip, run:
+
+```
+pyocd erase -t stm32g030f6px --chip
+```
 
 ## Arduino and PlatformIO Support
 You can use [STM32duino](https://github.com/stm32duino) as an Arduino IDE core for several STM32 microcontrollers. There is also support for [PlatformIO](https://stm32-base.org/guides/platformio.html).
