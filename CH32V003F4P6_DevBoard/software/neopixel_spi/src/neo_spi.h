@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic NeoPixel Functions using Hardware-SPI for CH32V003                   * v1.0 *
+// Basic NeoPixel Functions using Hardware-SPI for CH32V003                   * v1.1 *
 // ===================================================================================
 //
 // Functions available:
@@ -19,7 +19,7 @@
 // - Connect pin PC6 (MOSI) to DIN of the pixels string.
 // - Works with most 800kHz addressable LEDs (NeoPixels).
 // - Set number of pixels and pixel type in the parameters below!
-// - System clock frequency must be 48MHz, 24MHz, or 12MHz.
+// - System clock frequency must be 48MHz, 24MHz, 12MHz, or 6MHz.
 //
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 

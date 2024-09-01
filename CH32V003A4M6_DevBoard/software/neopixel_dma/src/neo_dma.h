@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic NeoPixel Functions using Hardware-SPI for CH32V003                   * v1.1 *
+// Basic NeoPixel Functions using Hardware-SPI and DMA for CH32V003           * v1.0 *
 // ===================================================================================
 //
 // Functions available:
@@ -10,8 +10,6 @@
 // NEO_writeColor(p,r,g,b)  write RGB color to pixel p
 // NEO_writeHue(p,h,b)      write hue (h=0..191) and brightness (b=0..2) to pixel p
 // NEO_update()             update pixels string (write buffer to pixels)
-//
-// NEO_sendByte(d)          send one data byte via hardware-SPI to pixels string
 // NEO_latch()              latch the data sent
 //
 // Notes:
@@ -43,11 +41,16 @@ extern "C" {
 #define NEO_LATCH_TIME  281   // latch time in microseconds
 
 // ===================================================================================
+// Interrupt enable check
+// ===================================================================================
+#if SYS_USE_VECTORS == 0
+  #error Interrupt vector table must be enabled (SYS_USE_VECTORS in system.h)!
+#endif
+
+// ===================================================================================
 // NeoPixel Functions and Macros
 // ===================================================================================
-#define NEO_latch()     DLY_us(NEO_LATCH_TIME)
 void NEO_init(void);
-void NEO_sendByte(uint8_t data);
 void NEO_update(void);
 void NEO_clearAll(void);
 void NEO_writeColor(uint8_t pixel, uint8_t r, uint8_t g, uint8_t b);

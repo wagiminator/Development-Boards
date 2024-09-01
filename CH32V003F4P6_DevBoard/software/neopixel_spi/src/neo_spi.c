@@ -1,5 +1,5 @@
 // ===================================================================================
-// Basic NeoPixel Functions using Hardware-SPI for CH32V003                   * v1.0 *
+// Basic NeoPixel Functions using Hardware-SPI for CH32V003                   * v1.1 *
 // ===================================================================================
 // 2023 by Stefan Wagner:   https://github.com/wagiminator
 
@@ -9,12 +9,14 @@
 // SPI Parameters and Variables
 // ===================================================================================
 
-// Define SPI prescaler for 6 MHz SPI frequency -> 166,67us per bit, 750kHz byte freq
+// Define SPI prescaler for 3 MHz SPI frequency -> 333.33us per bit, 750kHz byte freq
 #if F_CPU == 48000000
-#define SPI_PRESC   2
+#define SPI_PRESC   3
 #elif F_CPU == 24000000
-#define SPI_PRESC   1
+#define SPI_PRESC   2
 #elif F_CPU == 12000000
+#define SPI_PRESC   1
+#elif F_CPU ==  6000000
 #define SPI_PRESC   0
 #else
 #error Unsupported system frequency for NeoPixels!
@@ -30,7 +32,7 @@ void NEO_init(void) {
   RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPCEN | RCC_SPI1EN;
   
   // Setup GPIO pin PC6 (MOSI)
-  GPIOC->CFGLR = (GPIOC->CFGLR & ~((uint32_t)0b1111<<(6<<2))) | ((uint32_t)0b1001<<(6<<2));
+  GPIOC->CFGLR = (GPIOC->CFGLR & ~((uint32_t)0b1111<<(6<<2))) | ((uint32_t)0b1011<<(6<<2));
 
   // Setup and enable SPI master, TX only, standard configuration
   SPI1->CTLR1 = (SPI_PRESC << 3)            // set prescaler
@@ -46,11 +48,14 @@ void NEO_init(void) {
 // Send one Data Byte to Neopixels
 // ===================================================================================
 void NEO_sendByte(uint8_t data) {
-  uint8_t i;
-  for(i=8; i; i--, data<<=1) {              // 8 bits, MSB first
+  uint8_t i, bits;
+  for(i=4; i; i--, data<<=2) {              // 4x2 bits, MSB first
+    if(data & 0x80) bits  = 0x60;           // 667us high for "1"-bit
+    else            bits  = 0x40;           // 333us high for "0"-bit
+    if(data & 0x40) bits |= 0x06;           // 667us high for "1"-bit
+    else            bits |= 0x04;           // 333us high for "0"-bit
     while(!(SPI1->STATR & SPI_STATR_TXE));  // wait for transmit buffer empty
-    if(data & 0x80) SPI1->DATAR = 0x7c;     // 833us high for "1"-bit
-    else            SPI1->DATAR = 0x60;     // 333us high for "0"-bit
+    SPI1->DATAR = bits;                     // send 2 bits
   }
 }
 
