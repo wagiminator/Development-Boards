@@ -1,6 +1,6 @@
 // ===================================================================================
 // Project:   Example for CH32X035/X034/X033
-// Version:   v1.0
+// Version:   v1.1
 // Year:      2023
 // Author:    Stefan Wagner
 // Github:    https://github.com/wagiminator
@@ -37,11 +37,13 @@
 // Main Function
 // ===================================================================================
 int main(void) {
-  // Setup, request target voltage and light up LED if successful
-  if(PD_connect()) {
-    if(PD_setVoltage(TARGET_VOLTAGE)) PIN_output(PIN_LED);
+  if(PD_connect()) {                      // connect to PD supply, TRUE if successful
+    if(PD_setVoltage(TARGET_VOLTAGE)) {   // set target voltage, TRUE if successful
+      PIN_output(PIN_LED);                // light up LED to show success
+      while(1) {                          // loop forever
+        DLY_ms(10000);                    // wait 10 seconds
+        PD_negotiate();                   // refresh power negotiation
+      }
+    }
   }
-  
-  // Loop
-  while(1);                               // nothing to do anymore
 }
