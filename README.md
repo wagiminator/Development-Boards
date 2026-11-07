@@ -1,8 +1,5 @@
 # Development Boards
-Collection of various development boards for some entry-level microcontrollers and accompanying example software. More development boards and tools can be found here:
-- [AVR Development Boards](https://github.com/wagiminator/AVR-Development-Boards)
-- [AVR Programmers](https://github.com/wagiminator/AVR-Programmer)
-- [SAMD Development Boards and Programmers](https://github.com/wagiminator/SAMD-Development-Boards)
+Collection of various development boards for some entry-level microcontrollers and accompanying example software. Some additional tools can be found here:
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
 
@@ -103,6 +100,48 @@ Development board for the STM32G030F6P6 cost-effective (50 cents) 32-bit ARM Cor
 ![STM32G030F6P6_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STM32G030F6P6_DevBoard/documentation/STM32G030F6P6_DevBoard_pic2.jpg)
 
 The STM32G030 is based on high-performance Arm® Cortex®-M0+ 32-bit RISC core operating at up to 64 MHz frequency and at a voltage range of 2.0V - 3.6V. The device incorporates 8KB SRAM and 32KB flash, DMA, an extensive range of system functions, enhanced I/Os, one 12-bit ADC (2.5 MSps) with up to 19 channels, a low-power RTC, an advanced control PWM timer, four general-purpose 16-bit timers, two watchdog timers, a SysTick timer, standard communication interfaces (two I²Cs, two SPIs/one I2S, and two USARTs), and an embedded UART bootloader.
+
+## [ATSAMD11C14A Development Board](https://github.com/wagiminator/Development-Boards/tree/main/ATSAMD11C14A_DevBoard)
+Development board for the ATSAMD11C14A (SO14) low-cost 32-bit ARM Cortex M0+ microcontroller with native USB 2.0, USB bootloader support, and Arduino IDE support.
+
+![ATSAMD11C14A_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATSAMD11C14A_DevBoard/documentation/ATSAMD11C14A_DevBoard_pic1.jpg)
+
+The ATSAMD11C14A is a low-power microcontroller using the 32-bit ARM® Cortex®-M0+ processor running at up to 48MHz at a voltage range of 1.62V - 3.63V. It features 16KB flash, 4KB SRAM, a full-speed USB 2.0 device interface that works without an external crystal, two serial communication interfaces (SERCOM) configurable as USART, I²C or SPI, a 12-bit ADC, a 10-bit DAC, two analog comparators, a 24-bit timer/counter for control, two 16-bit timer/counters, a 32-bit RTC, a 6-channel DMA controller, an event system and a peripheral touch controller.
+
+## [ATSAMD11D14A Development Board](https://github.com/wagiminator/Development-Boards/tree/main/ATSAMD11D14A_DevBoard)
+Development board for the ATSAMD11D14A (SO20) low-cost 32-bit ARM Cortex M0+ microcontroller with native USB 2.0, USB bootloader support, and Arduino IDE support.
+
+![ATSAMD11D14A_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATSAMD11D14A_DevBoard/documentation/ATSAMD11D14A_DevBoard_pic1.jpg)
+
+The ATSAMD11D14A is a low-power microcontroller using the 32-bit ARM® Cortex®-M0+ processor running at up to 48MHz at a voltage range of 1.62V - 3.63V. It features 16KB flash, 4KB SRAM, a full-speed USB 2.0 device interface that works without an external crystal, three serial communication interfaces (SERCOM) configurable as USART, I²C or SPI, a 12-bit ADC with up to 10 channels, a 10-bit DAC, two analog comparators, a 24-bit timer/counter for control, two 16-bit timer/counters, a 32-bit RTC, a 6-channel DMA controller, an event system and a peripheral touch controller.
+
+## [ATSAMD21E Development Board](https://github.com/wagiminator/Development-Boards/tree/main/ATSAMD21E_DevBoard)
+Development board for the ATSAMD21E (TQFP32) 32-bit ARM Cortex M0+ microcontroller with native USB 2.0, 32.768kHz crystal, USB bootloader support, and Arduino IDE support.
+
+![ATSAMD21E_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATSAMD21E_DevBoard/documentation/ATSAMD21E_DevBoard_pic1.jpg)
+
+The ATSAMD21E is a low-power microcontroller using the 32-bit ARM® Cortex®-M0+ processor running at up to 48MHz at a voltage range of 1.62V - 3.63V. It features up to 256KB flash, 32KB SRAM, a full-speed USB 2.0 device/host interface that works without an external crystal, four serial communication interfaces (SERCOM) configurable as USART, I²C or SPI, an I²S interface, a 12-bit ADC, a 10-bit DAC, two analog comparators, three timer/counters for control, three 16-bit timer/counters, a 32-bit RTC, a 12-channel DMA controller, an event system and a peripheral touch controller.
+
+## [ATmega4808 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard)
+Development board for the ATmega4808 series 8-bit AVR microcontrollers with integrated USB-to-serial converter, 32.768kHz crystal for the RTC, bootloader support, and Arduino IDE support.
+
+![ATmega4808_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATmega4808_DevBoard/documentation/ATmega4808_DevBoard_pic1.jpg)
+
+The ATmega4808 is part of the megaAVR 0-series, which uses the AVR processor with hardware multiplier running at up to 20MHz from the internal calibrated oscillator at a voltage range of 1.8V - 5.5V. It features 48KB flash, 6KB SRAM, 256 bytes EEPROM, a 10-bit ADC, an analog comparator, one 16-bit timer/counter type A, three 16-bit timer/counters type B, a real-time counter, three USARTs, SPI, I²C, configurable custom logic, an event system, and a 1-wire UPDI programming and debugging interface.
+
+## [ATtiny814 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny814_DevBoard)
+Development board for the ATtiny814 and other tinyAVR 14-pin 8-bit microcontrollers with integrated USB-to-serial converter, which can also be used as a SerialUPDI programmer to upload firmware, and Arduino IDE support.
+
+![ATtiny814_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATtiny814_DevBoard/documentation/ATtiny814_DevBoard_pic1.jpg)
+
+The ATtiny814 is part of the tinyAVR 1-series, which uses the AVR processor with hardware multiplier running at up to 20MHz from the internal oscillator at a voltage range of 1.8V - 5.5V. It features 8KB flash, 512 bytes SRAM, 128 bytes EEPROM, a 10-bit ADC, an 8-bit DAC, an analog comparator, a 16-bit timer/counter type A, a 16-bit timer/counter type B, a 12-bit timer/counter type D, a real-time counter, USART, SPI, I²C, configurable custom logic, an event system, a peripheral touch controller, and a 1-wire UPDI programming and debugging interface.
+
+## [ATtiny3216 Development Board](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard)
+Development board for the ATtiny3216 and other tinyAVR 20-pin 8-bit microcontrollers with integrated USB-to-serial converter, which can also be used as a SerialUPDI programmer to upload firmware, and Arduino IDE support.
+
+![ATtiny3216_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATtiny3216_DevBoard/documentation/ATtiny3216_DevBoard_pic1.jpg)
+
+The ATtiny3216 is part of the tinyAVR 1-series, which uses the AVR processor with hardware multiplier running at up to 20MHz from the internal oscillator at a voltage range of 1.8V - 5.5V. It features 32KB flash, 2KB SRAM, 256 bytes EEPROM, two 10-bit ADCs, three 8-bit DACs, three analog comparators, a 16-bit timer/counter type A, two 16-bit timer/counters type B, a 12-bit timer/counter type D, a real-time counter, USART, SPI, I²C, configurable custom logic, an event system, a peripheral touch controller, and a 1-wire UPDI programming and debugging interface.
 
 ## [Development Board Adapter](https://github.com/wagiminator/Development-Boards/tree/main/DevBoard_Adapter)
 The development adapter simplifies experimenting with the various development boards. Simply plug in the board, connect the desired components using jumper cables, and you're good to go.

@@ -1,0 +1,11 @@
+device atsamd21e18
+if swd
+speed 4000
+loadfile samd_bootprot_clear.mot
+r
+loadbin sam_uf2_samd21e18a.bin,0
+verifybin sam_uf2_samd21e18a.bin,0
+loadfile samd_bootprot_8k.mot
+r
+g
+exit

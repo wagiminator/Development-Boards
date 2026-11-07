@@ -1,0 +1,11 @@
+device atsamd11d14
+if swd
+speed 4000
+loadfile samd_bootprot_clear.mot
+r
+loadbin sam_ba_samd11d14as.bin,0
+verifybin sam_ba_samd11d14as.bin,0
+loadfile samd_bootprot_4k.mot
+r
+g
+exit
