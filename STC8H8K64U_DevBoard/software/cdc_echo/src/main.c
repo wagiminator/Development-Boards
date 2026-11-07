@@ -10,13 +10,21 @@
 //
 // Description:
 // ------------
-// Blink example.
+// Simple USB-CDC serial demo which echoes back all received messages.
 //
 // Compilation Instructions:
 // -------------------------
 // - Make sure SDCC toolchain and Python3 with stc8usb is installed.
 // - Press and hold BOOT button while connecting the MCU board to your PC via USB.
 // - Run 'make flash'.
+//
+// Operating Instructions:
+// -----------------------
+// - Connect the board via USB to your PC. It should be detected as a CDC device.
+// - Open a serial monitor and select the correct serial port (BAUD rate doesn't 
+//   matter).
+// - Send a text message (with newline termination), it should be echoed back by
+//   the device.
 
 
 // ===================================================================================
@@ -26,7 +34,6 @@
 #include "usb_cdc.h"                    // delay functions
 
 // Prototypes for used interrupts
-//void USB_interrupt(void);
 void USB_ISR(void) __interrupt(INT_NO_USB) { USB_interrupt(); }
 
 // ===================================================================================
