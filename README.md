@@ -151,14 +151,14 @@ The development adapter simplifies experimenting with the various development bo
 ## [CH55xE Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH55xE_DevStick)
 Development stick for the CH552E and CH554E 8-bit 8051 core USB microcontrollers with a built-in LED on a PWM-capable pin, a WS2812 programmable LED (NeoPixel), a physical and a touch key, native USB 2.0, and Arduino IDE support. Explore the features of this cheap microcontroller without hooking up any wires!
 
-![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
+![CH55xE_DevStick_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xE_DevStick/documentation/CH55xE_DevStick_pic1.jpg)
 
 ## [CH554E USB Host Development Stick](https://github.com/wagiminator/Development-Boards/tree/main/CH554E_HostDevBoard)
 Development board for the USB host capabilities of the CH554E microcontroller with an integrated USB-A female connector for connecting USB devices like keyboards, mice, printers, hubs, etc. and a USB-A male connector for providing a serial interface for analysis and debugging on the PC.
 
-![CH554E_HostDevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/master/CH554E_HostDevBoard/documentation/CH554E_HostDevBoard_pic1.jpg)
+![CH554E_HostDevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH554E_HostDevBoard/documentation/CH554E_HostDevBoard_pic1.jpg)
 
 ## [MAX3000A Development Board](https://github.com/wagiminator/Development-Boards/tree/main/MAX3000A_DevBoard)
-CPLD Development Board for Altera EPM3032A/3064A.
+Development board for the Altera (Intel) MAX 3000A EPM3032A/EPM3064A CPLD with 3.3V regulator, clock oscillator, JTAG header and all I/O pins on breadboard-compatible headers.
 
 ![MAX3000A_DevBoard_pic1.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/MAX3000A_DevBoard/MAX3000A_DevBoard_pic1.jpg)

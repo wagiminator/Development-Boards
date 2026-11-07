@@ -30,50 +30,108 @@ Touch Key Channels | 4 | 5 | 5
 USB Modes | Device | Device | Host/Device
 USB Type-C | no | yes | yes
 Interfaces | 1x UART, SPI | 2x UART, SPI | 2x UART, SPI
-Internal Clock | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz 
+Internal Clock | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz | 24/16/12/6/3/0.75 MHz
 
-# Built-in USB Bootloader
-## Installing Drivers for the Bootloader
+# Programming and Debugging
+The CH55x has a factory built-in bootloader, so firmware can be uploaded directly via USB without the need for an additional programming device.
+
+## Built-in USB Bootloader
+### Installing Drivers for the Bootloader
 On Linux you do not need to install a driver. However, by default Linux will not expose enough permission to upload your code with the USB bootloader. In order to fix this, open a terminal and run the following commands:
 
 ```
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="4348", ATTR{idProduct}=="55e0", MODE="666"' | sudo tee /etc/udev/rules.d/99-ch55x.rules
-sudo service udev restart
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="55e0", MODE="666"' | sudo tee -a /etc/udev/rules.d/99-ch55x.rules
+sudo udevadm control --reload-rules
 ```
 
-For Windows, you need the [CH372 driver](http://www.wch-ic.com/downloads/CH372DRV_EXE.html). Alternatively, you can also use the [Zadig Tool](https://zadig.akeo.ie/) to install the correct driver. Here, click "Options" -> "List All Devices" and select the USB module. Then install the libusb-win32 driver. To do this, the board must be connected and the CH55x must be in bootloader mode.
+On Windows, you need the [CH372 driver](https://www.wch-ic.com/downloads/CH372DRV_EXE.html). Alternatively, you can also use the [Zadig](https://zadig.akeo.ie/) tool to install the correct driver. Here, click "Options" -> "List All Devices" and select the USB module. Then install the libusb-win32 driver. To do this, the board must be connected and the CH55x must be in bootloader mode.
 
-## Entering Bootloader Mode
-A brand new chip starts automatically in bootloader mode as soon as it is connected to the PC via USB. Once firmware has been uploaded, the bootloader must be started manually for new uploads. To do this, the board must first be disconnected from the USB port and all voltage sources. Now press the BOOT button and keep it pressed while reconnecting the board to the USB port of your PC. The chip now starts again in bootloader mode, the BOOT button can be released and new firmware can be uploaded within the next couple of seconds.
+### Entering Bootloader Mode
+A brand new chip starts automatically in bootloader mode as soon as it is connected to the PC via USB. Once firmware has been uploaded, the bootloader must be started manually for new uploads. To do this, the board must first be disconnected from the USB port and all voltage sources. Now press the BOOT button and keep it pressed while reconnecting the board to the USB port of your PC. The chip now starts in bootloader mode, the BOOT button can be released and new firmware can be uploaded via USB within the next couple of seconds.
 
-# Installing Toolchain for CH55x
-If you do not want to use the Arduino IDE, you can install the [CH55x Software Development Kit for the SDCC compiler](https://github.com/Blinkinlabs/ch554_sdcc). Follow the instructions on the website.
-
-In order for some programming tools to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [pyusb](https://github.com/pyusb/pyusb) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
+### Uploading Firmware with chprog
+The open-source platform-independent Python tool [chprog](https://pypi.org/project/chprog/) from the [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools) is used by the makefiles of the example software. In order for this tool to work, [Python3](https://www.python.org/downloads/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
-sudo apt install build-essential sdcc python3 python3-pip
-sudo pip install pyusb
+sudo apt install python3 python3-pip
+pip install chprog
 ```
 
-# Preparing Arduino IDE
-- [Install ch55xduino](https://github.com/DeqingSun/ch55xduino). Use version 0.0.16!
+Usage example:
+
+```
+chprog firmware.bin
+```
+
+Alternatively, you can use the [chprog web app](https://wagiminator.github.io/apps/chprog/) directly in your web browser (Chrome, Edge or Opera on a desktop computer) without installing any software.
+
+### Alternative Software Tools
+- [WCHISPTool](https://www.wch.cn/downloads/WCHISPTool_Setup_exe.html) - official closed-source tool by WCH (Windows only)
+- [isp55e0](https://github.com/frank-zago/isp55e0)
+- [wchisp](https://github.com/ch32-rs/wchisp)
+
+# Software Development Tools
+## Open-Source SDCC Toolchain
+For compiling install the [SDCC](https://sdcc.sourceforge.net/) compiler. On Linux (Debian-based), this can be done with the following command:
+
+```
+sudo apt install build-essential sdcc
+```
+
+The [example software](#example-software) is based on the [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/CH552), a lightweight starting point for bare-metal firmware development in C without any IDE. Each example folder contains a makefile. Go into the folder of an example and use one of the following commands:
+
+```
+make all       compile and build firmware
+make flash     compile and upload firmware to the MCU
+make clean     remove all build files
+make help      show all options
+```
+
+The [CH55x Software Development Kit](https://github.com/Blinkinlabs/ch554_sdcc) by Blinkinlabs is another option for SDCC.
+
+## Arduino IDE Support
+- [Install ch55xduino](https://github.com/DeqingSun/ch55xduino) (tested with version 0.0.16).
 - Open the Arduino IDE.
-- Go to "Tools" -> "Board" -> "CH55x Boards" and select your chip.
-- Go to "Tools" and set the desired board options.
-- Go to "File" -> "Examples" -> "Examples for CH55x Board" and select a Sketch of your choice.
-- If your board is never used with ch55xduino before, you need to make the ch55x chip enter the bootloader mode. Hold the BOOT button pressed while connecting the board to the USB port of your PC. You do not need to do this if you have installed a blank new chip on the board.
+- Go to **Tools -> Board -> CH55x Boards** and select your chip.
+- Go to **Tools** and set the desired board options.
+- Go to **File -> Examples -> Examples for CH55x Board** and select a sketch of your choice.
+- If your board has never been used with ch55xduino before, you need to make the chip enter the bootloader mode (see above).
 - Now you can upload your sketch.
+
+# Example Software
+The following examples are included. They use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. The USB examples use shared VID/PID pairs for testing purposes only.
+
+Some of the older examples (e.g. blink, capsblock, cdc_adc) are not yet based on the current MCU Templates. They contain their own copy of the flash tool in the *tools* folder, which is called via `python3` by the makefile. They can also be uploaded with the pip version of the tool. The examples with an *.ino* file can also be compiled and uploaded with the Arduino IDE (see the instructions in the *.ino* file).
+
+| Example | Description |
+|:-|:-|
+| [blink](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/blink) | Blink an LED connected to pin 3.3 |
+| [capsblock](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/capsblock) | Tired of accidentally hitting the CAPS-LOCK key? It doesn't have to be. CAPS bLOCK identifies itself as a USB HID keyboard and constantly monitors the state of CAPS LOCK. It immediately deactivates it if it has been activated. |
+| [cdc_adc](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/cdc_adc) | Continuously transmits ADC sample values (pin P1.4) via USB-CDC. |
+| [cdc_echo](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/cdc_echo) | Simple USB-CDC demo which echoes back all received messages. |
+| [debug](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/debug) | Sends a message via UART1 once a second. Connect pin P1.7 (TXD1) to RX of a USB-to-serial converter (115200 BAUD, 8N1). |
+| [flashdump](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/flashdump) | Transfers content of data flash via USB-CDC. |
+| [millis](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/millis) | Blink built-in LED using millis counter (TIMER2). |
+| [mousewiggler](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/mousewiggler) | Mouse Wiggler is a tool that simulates movements of the mouse pointer so that no screen saver is activated and the PC or notebook is not put to sleep. |
+| [neopixel](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/neopixel) | Shows a colorful animation on a string of NeoPixels (WS2812). The number of pixels can be changed in config.h. Connect pin P1.5 to DIN of the pixels string (via a ~330 ohms resistor). |
+| [pwm_fade](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/pwm_fade) | Fades an LED in and out using hardware PWM. Connect an LED with a series resistor (e.g. 470R) between pin P3.4 and GND. |
+| [serial](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/serial) | Echoes data sent via UART0 (115200 BAUD, 8N1). Connect pins P3.1 (TXD) and P3.0 (RXD) to a USB-to-serial converter. Uses interrupts and a ring buffer for RX. |
+| [touchkey](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/touchkey) | The built-in LED lights up as long as the touch key on pin P1.4 is touched. Connect a touch pad (e.g. a piece of copper foil) to pin P1.4. The thresholds can be adjusted in config.h. |
+| [usb2oled](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/usb2oled) | This code implements a simple USB controlled 128x64 pixels I2C OLED display. The MCU builds a USB communication device class (CDC) for serial communication via USB. |
+| [usb2serial](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/usb2serial) | Simple USB-to-serial converter. The MCU builds a USB communication device class (CDC) and forwards the data between USB and UART1 (TXD1: P1.7, RXD1: P1.6). The BAUD rate is set by the PC. The built-in LED flashes on data transfer. |
+| [watchdog](https://github.com/wagiminator/Development-Boards/tree/main/CH55xG_DevBoard/software/watchdog) | Flashes the built-in LED by regular watchdog timer resets. Uses the RESET_KEEP register to retain LED status across reset. |
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator/ch55xg-development-board)
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
-- [CH55x SDK for SDCC](https://github.com/Blinkinlabs/ch554_sdcc)
+- [CH55x SDK for SDCC by Blinkinlabs](https://github.com/Blinkinlabs/ch554_sdcc)
 - [ch55xduino](https://github.com/DeqingSun/ch55xduino)
-- [CH551/552 Datasheet](http://www.wch-ic.com/downloads/CH552DS1_PDF.html)
-- [CH554 Datasheet](http://www.wch-ic.com/downloads/CH554DS1_PDF.html)
+- [CH551/552 Datasheet](https://www.wch-ic.com/downloads/CH552DS1_PDF.html)
+- [CH554 Datasheet](https://www.wch-ic.com/downloads/CH554DS1_PDF.html)
 - [WCH Official Store on AliExpress](https://wchofficialstore.aliexpress.com)
+- [chprog Web App](https://wagiminator.github.io/apps/chprog/)
 
 ![CH55xG_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic3.jpg)
 ![CH55xG_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH55xG_DevBoard/documentation/CH55xG_DevBoard_pic2.jpg)
@@ -82,5 +140,5 @@ sudo pip install pyusb
 
 ![license.png](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)
 
-This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License.
 (http://creativecommons.org/licenses/by-sa/3.0/)

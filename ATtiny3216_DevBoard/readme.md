@@ -49,32 +49,58 @@ All chips have a USART (2-series: two USARTs), SPI and I²C interface and an int
 
 Note: The 0-series and 1-series parts have a 10-bit single-ended ADC with a sampling rate of up to 115 ksps, the 2-series parts have a 12-bit single-ended/differential ADC with a sampling rate of up to 375 ksps. The [tinyAVR MCU Template](https://github.com/wagiminator/MCU-Templates/tree/main/ATtiny814) and the example software support the 0-series and 1-series.
 
-# Compiling, Programming and Debugging
-## GCC Toolchain
-For compiling install the AVR GCC toolchain. On Linux (Debian-based), this can be done with the following command:
-```
-sudo apt install build-essential gcc-avr avr-libc
-```
-
-The device support files in the *avr* folder of each example allow the use of older avr-gcc versions, which do not support the tinyAVR natively.
+# Programming and Debugging
+The tinyAVR microcontrollers are programmed via the 1-wire UPDI interface. The CH340N USB-to-serial converter integrated into the board can be used as a SerialUPDI programmer, so that no additional hardware is required.
 
 ## Uploading Firmware via SerialUPDI
-The open-source platform-independent Python tool [tinyupdi](https://pypi.org/project/tinyupdi/) is used by the makefiles to upload firmware via the integrated SerialUPDI programmer. In order for this tool to work, Python3 must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
+Set the Serial Mode Switch to "UPDI" and connect the board via USB to your PC. If necessary, install the driver for the [CH340](https://www.wch-ic.com/downloads/CH341SER_ZIP.html).
+
+### Uploading Firmware with tinyupdi
+The open-source platform-independent Python tool [tinyupdi](https://pypi.org/project/tinyupdi/) from the [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools) is used by the makefiles of the example software. In order for this tool to work, [Python3](https://www.python.org/downloads/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
 sudo apt install python3 python3-pip
 pip install tinyupdi
 ```
 
-Set the Serial Mode Switch to "UPDI", connect the board via USB to your PC and run the following command to upload your firmware (example):
+Usage example:
 
 ```
 tinyupdi -d attiny3216 -t 20000000 -f firmware.bin
 ```
 
-The `-t` option sets the oscillator fuse matching the clock frequency. Alternatively, the [AVR Serial UPDI Programmer web app](https://wagiminator.github.io/apps/serialupdi/) (Chrome, Edge or Opera on a desktop computer), [megaupdi](https://pypi.org/project/megaupdi/) or [AVRDUDE](https://github.com/avrdudes/avrdude) (programmer `serialupdi`) can be used. If necessary, install the driver for the [CH340N](https://www.wch-ic.com/downloads/CH341SER_ZIP.html).
+The `-t` option sets the oscillator fuse matching the clock frequency.
 
-The [example software](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software) is based on the [tinyAVR MCU Template](https://github.com/wagiminator/MCU-Templates/tree/main/ATtiny814). Go into the folder of an example and run `make flash` to compile and upload the firmware. If another chip of the family is used, change `DEVICE` in the makefile and copy the corresponding device support files from the template into the *avr* folder.
+Alternatively, you can use the [AVR Serial UPDI Programmer web app](https://wagiminator.github.io/apps/serialupdi/) directly in your web browser (Chrome, Edge or Opera on a desktop computer) without installing any software.
+
+### Alternative Software Tools
+- [megaupdi](https://pypi.org/project/megaupdi/) - big brother of tinyupdi for all AVRs with UPDI
+- [AVRDUDE](https://github.com/avrdudes/avrdude) (programmer `serialupdi`)
+
+## External UPDI Programmers
+The UPDI pin is also available on the pin header, so that an external UPDI programmer can be used, e.g. if the chip needs to be programmed with high voltage. Suitable UPDI programmers can be found in my [AVR Programmer](https://github.com/wagiminator/AVR-Programmer) repository, e.g.:
+- [SerialUPDI Programmer](https://github.com/wagiminator/AVR-Programmer/tree/master/SerialUPDI_Programmer)
+- [SerialUPDI HV Programmer](https://github.com/wagiminator/AVR-Programmer/tree/master/SerialUPDI_HV_Programmer) (with high-voltage UPDI)
+- [picoAVR ISP + TPI + UPDI Programmer](https://github.com/wagiminator/AVR-Programmer/tree/master/picoAVR_Programmer)
+
+# Software Development Tools
+## Open-Source GCC Toolchain
+For compiling install the AVR GCC toolchain. On Linux (Debian-based), this can be done with the following command:
+
+```
+sudo apt install build-essential gcc-avr avr-libc
+```
+
+The [example software](#example-software) is based on the [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/ATtiny814), a lightweight starting point for bare-metal firmware development in C without any IDE. Each example folder contains a makefile. Go into the folder of an example and use one of the following commands:
+
+```
+make all       compile and build firmware
+make flash     compile and upload firmware to the MCU
+make clean     remove all build files
+make help      show all options
+```
+
+The device support files in the *avr* folder of each example allow the use of older avr-gcc versions, which do not support the tinyAVR natively. If another chip of the family is used, change `DEVICE` in the makefile and copy the corresponding device support files from the template into the *avr* folder.
 
 ## Arduino IDE Support
 - [Install megaTinyCore](https://github.com/SpenceKonde/megaTinyCore/blob/master/Installation.md).
@@ -88,7 +114,7 @@ The [example software](https://github.com/wagiminator/Development-Boards/tree/ma
 - Now you can upload your sketch.
 
 # Example Software
-The following examples are included. They all use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. Unless otherwise stated, the serial interface (115200 BAUD, 8N1) can be accessed via the USB-to-serial converter (set the Serial Mode Switch to "UART").
+The following examples are included. They use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. Unless otherwise stated, the serial interface (115200 BAUD, 8N1) can be accessed via the USB-to-serial converter (set the Serial Mode Switch to "UART").
 
 | Example | Description |
 |:-|:-|
@@ -98,6 +124,8 @@ The following examples are included. They all use the [MCU Templates](https://gi
 | [eeprom](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/eeprom) | Writes a value to EEPROM address 0 and transfers the content of the EEPROM via UART (115200 BAUD, 8N1) once a second. |
 | [i2c_oled](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/i2c_oled) | Displays text sent via UART (115200 BAUD, 8N1) on an SSD1306 128x64 pixels I2C OLED. Connect the OLED to PB1 (SDA) and PB0 (SCL). |
 | [millis](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/millis) | Blink built-in LED using millis counter. |
+| [neopixel](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/neopixel) | Shows a colorful animation on a string of NeoPixels (WS2812). The number of pixels can be changed in neo.h. Connect pin PA6 to DIN of the pixels string. |
+| [oled_txt](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/oled_txt) | SSD1306 128x64 pixels I2C OLED text demo (text sizes, segment digits and bitmaps). Connect the OLED to PB1 (SDA) and PB0 (SCL). |
 | [reset](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/reset) | Blink built-in LED using software resets. |
 | [reset_pin](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/reset_pin) | Software-defined reset pin. Pulling pin PA4 to GND resets the MCU. |
 | [serial](https://github.com/wagiminator/Development-Boards/tree/main/ATtiny3216_DevBoard/software/serial) | Echoes data sent via UART (115200 BAUD, 8N1). |
@@ -115,6 +143,8 @@ The following examples are included. They all use the [MCU Templates](https://gi
 - [Getting started with the new ATtiny chips](http://www.technoblogy.com/show?2OCH)
 - [The ATtiny 2-Series](http://www.technoblogy.com/show?3UKF)
 - [megaTinyCore](https://github.com/SpenceKonde/megaTinyCore)
+- [AVR Serial UPDI Programmer Web App](https://wagiminator.github.io/apps/serialupdi/)
+- [AVR Programmer](https://github.com/wagiminator/AVR-Programmer)
 
 ![ATtiny3216_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATtiny3216_DevBoard/documentation/ATtiny3216_DevBoard_pic2.jpg)
 ![ATtiny3216_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATtiny3216_DevBoard/documentation/ATtiny3216_DevBoard_pic3.jpg)

@@ -42,7 +42,7 @@ The CH32V203 is an industrial-grade microcontroller (MCU) designed for general-p
 Note that only the CH32V203F6P6 can be used on this development board. Although the CH32V203F8P6 comes in the same package (TSSOP20), it has a completely different pinout.
 
 # Programming and Debugging
-There are two ways to program the microcontroller: via USB using the built-in bootloader and via the serial 2-wire debug interface using a WCH-Link programming device.
+There are two ways to program the microcontroller: via USB using the built-in bootloader and via the serial 2-wire debug interface using a WCH-LinkE programming device.
 
 ## Built-in USB Bootloader
 ### Installing Drivers for the Bootloader
@@ -50,39 +50,44 @@ On Linux you do not need to install a driver. However, by default Linux will not
 
 ```
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="4348", ATTR{idProduct}=="55e0", MODE="666"' | sudo tee /etc/udev/rules.d/99-ch55x.rules
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="55e0", MODE="666"' | sudo tee -a /etc/udev/rules.d/99-ch55x.rules
 sudo udevadm control --reload-rules
 ```
 
-For Windows, you need the [CH372 driver](http://www.wch-ic.com/downloads/CH372DRV_EXE.html). Alternatively, you can also use the [Zadig Tool](https://zadig.akeo.ie/) to install the correct driver. Here, click "Options" -> "List All Devices" and select the USB module. Then install the libusb-win32 driver. To do this, the board must be connected and the microcontroller must be in bootloader mode.
+On Windows, you need the [CH372 driver](https://www.wch-ic.com/downloads/CH372DRV_EXE.html). Alternatively, you can also use the [Zadig](https://zadig.akeo.ie/) tool to install the correct driver. Here, click "Options" -> "List All Devices" and select the USB module. Then install the libusb-win32 driver. To do this, the board must be connected and the CH32V203 must be in bootloader mode.
 
 ### Entering Bootloader Mode
-The bootloader must be started manually for new uploads. To do this, the board must first be disconnected from the USB port and all voltage sources. Now press the BOOT0 button and keep it pressed while reconnecting the board to the USB port of your PC. The chip now starts in bootloader mode, the BOOT0 button can be released and new firmware can be uploaded via USB. Alternatively, you can leave the board connected to the USB port, press and hold the BOOT0 button, press and release the RESET button and then release the BOOT0 button to enter the bootloader mode.
+The bootloader must be started manually for new uploads. To do this, the board must first be disconnected from the USB port and all voltage sources. Now press the BOOT0 button and keep it pressed while reconnecting the board to the USB port of your PC. The chip now starts in bootloader mode, the BOOT0 button can be released and new firmware can be uploaded via USB within the next couple of seconds. Alternatively, you can leave the board connected to the USB port, press and hold the BOOT0 button, press and release the RESET button and then release the BOOT0 button to enter the bootloader mode.
 
-### WCHISPTool
-WCH offers the free but closed-source software [WCHISPTool](https://www.wch.cn/downloads/WCHISPTool_Setup_exe.html) to upload firmware with Windows via the USB bootloader.
-
-### chprog
-You can also use [chprog](https://pypi.org/project/chprog/), a simple Python command line tool, to flash the microcontroller via the built-in USB bootloader. In order for this tool to work, [Python3](https://realpython.com/installing-python/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). Then install chprog via pip. On Linux (Debian-based), all of this can be done with the following commands:
+### Uploading Firmware with chprog
+The open-source platform-independent Python tool [chprog](https://pypi.org/project/chprog/) from the [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools) is used by the makefiles of the example software. In order for this tool to work, [Python3](https://www.python.org/downloads/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
 sudo apt install python3 python3-pip
 pip install chprog
 ```
 
-```
 Usage example:
+
+```
 chprog firmware.bin
 ```
 
+Alternatively, you can use the [chprog web app](https://wagiminator.github.io/apps/chprog/) directly in your web browser (Chrome, Edge or Opera on a desktop computer) without installing any software.
+
 ### Alternative Software Tools
+- [WCHISPTool](https://www.wch.cn/downloads/WCHISPTool_Setup_exe.html) - official closed-source tool by WCH (Windows only)
 - [isp55e0](https://github.com/frank-zago/isp55e0)
 - [wchisp](https://github.com/ch32-rs/wchisp)
 
 ## Serial 2-Wire Debug Interface
 ### WCH-LinkE
-To program the CH32V203 microcontroller via the serial debug interface, you will need a special programming device. The [WCH-LinkE](http://www.wch-ic.com/products/WCH-Link.html) (pay attention to the "E" in the name) is a suitable option for this purpose and can be purchased commercially for around $3. This debugging tool is not only compatible with the CH32V203 but also with other WCH RISC-V and ARM-based microcontrollers.
+To program the microcontroller via the serial debug interface, you will need a special programming device. The [WCH-LinkE](https://www.wch-ic.com/products/WCH-Link.html) (pay attention to the "E" in the name) is a suitable device for this purpose and can be purchased commercially for around $3 - $4, e.g. at the [WCH Official Store on AliExpress](https://wchofficialstore.aliexpress.com). This debugging tool is also compatible with other WCH RISC-V and ARM-based microcontrollers.
 
-To use the WCH-Link on Linux, you need to grant access permissions beforehand by executing the following commands:
+![CH32V003_wch-linke.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V003F4P6_DevBoard/documentation/CH32V003_wch-linke.jpg)
+
+To use the WCH-LinkE on Linux, you need to grant access permissions beforehand by executing the following commands:
+
 ```
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="8010", MODE="666"' | sudo tee /etc/udev/rules.d/99-WCH-LinkE.rules
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="8012", MODE="666"' | sudo tee -a /etc/udev/rules.d/99-WCH-LinkE.rules
@@ -91,10 +96,10 @@ sudo udevadm control --reload-rules
 
 On Windows, if you need to you can install the WinUSB driver over the WCH interface 1 using the [Zadig](https://zadig.akeo.ie/) tool.
 
-To upload firmware, you should make the following connections to the WCH-LinkE:
+To upload firmware, make the following connections to the WCH-LinkE:
 
 ```
-WCH-LinkE      MCU Board
+WCH-LinkE      DevBoard
 +-------+      +------+
 |  SWCLK| ---> |CLK   |
 |  SWDIO| <--> |DIO   |
@@ -104,60 +109,94 @@ WCH-LinkE      MCU Board
 ```
 
 If the blue LED on the WCH-LinkE remains illuminated once it is connected to the USB port, it means that the device is currently in ARM mode and must be switched to RISC-V mode initially. There are a few ways to accomplish this:
-- You can utilize the Python tool [rvprog](https://pypi.org/project/rvprog/) (with -v option).
+- You can use the Python tool [rvprog](https://pypi.org/project/rvprog/) (with -v option) or the [rvprog web app](https://wagiminator.github.io/apps/rvprog/).
 - Alternatively, you can select "WCH-LinkRV" in the software provided by WCH, such as MounRiver Studio or WCH-LinkUtility.
 - Another option is to hold down the ModeS button on the device while plugging it into the USB port.
 
-More information can be found in the [WCH-Link User Manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html).
+More information can be found in the [WCH-Link User Manual](https://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html).
 
-### WCH-LinkUtility
-WCH offers the free but closed-source software [WCH-LinkUtility](https://www.wch.cn/downloads/WCH-LinkUtility_ZIP.html) to upload firmware with Windows using the WCH-LinkE.
-
-### rvprog
-You can also use [rvprog](https://pypi.org/project/rvprog/), a simple Python command line tool, to flash the microcontroller via the WCH-LinkE or compatible programmers/debuggers. In order for this tool to work, Python3 and pip must be installed on your system (see chprog above for details). On Linux (Debian-based), all of this can be done with the following commands:
+### Uploading Firmware with rvprog
+The open-source platform-independent Python tool [rvprog](https://pypi.org/project/rvprog/) from the [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools) is used by the makefiles of the example software. In order for this tool to work, [Python3](https://www.python.org/downloads/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
 sudo apt install python3 python3-pip
 pip install rvprog
 ```
 
-```
 Usage example:
+
+```
 rvprog -f firmware.bin
 ```
 
+Alternatively, you can use the [rvprog web app](https://wagiminator.github.io/apps/rvprog/) directly in your web browser (Chrome, Edge or Opera on a desktop computer) without installing any software.
+
 ### Alternative Software Tools
-- [minichlink](https://github.com/cnlohr/ch32v003fun/tree/master/minichlink)
+- [WCH-LinkUtility](https://www.wch.cn/downloads/WCH-LinkUtility_ZIP.html) - official closed-source tool by WCH (Windows only)
+- [MounRiver Studio](https://www.mounriver.com/) - official IDE by WCH
+- [minichlink](https://github.com/cnlohr/ch32fun/tree/master/minichlink) by Charles Lohr
 - [wlink](https://github.com/ch32-rs/wlink)
 
 ### Alternative Debugging Devices
-As part of his [ch32v003fun](https://github.com/cnlohr/ch32v003fun) project, Charles Lohr has also developed open-source programmers/debuggers based on STM32F042 and ESP32S2. Furthermore, the schematic diagram of the WCH-LinkE based on the CH32V305 is available on the manufacturer's [website](https://www.wch.cn/products/WCH-Link.html), but the [firmware](https://github.com/openwch/ch32v003) can only be downloaded as a binary file.
+As part of his [ch32fun](https://github.com/cnlohr/ch32fun) project, Charles Lohr has also developed open-source programmers/debuggers based on STM32F042 and ESP32S2. Furthermore, the schematic diagram of the WCH-LinkE is available on the manufacturer's [website](https://www.wch.cn/products/WCH-Link.html).
 
 # Software Development Tools
-## MounRiver Studio IDE
-The Eclipse-based closed-source [MounRiver Studio IDE](http://www.mounriver.com/) is the official development environment provided by WCH. It supports Windows, Linux, and Mac. MounRiver Studio can be downloaded for free.
-
 ## Open-Source GCC Toolchain
-You can download a complete toolchain (GCC and OpenOCD) for Linux and Mac from the MounRiver Studio website. However, on Linux you can also install a GCC-based toolchain by running the following command:
+You can download a complete toolchain (GCC and OpenOCD) for Linux and Mac from the [MounRiver Studio](https://www.mounriver.com/) website. However, on Linux you can also install a GCC-based toolchain by running the following command:
 
 ```
 sudo apt install build-essential libnewlib-dev gcc-riscv64-unknown-elf
 ```
 
+The [example software](#example-software) is based on the [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/CH32V203), a lightweight starting point for bare-metal firmware development in C without any IDE. Each example folder contains a makefile. Go into the folder of an example and use one of the following commands:
+
+```
+make all       compile and build firmware
+make flash     compile and upload firmware to the MCU
+make clean     remove all build files
+make help      show all options
+```
+
+## MounRiver Studio IDE
+The Eclipse-based closed-source [MounRiver Studio IDE](https://www.mounriver.com/) is the official development environment provided by WCH. It supports Windows, Linux, and Mac. MounRiver Studio can be downloaded for free.
+
 ## Arduino IDE and PlatformIO Support
 There are projects around to make the CH32V203 compatible with the Arduino IDE ([arduino_core_ch32](https://github.com/openwch/arduino_core_ch32)) and PlatformIO ([platform-ch32v](https://github.com/Community-PIO-CH32V/platform-ch32v)).
+
+# Example Software
+The following examples are included. They use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. By default, the firmware is uploaded with `make flash` via the USB bootloader (chprog). The USB examples use shared VID/PID pairs for testing purposes only.
+
+| Example | Description |
+|:-|:-|
+| [adc](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/adc) | Sends ADC value of PA0, Vdd and chip temperature via UART (TX pin is PA2). |
+| [blink](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/blink) | Blink example. |
+| [capsblock](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/capsblock) | Tired of accidentally hitting the CAPS-LOCK key? It doesn't have to be. CAPS bLOCK identifies itself as a USB HID keyboard and constantly monitors the state of CAPS LOCK. It immediately deactivates it if it has been activated. |
+| [cdc_echo](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/cdc_echo) | Simple USB-CDC serial demo which echoes back all received messages. |
+| [debug](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/debug) | Sends a message via UART once a second. TX pin is PA2. |
+| [mediakey](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/mediakey) | The device identifies itself as a USB HID consumer control device (multimedia keyboard). A short press of the BOOT0 button (PB8) sends PLAY/PAUSE, a long press (more than half a second) sends MUTE. |
+| [millis](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/millis) | Blink built-in LED using millis counter. |
+| [mousewiggler](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/mousewiggler) | Keeps the PC awake: the device identifies itself as a USB HID mouse and moves the mouse pointer a tiny bit every 30 seconds. |
+| [neopixel_spi](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/neopixel_spi) | Shows a colorful animation on a string of NeoPixels (WS2812) using the hardware SPI. The number of pixels can be changed in neo_spi.h. Connect pin PA7 (MOSI) to DIN of the pixels string. |
+| [oled_txt](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/oled_txt) | SSD1306 128x64 pixels I2C OLED text demo (text sizes, segment digits and bitmaps). Connect the OLED to PA6 (SDA) and PA5 (SCL). |
+| [reset](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/reset) | Blink built-in LED using software resets. |
+| [serial](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/serial) | Echoes data sent via UART. TX pin: PA2, RX pin: PA3. |
+| [serial_dma](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/serial_dma) | Echoes data sent via UART. Uses DMA for UART RX. TX pin: PA2, RX pin: PA3. |
+| [usb2serial](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/usb2serial) | Simple USB-to-serial converter. The MCU builds a USB communication device class (CDC) and forwards the data between USB and UART2 (TX: PA2, RX: PA3). The BAUD rate, the parity and the number of stop bits are set by the PC. |
+| [watchdog](https://github.com/wagiminator/Development-Boards/tree/main/CH32V203F6P6_DevBoard/software/watchdog) | Blink built-in LED using independent watchdog resets. |
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
-- [MounRiver Studio](http://www.mounriver.com/)
+- [MounRiver Studio](https://www.mounriver.com/)
 - [CH32V203 with Arduino IDE](https://github.com/openwch/arduino_core_ch32)
 - [CH32V203 with PlatformIO](https://github.com/Community-PIO-CH32V/platform-ch32v)
 - [CH32V203 on openwch](https://github.com/openwch/ch32v203)
-- [CH32V203 datasheets](http://www.wch-ic.com/products/CH32V203.html)
-- [WCH-Link user manual](http://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html)
+- [CH32V203 datasheets](https://www.wch-ic.com/products/CH32V203.html)
+- [WCH-Link user manual](https://www.wch-ic.com/downloads/WCH-LinkUserManual_PDF.html)
 - [WCH Official Store on AliExpress](https://wchofficialstore.aliexpress.com)
+- [chprog Web App](https://wagiminator.github.io/apps/chprog/)
+- [rvprog Web App](https://wagiminator.github.io/apps/rvprog/)
 
 ![CH32V203F6P6_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V203F6P6_DevBoard/documentation/CH32V203F6P6_DevBoard_pic2.jpg)
 ![CH32V203F6P6_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/CH32V203F6P6_DevBoard/documentation/CH32V203F6P6_DevBoard_pic3.jpg)
@@ -166,5 +205,5 @@ There are projects around to make the CH32V203 compatible with the Arduino IDE (
 
 ![license.png](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)
 
-This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License.
 (http://creativecommons.org/licenses/by-sa/3.0/)

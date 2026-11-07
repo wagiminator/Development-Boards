@@ -39,37 +39,82 @@ The STC8H1K08 series is a cost-effective family of 8-bit microcontrollers with a
 - 1x set of comparators
 - Factory-built-in UART bootloader
 
-# Compiling, Programming and Debugging
-## SDCC Toolchain
-For compiling install the SDCC compiler. On Linux (Debian-based), this can be done with the following command:
+# Programming and Debugging
+## Factory Built-in UART Bootloader
+The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial converter integrated into the board. If necessary, a driver for the [CH340](https://www.wch-ic.com/downloads/CH341SER_ZIP.html) must be installed.
+
+To upload firmware through the USB port, press and release the DOWNLOAD button when prompted by the ISP software. This button interrupts the power supply to the MCU (power cycle), forcing it to enter bootloader mode.
+
+### Uploading Firmware with stc8isp
+The open-source platform-independent Python tool [stc8isp](https://pypi.org/project/stc8isp/) from the [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools) is used by the makefiles of the example software. In order for this tool to work, [Python3](https://www.python.org/downloads/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
+
+```
+sudo apt install python3 python3-pip
+pip install stc8isp
+```
+
+Usage example:
+
+```
+stc8isp -p /dev/ttyUSB0 -t 24000000 -f firmware.bin
+```
+
+The `-p` option sets the serial port of the USB-to-serial converter (e.g. COM3 on Windows), the `-t` option trims the internal oscillator to the given frequency.
+
+### Alternative Software Tools
+- [STC-ISP](https://www.stcmicro.com/rjxz.html) - official closed-source tool by STC (Windows only)
+- [stcgal](https://github.com/grigorig/stcgal)
+
+# Software Development Tools
+## Open-Source SDCC Toolchain
+For compiling install the [SDCC](https://sdcc.sourceforge.net/) compiler. On Linux (Debian-based), this can be done with the following command:
+
 ```
 sudo apt install build-essential sdcc
 ```
 
-## Factory built-in UART Bootlader
-The MCU has an embedded bootloader with UART interface, which can be used to upload firmware using the CH340E USB-to-serial adapter integrated into the board.
-
-The Python tool [stc8isp.py](https://github.com/wagiminator/MCU-Flash-Tools) included with the example software can be used for this purpose. In order for this ISP tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [PySerial](https://github.com/pyserial/pyserial) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
+The [example software](#example-software) is based on the [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/STC8H1K08), a lightweight starting point for bare-metal firmware development in C without any IDE. Each example folder contains a makefile. Go into the folder of an example and use one of the following commands:
 
 ```
-sudo apt install python3 python3-pip
-python3 -m pip install pyserial
+make all       compile and build firmware
+make flash     compile and upload firmware to the MCU
+make clean     remove all build files
+make help      show all options
 ```
-
-You can also utilize the manufacturer's proprietary programming tool, [STC ISP](https://www.stcmicro.com/rjxz.html), for programming the MCU.
-
-To upload firmware through the USB port, press and release the DOWNLOAD button when prompted by the ISP software to perform a power cycle. This button interrupts the power supply to the MCU, forcing it to enter bootloader mode.
 
 ## Arduino IDE Support
-An Arduino core for the STC8H series can be found [here](https://github.com/ma6254/Arduino_Core_STC).
+An unofficial Arduino core for STC8 microcontrollers can be found [here](https://github.com/chayanforyou/Arduino-STC8).
+
+# Example Software
+The following examples are included. They use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. By default, the firmware is uploaded with `make flash` via the UART bootloader (stc8isp). The serial interface (UART1) is connected to the integrated USB-to-serial converter.
+
+Some of the older examples (e.g. adc_vdd, blink, debug) are not yet based on the current MCU Templates. They contain their own copy of the flash tool in the *tools* folder, which is called via `python3` by the makefile. They can also be uploaded with the pip version of the tool.
+
+| Example | Description |
+|:-|:-|
+| [adc_vdd](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/adc_vdd) | Samples supply voltage (VDD) using analog to serial converter (ADC) and internal reference voltage (VREF). Sends it once a second via UART. |
+| [blink](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/blink) | Blink example. |
+| [debug](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/debug) | Sends a message via UART once a second. |
+| [debug_soft](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/debug_soft) | Sends a message via software-serial once a second. |
+| [eeprom](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/eeprom) | Transfers content of EEPROM via UART. |
+| [i2c_oled](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/i2c_oled) | Displays text sent via UART on an SSD1306 128x64 pixels OLED. |
+| [neopixel](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/neopixel) | Shows a colorful animation on a string of NeoPixels (WS2812). The number of pixels can be changed in config.h. Connect pin P1.0 to DIN of the pixels string (via a ~330 ohms resistor). |
+| [oled_txt](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/oled_txt) | SSD1306 128x64 pixels I2C OLED text demo (text sizes, segment digits and bitmaps). Connect the OLED to P3.3 (SDA) and P3.2 (SCL). |
+| [pwm_fade](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/pwm_fade) | Fades built-in LED using PWM. |
+| [reset](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/reset) | Blinks built-in LED using continuous software resets. |
+| [serial](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/serial) | Echoes data sent via UART. |
+| [serial_int](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/serial_int) | Echoes data sent via UART. Uses interrupts for RX. |
+| [sleep](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/sleep) | Blinks built-in LED using deep sleep and wake-up timer. |
+| [spi_max7219](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/spi_max7219) | Prints numbers on a MAX7219 8-digit 7-segment display using hardware-SPI. |
+| [watchdog](https://github.com/wagiminator/Development-Boards/tree/main/STC8H1K08_DevBoard/software/watchdog) | Blinks built-in LED using continuous watchdog resets. |
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
 - [STC Product Page](https://stcmicro.com/stc/stc8h1k08.html)
-- [STC ISP Software](https://www.stcmicro.com/rjxz.html)
+- [STC-ISP Software](https://www.stcmicro.com/rjxz.html)
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
-- [Arduino Support](https://github.com/ma6254/Arduino_Core_STC)
+- [Arduino Support](https://github.com/chayanforyou/Arduino-STC8)
 
 ![STC8H1K08_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STC8H1K08_DevBoard/documentation/STC8H1K08_DevBoard_pic2.jpg)
 ![STC8H1K08_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STC8H1K08_DevBoard/documentation/STC8H1K08_DevBoard_pic3.jpg)
@@ -78,5 +123,5 @@ An Arduino core for the STC8H series can be found [here](https://github.com/ma62
 
 ![license.png](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)
 
-This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License.
 (http://creativecommons.org/licenses/by-sa/3.0/)

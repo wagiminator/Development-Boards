@@ -36,32 +36,59 @@ The ATmega4808 microcontrollers are part of the megaAVR 0-series, which uses the
 - External interrupt on all general purpose pins
 - 1-wire UPDI programming and debugging interface
 
-# Compiling, Programming and Debugging
-## GCC Toolchain
-For compiling install the AVR GCC toolchain. On Linux (Debian-based), this can be done with the following command:
-```
-sudo apt install build-essential gcc-avr avr-libc
-```
+## Using the AVR DA/DB Family of Microcontrollers
+The even more powerful AVR DA/DB family of microcontrollers (TQFP-32 package) can also be used with this board. Some of their features (depending on the model): up to 128KB flash and 16KB SRAM, up to 24MHz with internal oscillator, 12-bit differential ADC, 10-bit DAC, three analog comparators, two OpAmps, zero-cross detector, peripheral touch controller, multi-voltage I/O, three USARTs, two SPI and two I²C interfaces. In order to be able to use the AVR DA/DB microcontrollers with the Arduino IDE, [DxCore](https://github.com/SpenceKonde/DxCore) must be installed. The example software is written for the megaAVR 0-series only.
 
-The device support files in the *avr* folder of each example allow the use of older avr-gcc versions, which do not support the megaAVR 0-series natively.
+# Programming and Debugging
+The megaAVR microcontrollers are programmed via the 1-wire UPDI interface using a SerialUPDI programmer connected to the UPDI header of the board. Alternatively, an Optiboot bootloader can be installed via UPDI, so that sketches can afterwards be uploaded with the Arduino IDE via the integrated USB-to-serial converter (see below).
 
 ## Uploading Firmware via UPDI
-Firmware is uploaded via the UPDI header of the board using a SerialUPDI programmer, e.g. a USB-to-serial converter with a 1k resistor between TXD and RXD (see [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/ATmega4808)) or a pre-assembled [SerialUPDI Programmer](https://github.com/wagiminator/AVR-Programmer/tree/master/SerialUPDI_Programmer). The open-source platform-independent Python tool [megaupdi](https://pypi.org/project/megaupdi/) is used by the makefiles for this purpose. In order for this tool to work, Python3 must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
+A SerialUPDI programmer is a USB-to-serial converter with a 1k resistor between TXD and RXD (see [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/ATmega4808)). Suitable UPDI programmers can be found in my [AVR Programmer](https://github.com/wagiminator/AVR-Programmer) repository, e.g.:
+- [SerialUPDI Programmer](https://github.com/wagiminator/AVR-Programmer/tree/master/SerialUPDI_Programmer)
+- [SerialUPDI HV Programmer](https://github.com/wagiminator/AVR-Programmer/tree/master/SerialUPDI_HV_Programmer) (with high-voltage UPDI)
+- [picoAVR ISP + TPI + UPDI Programmer](https://github.com/wagiminator/AVR-Programmer/tree/master/picoAVR_Programmer)
+
+Do NOT use high voltage programming! Connect the programmer to the UPDI header of the board.
+
+### Uploading Firmware with megaupdi
+The open-source platform-independent Python tool [megaupdi](https://pypi.org/project/megaupdi/) from the [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools) is used by the makefiles of the example software. In order for this tool to work, [Python3](https://www.python.org/downloads/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
 
 ```
 sudo apt install python3 python3-pip
 pip install megaupdi
 ```
 
-Connect the programmer to the UPDI header and run the following command to upload your firmware (example):
+Usage example:
 
 ```
 megaupdi -d atmega4808 -t 20000000 -f firmware.bin
 ```
 
-The `-t` option sets the oscillator fuse matching the clock frequency. Alternatively, the [AVR Serial UPDI Programmer web app](https://wagiminator.github.io/apps/serialupdi/) (Chrome, Edge or Opera on a desktop computer) or [AVRDUDE](https://github.com/avrdudes/avrdude) (programmer `serialupdi`) can be used. Do NOT use high voltage programming!
+The `-t` option sets the oscillator fuse matching the clock frequency.
 
-The [example software](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software) is based on the [megaAVR MCU Template](https://github.com/wagiminator/MCU-Templates/tree/main/ATmega4808). Go into the folder of an example and run `make flash` to compile and upload the firmware. If another chip of the family is used, change `DEVICE` in the makefile and copy the corresponding device support files from the template into the *avr* folder.
+Alternatively, you can use the [AVR Serial UPDI Programmer web app](https://wagiminator.github.io/apps/serialupdi/) directly in your web browser (Chrome, Edge or Opera on a desktop computer) without installing any software.
+
+### Alternative Software Tools
+- [AVRDUDE](https://github.com/avrdudes/avrdude) (programmer `serialupdi`)
+
+# Software Development Tools
+## Open-Source GCC Toolchain
+For compiling install the AVR GCC toolchain. On Linux (Debian-based), this can be done with the following command:
+
+```
+sudo apt install build-essential gcc-avr avr-libc
+```
+
+The [example software](#example-software) is based on the [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/ATmega4808), a lightweight starting point for bare-metal firmware development in C without any IDE. Each example folder contains a makefile. Go into the folder of an example and use one of the following commands:
+
+```
+make all       compile and build firmware
+make flash     compile and upload firmware to the MCU
+make clean     remove all build files
+make help      show all options
+```
+
+The device support files in the *avr* folder of each example allow the use of older avr-gcc versions, which do not support the megaAVR 0-series natively. If another chip of the family is used, change `DEVICE` in the makefile and copy the corresponding device support files from the template into the *avr* folder.
 
 ## Arduino IDE Support
 - [Install MegaCoreX](https://github.com/MCUdude/MegaCoreX#how-to-install).
@@ -77,17 +104,14 @@ The [example software](https://github.com/wagiminator/Development-Boards/tree/ma
 - Go to **Tools -> Burn Bootloader**.
 - Disconnect the programmer and connect the board via USB to your PC. Now you can upload your sketches via the integrated USB-to-serial converter.
 
-## Using the AVR DA/DB Family of Microcontrollers
-The even more powerful AVR DA/DB family of microcontrollers (TQFP-32 package) can also be used with this board. Some of their features (depending on the model): up to 128KB flash and 16KB SRAM, up to 24MHz with internal oscillator, 12-bit differential ADC, 10-bit DAC, three analog comparators, two OpAmps, zero-cross detector, peripheral touch controller, multi-voltage I/O, three USARTs, two SPI and two I²C interfaces. In order to be able to use the AVR DA/DB microcontrollers with the Arduino IDE, [DxCore](https://github.com/SpenceKonde/DxCore) must be installed. The example software is written for the megaAVR 0-series only.
-
 # Example Software
-The following examples are included. They all use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. Unless otherwise stated, the serial interface (115200 BAUD, 8N1) can be accessed via the integrated USB-to-serial converter.
+The following examples are included. They use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. Unless otherwise stated, the serial interface (115200 BAUD, 8N1) can be accessed via the integrated USB-to-serial converter.
 
 | Example | Description |
 |:-|:-|
 | [adc](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/adc) | ADC example including supply voltage and temperature measurement. Reads the analog value on pin PD0, the supply voltage and the chip temperature once a second and sends the results via UART (115200 BAUD, 8N1). |
 | [blink](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/blink) | Blink built-in LED. |
-| [blink_cip](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/blink_cip) | Blinks the LED with Core Independent Peripherals (CIP). The periodic interrupt timer (PIT) directly toggles pin PA7 (built-in LED) via channel 0 of the event system (EVSYS). Because the CPU isn't needed anymore, it is put into sleep mode POWER-DOWN forever. |
+| [blink_cip](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/blink_cip) | Blinks the LED with Core Independent Peripherals (CIP). The periodic interrupt timer (PIT) directly toggles pin PA7 (built-in LED) via channel 0 of the event system (EVSYS). |
 | [blink_pit](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/blink_pit) | Blink built-in LED using sleep mode with the periodic interrupt timer (PIT) as wake-up source. |
 | [debug](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/debug) | Sends a message via UART once a second. The message can be displayed with a serial monitor (115200 BAUD, 8N1). |
 | [eeprom](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/eeprom) | Writes a value to EEPROM address 0 and transfers the content of the EEPROM via UART (115200 BAUD, 8N1) once a second. |
@@ -95,7 +119,7 @@ The following examples are included. They all use the [MCU Templates](https://gi
 | [i2c_oled](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/i2c_oled) | Displays text sent via UART (115200 BAUD, 8N1) on an SSD1306 128x64 pixels I2C OLED. Connect the OLED to PA2 (SDA) and PA3 (SCL). |
 | [millis](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/millis) | Blink built-in LED using millis counter. |
 | [reset](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/reset) | Blink built-in LED using software resets. |
-| [rtc](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/rtc) | Real-time clock using the RTC with the external 32.768kHz crystal. With a prescaler of 32768 the RTC counts every second. Every five seconds the current time and date are sent via the USB-to-serial converter (115200 BAUD, 8N1). The time is set to the compile time at startup. |
+| [rtc](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/rtc) | Real-time clock using the RTC with the external 32.768kHz crystal. With a prescaler of 32768 the RTC counts every second. Every five seconds the current time and date are sent via the USB-to-serial converter (115200 BAUD, 8N1). |
 | [serial](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/serial) | Echoes data sent via UART (115200 BAUD, 8N1). |
 | [serial_int](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/serial_int) | Echoes data sent via UART (115200 BAUD, 8N1). Uses interrupts and a ring buffer for RX. |
 | [spi_max7219](https://github.com/wagiminator/Development-Boards/tree/main/ATmega4808_DevBoard/software/spi_max7219) | Prints numbers on a MAX7219 8-digit 7-segment display using hardware SPI. Connect DIN to PA4 (MOSI), CLK to PA6 (SCK) and LOAD/CS to PD1. |
@@ -108,11 +132,13 @@ The following examples are included. They all use the [MCU Templates](https://gi
 - [AVR Development Boards](https://github.com/wagiminator/AVR-Development-Boards)
 - [MegaCoreX by MCUdude](https://github.com/MCUdude/MegaCoreX)
 - [DxCore by Spence Konde](https://github.com/SpenceKonde/DxCore)
-- [megaAVR 0-series Family Data Sheet](http://ww1.microchip.com/downloads/en/DeviceDoc/megaAVR0-series-Family-Data-Sheet-DS40002015B.pdf)
-- [ATmega4808 Datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega4808-09-DataSheet-DS40002173B.pdf)
-- [TB3213: Getting Started with RTC](http://ww1.microchip.com/downloads/en/Appnotes/TB3213-Getting-Started-with-RTC-DS90003213B.pdf)
-- [AN2451: Getting Started with Core Independent Peripherals](http://ww1.microchip.com/downloads/en/Appnotes/Getting-Started-with-Peripherals-on-AVR-MCU-00002451C.pdf)
-- [AN2515: AVR Low-Power Techniques](http://ww1.microchip.com/downloads/en/Appnotes/AN2515-AVR-Low-Power-Techniques-00002515C.pdf)
+- [megaAVR 0-series Family Data Sheet](https://ww1.microchip.com/downloads/en/DeviceDoc/megaAVR0-series-Family-Data-Sheet-DS40002015B.pdf)
+- [ATmega4808 Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/ATmega4808-09-DataSheet-DS40002173B.pdf)
+- [TB3213: Getting Started with RTC](https://ww1.microchip.com/downloads/en/Appnotes/TB3213-Getting-Started-with-RTC-DS90003213B.pdf)
+- [AN2451: Getting Started with Core Independent Peripherals](https://ww1.microchip.com/downloads/en/Appnotes/Getting-Started-with-Peripherals-on-AVR-MCU-00002451C.pdf)
+- [AN2515: AVR Low-Power Techniques](https://ww1.microchip.com/downloads/en/Appnotes/AN2515-AVR-Low-Power-Techniques-00002515C.pdf)
+- [AVR Serial UPDI Programmer Web App](https://wagiminator.github.io/apps/serialupdi/)
+- [AVR Programmer](https://github.com/wagiminator/AVR-Programmer)
 
 ![ATmega4808_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATmega4808_DevBoard/documentation/ATmega4808_DevBoard_pic2.jpg)
 ![ATmega4808_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/ATmega4808_DevBoard/documentation/ATmega4808_DevBoard_pic3.jpg)

@@ -46,44 +46,88 @@ The STC8H8K64U series is a cost-effective family of 8-bit microcontrollers with 
 - LCM (TFT color screen) driver, supports 8080 and 6800 interface, 8-bit and 16-bit data width
 - Factory-built-in USB bootloader
 
-# Compiling, Programming and Debugging
-## SDCC Toolchain
-For compiling install the SDCC compiler. On Linux (Debian-based), this can be done with the following command:
+# Programming and Debugging
+## Factory Built-in USB Bootloader
+The MCU has an embedded bootloader with USB interface (HID), which can be used to upload firmware without the need for an additional programming device. Because the USB bootloader functions as a Human Interface Device (HID), there's no need to install drivers. However, Linux doesn't initially grant sufficient permissions to access the bootloader. To resolve this issue, open a terminal and execute the following commands:
+
+```
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="34bf", ATTR{idProduct}=="1001", MODE="666"' | sudo tee /etc/udev/rules.d/99-STC-ISP.rules
+echo 'KERNEL=="hidraw*", ATTRS{idVendor}=="34bf", ATTRS{idProduct}=="1001", MODE="666"' | sudo tee -a /etc/udev/rules.d/99-STC-ISP.rules
+sudo udevadm control --reload-rules
+```
+
+### Entering Bootloader Mode
+To initiate new uploads, the bootloader needs to be manually started. Begin by unplugging the board from the USB port and disconnecting all power sources. Then, press and hold the BOOT button while reconnecting the board to your PC's USB port. This action triggers the chip to enter bootloader mode. Once in this mode, you can release the BOOT button and proceed to upload new firmware via USB.
+
+### Uploading Firmware with stc8usb
+The open-source platform-independent Python tool [stc8usb](https://pypi.org/project/stc8usb/) from the [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools) is used by the makefiles of the example software. In order for this tool to work, [Python3](https://www.python.org/downloads/) with [pip](https://pip.pypa.io/en/stable/getting-started/) must be installed on your system. On Linux (Debian-based), all of this can be done with the following commands:
+
+```
+sudo apt install python3 python3-pip
+pip install stc8usb
+```
+
+Usage example:
+
+```
+stc8usb -t 24000000 -f firmware.bin
+```
+
+The `-t` option trims the internal oscillator to the given frequency.
+
+### Alternative Software Tools
+- [STC-ISP](https://www.stcmicro.com/rjxz.html) - official closed-source tool by STC (Windows only)
+
+# Software Development Tools
+## Open-Source SDCC Toolchain
+For compiling install the [SDCC](https://sdcc.sourceforge.net/) compiler. On Linux (Debian-based), this can be done with the following command:
+
 ```
 sudo apt install build-essential sdcc
 ```
 
-## Factory built-in USB Bootlader
-The MCU has an embedded bootloader with USB interface, which can be used to upload firmware.
-
-The Python tool [stc8usb.py](https://github.com/wagiminator/MCU-Flash-Tools) included with the example software can be used for this purpose. In order for this ISP tool to work, Python3 must be installed on your system. To do this, follow these [instructions](https://www.pythontutorial.net/getting-started/install-python/). In addition [pyhidapi](https://pypi.org/project/hid/) must be installed. On Linux (Debian-based), all of this can be done with the following commands:
+The [example software](#example-software) is based on the [MCU Templates](https://github.com/wagiminator/MCU-Templates/tree/main/STC8H8K64U), a lightweight starting point for bare-metal firmware development in C without any IDE. Each example folder contains a makefile. Go into the folder of an example and use one of the following commands:
 
 ```
-sudo apt install python3 python3-pip
-python3 -m pip install hid
+make all       compile and build firmware
+make flash     compile and upload firmware to the MCU
+make clean     remove all build files
+make help      show all options
 ```
-
-Because the USB bootloader functions as a Human Interface Device (HID), there's no need to install drivers. However, Linux doesn't initially grant sufficient permissions to access the bootloader. To resolve this issue, open a terminal and execute the following commands:
-
-```
-echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="34bf", ATTR{idProduct}=="1001", MODE="666"' | sudo tee /etc/udev/rules.d/99-STC-ISP.rules
-sudo udevadm control --reload-rules
-```
-
-You can also utilize the manufacturer's proprietary programming tool, [STC ISP](https://www.stcmicro.com/rjxz.html), for programming the MCU.
-
-To initiate new uploads, the bootloader needs to be manually started. Begin by unplugging the board from the USB port and disconnecting all power sources. Then, press and hold the BOOT button while reconnecting the board to your PC's USB port. This action triggers the chip to enter bootloader mode. Once in this mode, you can release the BOOT button and proceed to upload new firmware via USB.
 
 ## Arduino IDE Support
-An Arduino core for the STC8H series can be found [here](https://github.com/thevien257/STC_Arduino_Core).
+An unofficial Arduino core for STC8 microcontrollers can be found [here](https://github.com/chayanforyou/Arduino-STC8).
+
+# Example Software
+The following examples are included. They use the [MCU Templates](https://github.com/wagiminator/MCU-Templates) and their libraries. By default, the firmware is uploaded with `make flash` via the USB bootloader (stc8usb). The USB examples use shared VID/PID pairs for testing purposes only.
+
+Some of the older examples (e.g. blink, pwm_fade, reset) are not yet based on the current MCU Templates. They contain their own copy of the flash tool in the *tools* folder, which is called via `python3` by the makefile. They can also be uploaded with the pip version of the tool.
+
+| Example | Description |
+|:-|:-|
+| [adc](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/adc) | Reads the supply voltage and the analog value on pin P1.1 (A1) once a second and sends the results via USB CDC (virtual serial port). |
+| [blink](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/blink) | Blink example. |
+| [capsblock](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/capsblock) | Tired of accidentally hitting the CAPS-LOCK key? It doesn't have to be. CAPS bLOCK identifies itself as a USB HID keyboard and constantly monitors the state of CAPS LOCK. It immediately deactivates it if it has been activated. |
+| [cdc_echo](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/cdc_echo) | Simple USB-CDC serial demo which echoes back all received messages. |
+| [debug](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/debug) | Sends a message via UART1 once a second. Connect pin P1.7 (TX) to RX of a USB-to-serial converter (115200 BAUD, 8N1). |
+| [eeprom](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/eeprom) | Increments a boot counter in the EEPROM (IAP area) at each start and sends a hex dump of the first 128 bytes of the EEPROM via USB CDC (virtual serial port). |
+| [mousewiggler](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/mousewiggler) | Keeps the PC awake: the device identifies itself as a USB HID mouse and moves the mouse pointer a tiny bit every 30 seconds. |
+| [neopixel](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/neopixel) | Shows a colorful animation on a string of NeoPixels (WS2812). The number of pixels can be changed in config.h. Connect pin P1.0 to DIN of the pixels string (via a ~330 ohms resistor). |
+| [pwm_fade](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/pwm_fade) | Fades built-in LED using PWM. |
+| [reset](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/reset) | Blinks built-in LED using continuous software resets. |
+| [serial](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/serial) | Echoes data sent via UART1 (115200 BAUD, 8N1). Connect pins P3.7 (TX) and P3.6 (RX) to a USB-to-serial converter. Uses interrupts and a ring buffer for RX. |
+| [sleep](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/sleep) | Blinks built-in LED using deep sleep and wake-up timer. |
+| [spi_max7219](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/spi_max7219) | Counts on a MAX7219 8-digit 7-segment display using hardware SPI. Connect DIN to P1.3 (MOSI), CLK to P1.5 (SCK) and LOAD/CS to P1.1. |
+| [usb2oled](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/usb2oled) | This code implements a simple USB controlled 128x64 pixels I2C OLED display. The MCU builds a USB communication device class (CDC) for serial communication via USB. |
+| [watchdog](https://github.com/wagiminator/Development-Boards/tree/main/STC8H8K64U_DevBoard/software/watchdog) | Blink built-in LED using watchdog resets. |
 
 # References, Links and Notes
 - [EasyEDA Design Files](https://oshwlab.com/wagiminator)
 - [STC Product Page](https://stcmicro.com/stc/stc8h8k64u.html)
-- [STC ISP Software](https://www.stcmicro.com/rjxz.html)
+- [STC-ISP Software](https://www.stcmicro.com/rjxz.html)
 - [MCU Templates](https://github.com/wagiminator/MCU-Templates)
 - [MCU Flash Tools](https://github.com/wagiminator/MCU-Flash-Tools)
-- [Arduino Support](https://github.com/thevien257/STC_Arduino_Core)
+- [Arduino Support](https://github.com/chayanforyou/Arduino-STC8)
 
 ![STC8H8K64U_DevBoard_pic2.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STC8H8K64U_DevBoard/documentation/STC8H8K64U_DevBoard_pic2.jpg)
 ![STC8H8K64U_DevBoard_pic3.jpg](https://raw.githubusercontent.com/wagiminator/Development-Boards/main/STC8H8K64U_DevBoard/documentation/STC8H8K64U_DevBoard_pic3.jpg)
@@ -92,5 +136,5 @@ An Arduino core for the STC8H series can be found [here](https://github.com/thev
 
 ![license.png](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)
 
-This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License.
 (http://creativecommons.org/licenses/by-sa/3.0/)
