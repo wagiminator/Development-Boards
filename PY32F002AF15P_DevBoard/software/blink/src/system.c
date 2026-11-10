@@ -304,6 +304,7 @@ extern void _estack(void);
 int main(void)                __attribute__((section(".text.main"), used));
 void (*const vectors[])(void) __attribute__((section(".isr_vector"), used));
 void Reset_Handler(void)      __attribute__((section(".text.irq_handler"), naked, used, noreturn));
+void SYS_startup(void)        __attribute__((section(".text.irq_handler"), used, noinline, noreturn));
 
 #if SYS_USE_VECTORS > 0
 // Unless a specific handler is overridden, it just spins forever
@@ -409,16 +410,23 @@ void (*const vectors[])(void) = {
   #endif  // SYS_USE_VECTORS > 0
 };
 
-// Reset handler
+// Reset handler: set stack pointer and jump to startup code. Only assembler code
+// is used here, because the stack pointer must be set before the compiler uses the
+// stack (e.g. for local variables of an inlined main function).
 void Reset_Handler(void) {
-  uint32_t *src, *dst;
-
-  // Set stack pointer
+  // Set stack pointer (also loaded by hardware from the vector table on reset,
+  // but not necessarily when jumping from a bootloader)
   asm volatile(
-  " ldr r0, =_estack  \n\
-    mov sp, r0        \n"
-    : : : "r0", "memory"
+    " ldr  r0, =_estack     \n"
+    " mov  sp, r0           \n"
+    " bl   SYS_startup      \n"
+    " .ltorg                \n"   // literal pool directly behind (no range problems)
   );
+}
+
+// Startup code: initialize memory and system, then start main function
+void SYS_startup(void) {
+  uint32_t *src, *dst;
 
   // Configure vector table location
   SCB->VTOR = (uint32_t)vectors;
