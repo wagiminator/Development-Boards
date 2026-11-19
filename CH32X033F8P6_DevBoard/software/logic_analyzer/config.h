@@ -17,8 +17,11 @@
 // Sample rates:
 // -------------
 // The sample clock is the system clock (48 MHz) divided by an integer, so possible
-// rates are 48 MHz / n, e.g. 12M, 8M, 6M, 4M, 3M, 2M, 1M .. 5k. Other rates (like 5M
-// or 10M) are refused.
+// rates are 48 MHz / n up to SAMPLE_RATE_MAX, e.g. 4M, 3M, 2M, 1M .. 5k. Other rates
+// (like 5M) are refused. Each sample is one DMA transfer from GPIOA to RAM, which takes
+// about 9 to 12 clock cycles; at higher rates (6M = 8 cycles, 8M = 6 cycles) the DMA
+// misses every second request of the timer. The firmware checks this with the SysTick
+// and aborts the capture instead of sending samples with the wrong timing.
 // - Captures of up to BUF_SIZE samples without trigger are first stored in RAM and
 //   then sent. This works up to SAMPLE_RATE_MAX.
 // - Longer captures and captures with trigger (continuous mode, triggering is done
@@ -40,7 +43,7 @@
 
 // Sampling
 #define BUF_SIZE            16384     // sample buffer in RAM (bytes = samples)
-#define SAMPLE_RATE_MAX     8000000   // highest sample rate accepted (Hz)
+#define SAMPLE_RATE_MAX     4000000   // highest sample rate accepted (Hz), DMA limit
 #define SAMPLE_RATE_MIN     1000      // lowest sample rate accepted (Hz)
 
 // MCU supply voltage

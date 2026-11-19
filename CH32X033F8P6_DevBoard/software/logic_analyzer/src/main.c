@@ -21,7 +21,9 @@
 // - Longer captures and captures in continuous mode (used by the host for software
 //   triggering) are sent while sampling. If the USB cannot keep up, the capture is
 //   aborted.
-// - Sample rates are 48 MHz divided by an integer (12M, 8M, 6M, 4M, 3M, 2M, ...).
+// - Sample rates are 48 MHz divided by an integer (4M, 3M, 2M, 1M, ...), up to
+//   SAMPLE_RATE_MAX. Faster rates would need more DMA transfers than the bus can do;
+//   if samples get lost anyway, the capture is aborted (checked with the SysTick).
 // - A square wave on PC3 (TEST_FREQ) can be used to check the analyzer.
 //
 // Protocol (host to device, commands end with '\n'):
@@ -44,7 +46,7 @@
 //   (n - 78) * 32 times.
 // - Up to 4 channels (D0..D3): 0x80 | (r << 4) | value = r repeats of the last sample
 //   (r = 0..7) and then the new value; 48..127 = (n - 47) * 8 repeats.
-// - End: "$<number of data bytes>+". Abort (USB too slow): "!!!" and "$0+".
+// - End: "$<number of data bytes>+". Abort (USB or DMA too slow): "!!!" and "$0+".
 //
 // References:
 // -----------
@@ -110,10 +112,16 @@ enum { LA_IDLE, LA_BUFFER, LA_STREAM };
 uint8_t SMP_buffer[BUF_SIZE] __attribute__((aligned(4)));
 volatile uint32_t SMP_laps;         // completed passes through the buffer
 volatile uint8_t  SMP_done;         // buffer filled (single pass)
+volatile uint32_t SMP_tend;         // SysTick when the buffer was filled (single pass)
+uint32_t SMP_div;                   // sample period in clock cycles
+uint32_t SMP_t0;                    // SysTick at the start of the check window
+uint32_t SMP_w0;                    // samples written at the start of the check window
+uint8_t  SMP_running;               // 1: timer and DMA are sampling
 
 // DMA interrupt: end of buffer reached
 void DMA1_Channel2_IRQHandler(void) __attribute__((interrupt));
 void DMA1_Channel2_IRQHandler(void) {
+  SMP_tend = STK->CNTL;             // time of the last sample
   DMA1->INTFCR = DMA_CGIF2;         // clear interrupt flags
   SMP_laps++;                       // one more pass (circular mode)
   SMP_done = 1;                     // buffer full (single pass)
@@ -149,7 +157,11 @@ void SMP_start(uint32_t div, uint16_t count, uint8_t circular) {
   NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
   // Start sampling
+  SMP_div     = div;
+  SMP_w0      = 0;
+  SMP_running = 1;
   TIM2->DMAINTENR = TIM_UDE;                  // update event triggers DMA
+  SMP_t0          = STK->CNTL;                // start of the time check
   TIM2->CTLR1     = TIM_CEN;                  // start timer
 }
 
@@ -158,6 +170,22 @@ void SMP_stop(void) {
   TIM2->CTLR1         = 0;                    // stop timer
   TIM2->DMAINTENR     = 0;                    // no more DMA requests
   DMA1_Channel2->CFGR &= ~DMA_CFGR1_EN;       // disable DMA channel
+  SMP_running = 0;
+}
+
+// Check that the DMA served every request of the timer: written samples (read after
+// the time now) must match the time since the start. If the bus is too busy for the
+// sample rate, the DMA skips requests and the samples would be further apart than
+// the host assumes. Returns 1 if samples were lost.
+uint8_t SMP_lost(uint32_t now, uint32_t written) {
+  uint32_t t   = now - SMP_t0;
+  uint32_t due = t / SMP_div;                 // samples the timer has asked for
+  uint32_t got = written - SMP_w0;            // samples the DMA has written
+  if(t >= (1UL << 30)) {                      // long captures: start a new window
+    SMP_t0 = now;                             // (the SysTick difference must not
+    SMP_w0 = written;                         // overflow)
+  }
+  return due > got + (got >> 5) + 32;         // 3% and 32 samples of tolerance
 }
 
 // Number of samples written in circular mode so far
@@ -411,6 +439,10 @@ void LA_abort(void) {
 void LA_buffer(void) {
   if(SMP_done) {
     SMP_stop();
+    if(SMP_lost(SMP_tend, LA_limit)) {        // DMA too slow for the sample rate
+      LA_abort();
+      return;
+    }
     ENC_run(SMP_buffer, LA_limit);
     LA_finish();
   }
@@ -423,9 +455,16 @@ void LA_buffer(void) {
 
 // Capture while sending
 void LA_stream(void) {
+  uint32_t now     = STK->CNTL;
   uint32_t written = SMP_written();
   int32_t  avail;
   uint32_t n, idx, first;
+
+  // DMA too slow for the sample rate (e.g. with much USB traffic): samples lost
+  if(SMP_running && SMP_lost(now, written)) {
+    LA_abort();
+    return;
+  }
 
   // Fixed number of samples: stop sampling when all of them are in the buffer
   if(!LA_cont && written >= LA_limit) {
